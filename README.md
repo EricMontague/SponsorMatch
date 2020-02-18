@@ -1,5 +1,12 @@
 # SponsorMatch
-A Flask application that connects event organizers and companies looking to sponsor events. Event organizers can create events as well as sponsorship packages that can be purchased in the app by potential sponsors through the Stripe API. Organizers have an area where they can manage their events, make changes, and see what purchases have been made. Sponsors also have a similar area, but are also able to save events that they are interested in to their own personal list of saved events. The application also features basic search functionality for finding events, powered by Elasticsearch
+A Flask application that connects event organizers and companies looking to sponsor events. 
+
+## Features
+ - Organizers can create events as well as sponsorship packages that can be purchased in the app by potential sponsors through the Stripe API. 
+ - Organizers have an area where they can manage their events, make changes, and see what purchases have been made.
+ - Sponsors have an area where they can review past purchases
+ - Sponsors can save events they're interested in to a personalized list
+ - Basic search functionality for finding events, powered by Elasticsearch
 
 ## Technologies
  - Flask
