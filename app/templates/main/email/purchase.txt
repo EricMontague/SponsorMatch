@@ -1,0 +1,15 @@
+Hi {{ user.first_name + " " + user.last_name }}
+Below are the details for your purchase.
+
+Event: {{ sponsorships[0].event.title }}
+Packages Purchased:
+{% for sponsorship in sponsorships %}
+	{{ sponsorship.package.name }}
+{% endfor %}
+Amount Paid: ${{ amount / 100 }}
+Confirmation Code: {{ sponsorships[0].confirmation_code }}
+Purchase Date: {{ sponsorships[0].timestamp.date().strftime("%m/%d/%Y") }}
+
+Thank you for using SponsorMatch
+
+Note: replies to this email address are not monitored

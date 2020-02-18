@@ -1,0 +1,16 @@
+<p>Hi {{ user.first_name }},</p>
+<p>Below are the details for your purchase.</p>
+<p><strong>Event</strong>: <a href="{{ url_for('main.event', id=sponsorships[0].event.id, _external=True) }}">{{ sponsorships[0].event.title }}</a></p>
+<p><strong>Packages Purchased</strong>:</p>
+<ul>
+	{% for sponsorship in sponsorships %}
+		<li>{{ sponsorship.package.name }}</li>
+	{% endfor %}
+</ul>
+<p><strong>Amount Paid</strong>: ${{ amount / 100 }} </p>
+<p><strong>Confirmation Code</strong>: {{ sponsorships[0].confirmation_code }}</p>
+<p><strong>Purchase Date</strong>: {{ sponsorships[0].timestamp.date().strftime("%m/%d/%Y") }}</p>
+<br>
+<p>Thank you for using SponsorMatch!</p>
+<br>
+<p><small>Note: replies to this email address are not monitored.</small></p>

@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block page_content %}
+<div class="container">
+	<div id="{{ event.id }}" class="event-page-header">
+		<div class="event-page-sidebar-top">
+			<nav class="nav nav-stacked">
+				<p class="event-datetime">{{ event.start_date("%a, %b %-d") }}</p>
+				{% if event.is_ongoing() %}
+					<p class="event-title">{{ event.title }}</p>
+				{% else %}
+					<p class="event-title">{{ event.title }} (Event Ended)</p>
+				{% endif %}
+				<p class="price-range">{{ event.price_range() }}</p>
+				<p class="event-organizer">by <a href="{{ url_for('main.user_profile', company=organizer.company) }}">{{ organizer.company }}</a></p>
+				{% if current_user.can(Permission.SPONSOR_EVENT) %}
+					<div class="save">
+						<a class="btn btn-primary save-btn" href="{{ url_for('main.save_event', id=event.id) }}">
+							Save Event
+						</a>
+					</div>
+				{% endif %}
+				{% if current_user == event.user or current_user.is_administrator() %}
+					<div id="editEvent">
+						<a class="btn btn-info" href="{{ url_for('main.edit_basic_info', id=event.id) }}">Edit Event</a>
+					</div>
+				{% endif %}
+			</nav>
+		</div>
+		<div class="main-event-image">
+			{% if image_path %}
+				<img src="{{ url_for('static', filename=image_path) }}">
+			{% else %}
+				<img src="{{ url_for('static', filename='images/default_event_image.png') }}">
+			{% endif %}
+		</div>
+		<nav id="onResize" class="nav hidden">
+			{% if event.is_ongoing() %}
+				<p>{{ event.title }}</p>
+			{% else %}
+				<p>{{ event.title }} (Event Ended)</p>
+			{% endif %}
+			<p>{{ event.start_date("%a, %b %-d") }}</p>
+			<p class="event-organizer">by <a href="{{ url_for('main.user_profile', company=organizer.company) }}">{{ organizer.company }}</a></p>
+			<div>
+				{% if current_user.can(Permission.SPONSOR_EVENT) %}
+					
+					<a class="btn btn-primary save-btn" href="{{ url_for('main.save_event', id=event.id) }}">Save Event</a>
+					
+				{% endif %}
+				{% if current_user == event.user or current_user.is_administrator() %}
+					
+					<a class="btn btn-info" href="{{ url_for('main.edit_basic_info', id=event.id) }}">Edit Event</a>
+					
+				{% endif %}
+			</div>
+		</nav>
+	</div>
+	<div class="event-tabs">
+		<ul id="scrollTo" class="nav nav-tabs">
+			<li id="info" class="active" role="presentation"><a>Info</a></li>
+			<li id="sponsors" role="presentation"><a>Sponsors <span class="badge">{{ event.num_sponsors() }}</span></a></li>
+			{% if event.has_ended() %}
+				<li id="salesEnded"><a class="no-link-styling" href="#">Sales Ended</a></li>
+			{% endif %}
+
+		</ul>
+		<div id="btnSidebar">
+			<button id="packageBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#packageModal">
+		  		Packages
+			</button>
+		</div>
+	</div>
+	<div class="event-page-body">
+		<div class="event-page-sidebar-bottom">
+			<nav class="nav nav-stacked">
+				<div class="event-datetime">
+					<h4>Date and Time</h4>
+					<p>{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }} - </p>
+					<p>{{ event.end_date("%a, %b %-d") }}, {{ event.end_time("%-I:%M %p") }}</p>
+				</div>
+				<div class="event-location">
+					<h4>Location</h4>
+					<p>{{ venue.name }}</p>
+					<p>{{ venue.address }}</p>
+					<p>{{ venue.city }}, {{ venue.state }} {{ venue.zip_code }}</p>
+				</div>
+			</nav>
+		</div>
+		<div class="event-page-content">
+			{% include "_event_page_content.html" %}
+		</div>
+	</div>
+
+	<!-- Package Modal -->
+	<div class="modal fade" id="packageModal" tabindex="-1" role="dialog" aria-labelledby="packageModalCenterTitle" aria-hidden="true">
+		 <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		      	{% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing %}
+		        	<h3 class="modal-title" id="packageModalTitle">Select Packages</h3>
+		        {% else %}
+		        	<h3 class="modal-title" id="packageModalTitle">Packages</h3>
+		        {% endif %}
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		     </div>
+		     <div class="modal-body">
+				<ul id="accordion" class="list-unstyled panel-group package-panels" role="tablist" aria-multiselectable="true">
+					{% for package in packages %}
+						<li class="package-panel">
+							<div class="panel panel-info">
+							  <div class="panel-heading" role="tab">
+							  	<h3 class="panel-title">
+							        <a href="javascript:void(0);" role="button" data-parent="#accordion" data-toggle="collapse" data-target="#package_{{ package.id }}" aria-expanded="true" aria-controls="package_{{ package.id }}">
+							          <span class="glyphicon glyphicon-plus"></span>
+							          {{ package.name }}
+							        </a>
+							        {% if package.is_sold_out() %}
+							        	<span class="pull-right">Sold Out</span>
+							        {% endif %}
+						      	</h3>
+							  </div>
+							  <div id="package_{{ package.id }}" class="panel-collapse collapse" role="tabpanel">
+								  <div class="panel-body">
+								    <p class="price">Price: ${{ package.price }}</p>
+									<p>Audience Reached: {{ package.audience }}</p>
+									<p>Description: {{ package.description }}</p>
+									<p>Available Packages: {{ package.num_for_sale() }}</p>
+									<p>Package Type: {{ package.package_type }}</p>
+									{% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing() %}
+										{% if current_user.has_purchased(package) %}
+											<a class="btn btn-primary select-package disabled">Add</a>
+											<span>Already Purchased</span>
+										{% elif package.is_sold_out() %}
+											<a class="btn btn-primary select-package disabled">Add</a>
+										{% else %}
+											<a class="btn btn-primary select-package">Add</a>
+										{% endif %}
+									{% endif %}
+								  </div>
+							  </div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+		     </div>
+		     <div id="packageFooter" class="modal-footer">
+		     	{% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing() %}
+			     	<div id="packageQuantity">QTY: 0</div>
+	      			<div id="total">USD $0.00</div>
+		        	<a id="checkout" class="btn btn-primary disabled" href="#">Checkout</a>
+		        {% else %}
+		        	<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+		        {% endif %}
+			</div>
+		   </div>
+		 </div>
+	</div>
+
+	<nav id="eventFooter" class="nav navbar-fixed-bottom hidden">
+		<div>
+			{{ event.price_range() }}
+		</div>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#packageModal">
+		  	Packages
+		</button>
+	</nav>
+
+</div>
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h3 class="modal-title" id="contactTitle">Contact Organizer</h3>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	     </div>
+	     <div class="modal-body">
+      		<form class="contact-form" method="POST" action="{{ url_for('main.event', id=event.id) }}" role="form">
+      			{{ form.hidden_tag() }}
+				{{ wtf.form_errors(form, hiddens="only") }}
+				<div class="row">
+					<div class="col-md-12">
+						{{ wtf.form_field(form.name) }}
+					</div>
+					<div class="col-md-12">
+						{{ wtf.form_field(form.email) }}
+					</div>
+					<div class="col-md-12">
+						{{ wtf.form_field(form.subject) }}
+					</div>
+					<div class="col-md-12">
+						{{ wtf.form_field(form.message) }}
+					</div>
+      			</div>
+      			<div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        {{ wtf.form_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
+				</div>
+      		</form>
+	     </div>
+	 </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+
+
+
+	let resizeFunc = function() {
+	    if ($(window).width() <= 768){ 
+	        $("#eventFooter").removeClass("hidden");
+	        $("#onResize").removeClass("hidden");
+	        $("#packageBtn").hide();
+	    } else {
+	    	$("#eventFooter").addClass("hidden");
+	    	$("#onResize").addClass("hidden");
+	    	$("#packageBtn").show();	
+	    }
+	};
+
+	let scrollFunc = function() {
+		let elementPosition = $("#scrollTo").offset().top;
+		let yScrollPosition = $(window).scrollTop();
+		if (elementPosition < yScrollPosition) {
+			$("#eventFooter").removeClass("navbar-fixed-bottom").addClass("navbar-fixed-top").css({"box-shadow": "0px 8px 20px -9px rgba(0, 0, 0, 0.3"});
+			$("#eventFooter .btn").css({"margin-bottom": "10px"});
+		} else {
+			$("#eventFooter").removeClass("navbar-fixed-top").addClass("navbar-fixed-bottom").css({"box-shadow": "none"});
+			$("#eventFooter .btn").css({"margin-bottom": "0"});
+		}
+	};
+
+	// Ensure that elements are moved to their appropriate places even if browser is refreshed
+	$(resizeFunc);
+	$(scrollFunc);
+
+	// Makes the events page responsive
+	$(window).resize(resizeFunc);
+	$(window).scroll(scrollFunc);
+
+
+	//Show the modal if the user entered invalid data
+	let formErrors = {{ form.errors | safe }};
+	if ($.isEmptyObject(formErrors) === false) {
+		$("#contactModal").modal("show");
+	}
+	
+
+	$(".save-btn").click(function() {
+		let eventId = $(".event-page-header").attr("id");
+		$.ajax({
+			type: "POST",
+			url: `${window.origin}/events/${eventId}/save`,
+			dataType: "json",
+			success: function(response) {
+				displayAlert(response.message);
+			}
+		});
+		return false;
+	});
+
+	$(".panel-title a").click(function() {
+		let packageId = $(this).attr("data-target").split("_")[1];
+		let element = $(this).find("span");
+		$(`#package_${packageId}`).on('hide.bs.collapse', function () {
+  			$(element).removeClass("glyphicon-minus").addClass("glyphicon-plus");
+		});
+		$(`#package_${packageId}`).on('show.bs.collapse', function () {
+	  		$(element).removeClass("glyphicon-plus").addClass("glyphicon-minus");
+		});
+	});
+
+	$("#info").click(function() {
+		let eventId = $(".event-page-header").attr("id");
+		$.ajax({
+			type: "GET",
+			url: `${window.origin}/events/${eventId}/info`,
+			dataType: "html",
+			success: function(response) {
+				let active = $("#sponsors").hasClass("active");
+				if (active === true) {
+					$("#sponsors").removeClass("active");
+					$("#info").addClass("active");
+				};
+				$(".event-page-content").html(response);
+			}
+		});
+		return false;
+	});
+
+	$("#sponsors").click(function() {
+		let eventId = $(".event-page-header").attr("id");
+		$.ajax({
+			type: "GET",
+			url: `${window.origin}/events/${eventId}/sponsors`,
+			dataType: "html",
+			success: function(response) {
+				let active = $("#info").hasClass("active");
+				if (active === true) {
+					$("#info").removeClass("active");
+					$("#sponsors").addClass("active");
+				};
+				$(".event-page-content").html(response);
+			}
+		});
+		return false;
+	});
+
+	$(".select-package").click(function() {
+		let regexPrice = /\d+\.\d{2}/;
+		let regexQty = /\d+/;
+		let $element = $(this);
+		let quantity = parseInt(regexQty.exec($("#packageQuantity").text()));
+		let total = parseFloat(regexPrice.exec($("#total").text()));
+		let cost = parseFloat(regexPrice.exec($(this).siblings(".price").text()));
+		if( $element.text() === "Add") {
+			$element.text("Remove");
+			if (total === 0.00) {
+				$("#checkout").removeClass("disabled");
+			};
+			$("#packageQuantity").text(`QTY: ${quantity + 1}`);
+			$("#total").text(`USD $${(total + cost).toFixed(2)}`);
+		} else {
+			$element.text("Add");
+			if (parseInt(total - cost) === 0){
+				$("#checkout").addClass("disabled");
+			};
+			$("#packageQuantity").text(`QTY: ${quantity - 1}`);
+			$("#total").text(`USD $${(total - cost).toFixed(2)}`);
+		};
+		$element.closest(".panel-collapse").toggleClass("selected");
+	});
+
+	$("#checkout").click(function() {
+		let eventId = $(".event-page-header").attr("id");
+		let packageIds = [];
+		$(".selected").each(function(index) {
+			packageIds.push($(this).attr("id").split("_")[1]);
+		});
+		$.ajax({
+			type: "POST",
+			url:`${window.origin}/events/${eventId}/sponsorships`,
+			contentType: "application/json",
+			data: JSON.stringify({"ids": packageIds}),
+			dataType: "json",
+			success: function(response) {
+				window.location.href = response.url;
+			},
+			error: function (jqXHR, exception) {
+				$("#packageModal").modal("toggle");
+		        ajaxErrorHandler(jqXHR, exception);
+		    }
+		});
+		return false;
+	});
+
+	
+
+</script>
+{% endblock %}

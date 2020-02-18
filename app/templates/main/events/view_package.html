@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ package.name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>{{ package.name }}</h1>
+</div>
+<ul>
+	<li>Price: ${{ package.price }}</li>
+	<li>Audience Reached: {{ package.audience }}</li>
+	<li>Description: {{ package.description }}</li>
+	<li>Available Packages: {{ package.available_packages }}</li>
+	<li>Package Type: {{ package.package_type }}</li>
+</ul>
+{% endblock %}

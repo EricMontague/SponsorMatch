@@ -1,0 +1,31 @@
+<ul class="event-panels list-unstyled">
+	{% for event in events %}
+		<li id="{{ event.id }}" class="event-panel">
+			<div class="dropdown">
+				<span class="vertical-ellipsis dropdown-toggle" data-toggle="dropdown">
+					&vellip;
+				</span>
+				<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
+					<li><a href="{{ url_for('main.event', id=event.id) }}">View</a></li>
+					{% if endpoint == "main.saved_events" %}
+						<li class="remove-event"><a>Remove</a></li>
+					{% else %}
+						<li class="save-event"><a>Save</a></li>
+					{% endif %}
+				</ul>
+			</div>
+			<a class="no-link-styling" href="{{ url_for('main.event', id=event.id) }}">
+				<div class="event-panel-content">
+					<div class="row">
+						<div class="col-md-6">
+							<p class="event-datetime">{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }}</p>
+							<h3 class="event-title">{{ event.title }}</h3>
+							<p class="event-location">{{ event.venue.name }}, {{ event.venue.city }}, {{ event.venue.state }}</p>
+						</div>
+					</div>
+				</div>
+			</a>
+		</li>
+	{% endfor %}
+</ul>
+

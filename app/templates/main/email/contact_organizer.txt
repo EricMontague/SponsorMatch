@@ -1,0 +1,6 @@
+Hi {{ organizer.first_name + " " + organizer.last_name }},
+{{ form.name. data}} ({{ form.email.data }}) has been trying to get in contact with you about your event, {{ title }}. See their message below:
+
+{{ form.message.data }}
+
+Note: replies to this email address are not monitored.

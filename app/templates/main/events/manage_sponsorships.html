@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Sponsorship | Manage Sponsorships{% endblock %}
+
+{% block page_content %}
+<div class="manage-container">
+	<h1 class="page-header">Manage Sponsorships</h1>
+	<div>
+		<div class="row manage-forms">
+			<div class="col-md-6">
+				{{ wtf.quick_form(dropdown_form) }}
+			</div>
+		</div>
+		<ul class="sponsorship-list">
+			<li class="sponsorship-list-headers">
+				<div class="row">
+					<div class="col-md-6">Packages</div>
+					<div class="col-md-6">Amount</div>
+				</div>
+			</li>
+			{% for sponsorship in sponsorships %}
+				<li class="sponsorship" id="{{ sponsorship.package_id }}">
+					<div class="sponsorship-content">
+						<div class="row">
+							<div class="sponsorship-details col-md-6">
+								<h4 class="event-title">
+									<a class="no-link-styling" href="{{ url_for('main.event', id=sponsorship.event_id) }}">
+										{{ sponsorship.event.title }}
+									</a>
+								</h4>
+								<div class="package-name">
+									Package Name: {{ sponsorship.package.name }}
+								</div>
+								<div class="purchase-date">
+									Purchase Date: {{ sponsorship.timestamp.date().strftime("%-m/%-d/%Y") }}
+								</div>
+								<div class="sponsorship-status">
+									{% if sponsorship.is_current() %}
+										<p>Current</p>
+									{% elif sponsorship.is_past() %}
+										<p>Past</p>
+									{% endif %}
+								</div>
+							</div>
+							<div class="sponsorship-amount col-md-6">
+								${{ sponsorship.package.price }}
+							</div>
+						</div>
+					</div>
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="packageModal" tabindex="-1" role="dialog" aria-labelledby="packageCenterTitle" aria-hidden="true">
+	 <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	    	<div class="modal-header">
+	        	<h3 class="modal-title" id="PackageTitle">Package Details</h3>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+	     	</div>
+		    <div class="modal-body">
+		    	<div id="packageDetails">
+		    		<p class="price"></p>
+					<p class="audience-reached"></p>
+					<p class="description"></p>
+					<p class="type"></p>
+		    	</div>
+		     </div>
+		     <div class="modal-footer">
+			    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      		</div>
+	    </div>
+	 </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+	$("#options").change(function() {
+		let status = $("#options :selected").text().toLowerCase();
+		window.location.href = `${window.origin}/manage_sponsorships/${status}`
+	});
+
+	$(".event-title").click(function() {
+		location = $(this).find("a").attr("href");
+		// Needed to prevent modal from opening before the new link is followed
+		$(".sponsorship").unbind("click");
+		window.location.href = window.origin + location;
+
+	});
+
+	$(".sponsorship").click(function() {
+		let packageId = $(this).attr("id");
+		$.ajax({
+			type: "GET",
+			url: `${window.origin}/packages/${packageId}`,
+			dataType: "json",
+			success: function(response) {
+				$(".price").text(`Price: $${response.price}`);
+				$(".audience-reached").text(`Audience Reached: ${response.audience}`);
+				$(".description").text(`Description: ${response.description}`);
+				$(".type").text(`Package Type: ${response.package_type}`);
+				$("#packageModal").modal("show");
+			},
+			error: function (jqXHR, exception) {
+		        $("#packageModal").modal("toggle");
+		        ajaxErrorHandler(jqXHR, exception);
+		    }
+		})
+		return false;
+	});
+
+</script>
+{% endblock %}

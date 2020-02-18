@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}SponsorMatch - {{ title }}{% endblock %}
+
+{% block page_content %}
+<div class="settings">
+	<div class="sidebar-wrapper">
+		{{ macros.render_sidebar("settings", "Settings") }}
+	</div>
+	<div class="content-wrapper">
+		<div class="settings-content">
+			<h1>{{ heading }}</h1>
+			{% if message %}
+				<p>{{ message }}</p>
+			{% endif %}
+			<div>
+				{{ wtf.quick_form(form, button_map={"submit": button_classes }) }}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

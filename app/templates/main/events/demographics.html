@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Event Demographics{% endblock %}
+
+{% block page_content %}
+<div class="edit-event-container">
+	{{ macros.render_sidebar("event", event.title, event) }}
+
+	<div class="edit-event-content">
+		<div class="event-form-group">
+			<form class="demographics-form" method="POST" action="{{ url_for('main.demographics', id=event.id) }}" role="form">
+				{{ form.hidden_tag() }}
+				{{ wtf.form_errors(form, hiddens="only") }}
+				<div class="demographics">
+					<div class="row">
+						<h2 class="col-md-12 form-header">Event Demographics</h2>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							{{ wtf.form_field(form.attendees) }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							{{ wtf.form_field(form.males) }}
+						</div>
+						<div class="col-md-12">
+							{{ wtf.form_field(form.females) }}
+						</div>
+					</div>
+				</div>
+				{{ wtf.form_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+<p>Dear {{ user.first_name + " " + user.last_name }},</p>
+<p>To confirm your new email address <a href="{{ url_for('settings.confirm_email_change', token=token, _external=True) }}">click here</a>.</p>
+<p>Sincerely,</p>
+<p>The SponsorMatch Team</p>
+<p><small>Note: replies to this email address are not monitored.</small></p>

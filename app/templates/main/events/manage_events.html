@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}SponsorMatch | Manage Events{% endblock %}
+
+{% block page_content %}
+<div class="manage-container">
+	<h1 class="page-header">Events Dashboard</h1>
+	
+		
+		<div class="row manage-forms">
+			<div class="col-md-6">
+				{{ wtf.quick_form(dropdown_form) }}
+			</div>
+		</div>
+		
+		<ul class="event-list">
+			<li class="event-list-headers">
+				<div class="row">
+					<div class="col-md-6">Event</div>
+					<div class="col-md-6">Sold</div>
+				</div>
+			</li>
+			
+			{% for event in events %}
+				<li class="event" id="{{ event.id }}">
+					<div class="dropdown">
+						<span class="vertical-ellipsis dropdown-toggle" data-toggle="dropdown">
+							&vellip;
+						</span>
+						<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
+							<li><a href="{{ url_for('main.event', id=event.id) }}">View</a></li>
+							<li><a href="{{ url_for('main.edit_basic_info', id=event.id) }}">Edit</a></li>
+							<li class="delete-event"><a>Delete</a></li>
+						</ul>
+					</div>
+					<a class="no-link-styling" href="{{ url_for('main.edit_basic_info', id=event.id) }}">
+						<div class="event-content">
+							<div class="row">
+								<div class="event-details col-md-6">
+									<h4 class="event-title">{{ event.title }}</h4>
+									<div class="event-date">
+										{{ event.start_date("%B %-d, %-Y") }} at {{ event.start_time("%-I:%M %p")}}
+									</div>
+									<div class="event-venue">
+										{{ event.venue.name }}
+									</div>
+									<div class="event-sales">
+										Total sales: ${{ event.total_sales() }}
+									</div>
+									<div class="event-status">
+										{% if event.is_ongoing() %}
+											<p>Live Event</p>
+										{% elif event.has_ended() %}
+											<p>Past Event</p>
+										{% elif event.is_draft() %}
+											<p>Draft</p>
+										{% endif %}
+									</div>
+								</div>
+								<div class="packages-purchased col-md-6">
+									{{ event.num_packages_sold() }} / {{ event.num_packages_available() }}
+								</div>
+							</div>
+						</div>
+					</a>
+				</li>
+			{% endfor %}
+		</ul>
+			
+		
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+	$(".delete-event").click(function() {
+		let eventId = $(this).parent().closest("li").attr("id");
+		$.ajax({
+			type: "POST",
+			url: `${window.origin}/events/${eventId}/delete`,
+			dataType: "json",
+			success: function(response) {
+				$(`#${eventId}`).remove();
+			},
+			error: function(jqXHR, exception) {
+				ajaxErrorHandler(jqXHR, exception);
+			}			
+		});
+		return false;
+	});
+
+	$("#options").change(function() {
+		let status = $("#options :selected").text().toLowerCase();
+		window.location.href = `${window.origin}/manage_events/${status}`
+	});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

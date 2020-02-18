@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Saved Events{% endblock %}
+
+{% block page_content %}
+<div class="container saved-events">
+	<h1 class="page-header">Saved Events</h1>
+	{% include "_event_panels.html" %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+	$(".remove-event").click(function() {
+		let eventId = $(this).parent().closest("li").attr("id");
+		$.ajax({
+			type: "POST",
+			url: `${window.origin}/saved_events/${eventId}/delete`,
+			success: function() {
+				$(`#${eventId}`).remove();
+			},
+			error: function(jqXHR, exception) {
+				ajaxErrorHandler(jqXHR, exception);
+			}	
+		});
+		return false;
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+Dear {{ user.first_name + " " + user.last_name }},
+
+Welcome to SponsorMatch!
+
+Your signup for SponsorMatch is now complete! Your monthly subscription payment of ${{ charge.amount / 100 }} will be automatically charged to your card. We are glad that you have chosen to use our marketplace to find sponsorships for your events.
+
+Sincerely,
+
+The SponsorMatch Team
+
+Note: replies to this email address are not monitored

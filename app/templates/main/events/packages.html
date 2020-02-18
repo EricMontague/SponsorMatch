@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Event Packages{% endblock %}
+
+{% block page_content %}
+<div id="{{ event.id }}"class="edit-event-container">
+	{{ macros.render_sidebar("event", event.title, event) }}
+	<div class="edit-event-content">
+		<div class="packages">
+			<h2 class="page-header">Packages</h2>
+			{% if packages %}
+				<div class="display-packages">
+
+					{% if not event.has_ended() %}
+						<div class="publish-event">
+							<form class="publish-event" method="POST" action="{{ url_for('main.publish', id=event.id) }}">
+								<input class="btn btn-success" type="submit" value="Publish Event"></input>
+							</form>
+						</div>
+					{% endif %}
+
+					<button id="openModalBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPackageModal">
+						Add Package
+					</button>
+					<ul class="package-list">
+						{% for package in packages %}
+							<li id="{{ package.id }}" class="package">
+								<div class="dropdown">
+									<span class="vertical-ellipsis dropdown-toggle" data-toggle="dropdown">
+										&vellip;
+									</span>
+									<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
+										<li><a class="dropdown-item no-link-styling" href="{{ url_for('main.edit_package', event_id=event.id, package_id=package.id) }}">Edit</a></li>
+										<li class="delete-package"><a class="dropdown-item">Delete</a></li>
+									</ul>
+								</div>
+								<a class="no-link-styling" href="{{ url_for('main.edit_package', event_id=event.id, package_id=package.id) }}">
+									<div class="package-content">
+										<div class="package-details row">
+											<div class="col-md-6">
+												<h4 class="package-name">{{ package.name }}</h4>
+												<div class="package-type">
+													{{ package.package_type }}
+												</div>
+											</div>
+											<div class="package-price col-md-3">
+												${{ package.price }}
+											</div>
+											<div class="packages-purchased col-md-3">
+												{{ package.num_purchased }} / {{ package.available_packages }}
+											</div>
+										</div>
+									</div>
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+				
+			
+			{% else %}	
+				<div class="add-packages">
+					<h3>Add your first package</h3>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPackageModal">Add Package</button>
+				</div>
+				
+				
+
+			{% endif %}
+
+			<!-- Modal -->
+			<div class="modal fade" id="addPackageModal" tabindex="-1" role="dialog" aria-labelledby="addPackageCenterTitle" aria-hidden="true">
+				 <div class="modal-dialog modal-dialog-centered" role="document">
+				    <div class="modal-content">
+				    	<div class="modal-header">
+				        	<h3 class="modal-title" id="addPackageTitle">Add Package</h3>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+				     	</div>
+					    <div class="modal-body">
+					    	<div>
+					    		
+					    	</div>
+				      		<form id="addPackageForm" method="POST" action="{{ url_for('main.packages', id=event.id) }}" role="form">
+				      			{{ form.hidden_tag() }}
+								{{ wtf.form_errors(form, hiddens="only") }}
+								<div class="row">
+									<div class="col-md-12">
+										{{ wtf.form_field(form.name) }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										{{ wtf.form_field(form.price) }}
+									</div>
+									<div class="col-md-6">
+										{{ wtf.form_field(form.available_packages) }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										{{ wtf.form_field(form.audience) }}
+									</div>
+									<div class="col-md-6">
+										{{ wtf.form_field(form.package_type) }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										{{ wtf.form_field(form.description) }}
+									</div>
+								</div>
+				      		</form>
+					     </div>
+					     <div class="modal-footer">
+						    {{ wtf.form_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
+			      		</div>
+				    </div>
+				 </div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+	
+
+	//Needed to prevent two POST requests from being sent
+	//when a user submits the form after submitting invalid
+	//data the first time
+	let formErrors = {{ form.errors | safe }};
+	if ($.isEmptyObject(formErrors) === false) {
+		$("#addPackageModal").modal("show");	
+	}
+
+	//determine if user is trying to edit a package. If so, show the modal
+	let fullPath = window.location;
+	let path = fullPath.pathname.split("/");
+	if (path[path.length - 1] === "edit") {
+		$("#addPackageModal").modal("show");
+	    $("#addPackageModal").on("hidden.bs.modal", function(e) {
+			window.location.href = "{{ url_for('main.packages', id=event.id) }}";
+		});
+		$(".modal-footer input").click(function() {
+			$("#addPackageForm").attr("action", fullPath.href);
+			$("#addPackageForm").submit();
+		});
+		
+	};
+
+	
+	// used for when a user is adding a package
+	$(".modal-footer input").click(function() {
+		$("#addPackageForm").submit();
+	});
+
+
+	$(".delete-package").click(function() {
+		let eventId = $(".edit-event-container").attr("id");
+		let packageId = $(this).parent().closest("li").attr("id");
+		$.ajax({
+			type: "POST",
+			url: `${window.origin}/events/${eventId}/packages/${packageId}/delete`,
+			success: function(response) {
+				window.location.href = response.url;
+			},
+			error: function(jqXHR, exception) {
+				ajaxErrorHandler(jqXHR, exception);
+			}
+		});
+		return false;
+	});	
+</script>
+{% endblock %}
+

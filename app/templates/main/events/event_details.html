@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block page_content %}
+<div class="edit-event-container">
+	{{ macros.render_sidebar("event", event.title, event) }}
+	<div class="edit-event-content">
+		<div class="event-form-group">
+			{% if main_image_path %}
+				<!-- Remove Image Form -->
+				<form method="POST" class="remove-image-form" action="{{ url_for('main.delete_image', filename=main_image_path.split('/')[-1]) }}" role="form" enctype="multipart/form-data">
+					{{ remove_image_form.hidden_tag() }}
+					{{ wtf.form_errors(remove_image_form, hiddens="only") }}
+					<div class="main-event-image">
+						<div class="row">
+							<h2 class="col-md-12 form-header">Main Event Image</h2>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<img class="media" src="{{ url_for('static', filename=main_image_path) }}" alt="Main Event Image">
+							</div>
+						</div>
+						{{ wtf.form_field(remove_image_form.submit, button_map={"submit": "btn btn-danger delete-media"}) }}
+					</div>
+				</form>
+			{% else %}
+				<!-- Upload Image Form -->
+				<form method="POST" class="upload-image-form" action="{{ url_for('main.add_event_image', id=event.id) }}" enctype="multipart/form-data">
+					{{ upload_image_form.hidden_tag() }}
+					{{ wtf.form_errors(upload_image_form, hiddens="only") }}
+					<div class="main-event-image">
+						<div class="row">
+							<h2 class="col-md-12 form-header">Main Event Image</h2>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<img src="{{ url_for('static', filename='images/default_event_image.png') }}" alt="Main Event Image Default">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 upload-image">
+								{{ wtf.form_field(upload_image_form.image) }}
+							</div>
+						</div>
+						{{ wtf.form_field(upload_image_form.upload, button_map={"upload": "btn btn-primary"}) }}
+					</div>
+				</form>
+			{% endif %}
+
+			<!-- Event Description and Pitch -->
+			<form method="POST" class="details-form" action="{{ url_for('main.event_details', id=event.id) }}" role="form">
+				{{ details_form.hidden_tag() }}
+				{{ wtf.form_errors(details_form, hiddens="only") }}
+				<div class="description-and-pitch">
+					<div class="row">
+						<h2 class="col-md-12 form-header">Description & Pitch</h2>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 description">
+							{{ wtf.form_field(details_form.description) }}
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 pitch">
+							{{ wtf.form_field(details_form.pitch) }}
+						</div>
+					</div>
+					{{ wtf.form_field(details_form.submit, button_map={"submit": "btn btn-primary"}) }}
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
