@@ -8,7 +8,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
  - Organizers have an area where they can manage their events, make changes, and see what purchases have been made.
  - Sponsors have an area where they can review past purchases
  - Sponsors can save events they're interested in to a personalized list
- - Basic search functionality for finding events, powered by Elasticsearch
+ - The app offers basic search functionality for finding events, powered by Elasticsearch
  
 <br>
 
