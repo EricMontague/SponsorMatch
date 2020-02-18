@@ -1,9 +1,17 @@
 # SponsorMatch
-
+A Flask application that connects event organizers and companies looking to sponsor events.
 
 
 ## Description
-A Flask application that connects event organizers and companies looking to sponsor events.
+SponsorMatch is an application
+
+
+## Technologies
+ - Flask
+ - Bootstrap
+ - Elasticsearch
+ - jQuery
+ - Stripe API
 
 
 ## Todo
