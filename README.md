@@ -25,8 +25,9 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 ## Todo
  - Deploy to Heroku
  - Upgrade the version of Elasticsearch to the latest version
- - Refactor the backend, specfically splitting up the main blueprint.
- - Refactor the frontend to make the application responsive for mobile and fix the issues with image resizing
+ - Refactor the backend, specifically splitting up the main blueprint.
+ - Refactor the HTML to look more structured and easy to follow
+ - Refactor the frontend(clean up the CSS) to make the application responsive for mobile and fix the issues with image resizing
  - Add a feature for discovering nearby events
  - Add tests for the Stripe API
 
