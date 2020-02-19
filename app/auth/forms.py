@@ -5,7 +5,7 @@ from wtforms import (
     PasswordField,
     BooleanField,
     ValidationError,
-    SelectField
+    SelectField,
 )
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 from ..models import User, Role
@@ -14,8 +14,14 @@ from ..models import User, Role
 class LoginForm(FlaskForm):
     """Class to represent a login form"""
 
-    email = StringField("Email", validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "Email"})
-    password = PasswordField("Password", validators=[DataRequired()], render_kw={"placeholder": "Password"})
+    email = StringField(
+        "Email",
+        validators=[DataRequired(), Length(1, 64), Email()],
+        render_kw={"placeholder": "Email"},
+    )
+    password = PasswordField(
+        "Password", validators=[DataRequired()], render_kw={"placeholder": "Password"}
+    )
     remember_me = BooleanField("Keep me logged in")
     submit = SubmitField("Sign In")
 
@@ -23,20 +29,39 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     """Class to represent a registration form"""
 
-    first_name = StringField("First Name", validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": "First Name"})
-    last_name = StringField("Last Name", validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": "Last Name"})
+    first_name = StringField(
+        "First Name",
+        validators=[DataRequired(), Length(1, 64)],
+        render_kw={"placeholder": "First Name"},
+    )
+    last_name = StringField(
+        "Last Name",
+        validators=[DataRequired(), Length(1, 64)],
+        render_kw={"placeholder": "Last Name"},
+    )
     company = StringField(
-        "Company/Organization", validators=[DataRequired(), Length(1, 64)], render_kw={"placeholder": "Company"}
+        "Company/Organization",
+        validators=[DataRequired(), Length(1, 64)],
+        render_kw={"placeholder": "Company"},
     )
-    email = StringField("Email", validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "Email"})
+    email = StringField(
+        "Email",
+        validators=[DataRequired(), Length(1, 64), Email()],
+        render_kw={"placeholder": "Email"},
+    )
     password = PasswordField(
-        "Password", 
-        validators=[DataRequired(), 
-        EqualTo("confirm_password", message="Passwords must match.")
+        "Password",
+        validators=[
+            DataRequired(),
+            EqualTo("confirm_password", message="Passwords must match."),
         ],
-        render_kw={"placeholder": "Password"}
+        render_kw={"placeholder": "Password"},
     )
-    confirm_password = PasswordField("Confirm password", validators=[DataRequired()], render_kw={"placeholder": "Confirm Password"})
+    confirm_password = PasswordField(
+        "Confirm password",
+        validators=[DataRequired()],
+        render_kw={"placeholder": "Confirm Password"},
+    )
     role = SelectField("Choose account", coerce=int)
     submit = SubmitField("Create Account")
 
@@ -68,7 +93,11 @@ class RegistrationForm(FlaskForm):
 class PasswordResetRequestForm(FlaskForm):
     """Class to represent a request to reset a user password"""
 
-    email = StringField("Email", validators=[DataRequired(), Length(1, 64), Email()], render_kw={"placeholder": "Email"})
+    email = StringField(
+        "Email",
+        validators=[DataRequired(), Length(1, 64), Email()],
+        render_kw={"placeholder": "Email"},
+    )
     submit = SubmitField("Submit")
 
 
@@ -81,9 +110,11 @@ class PasswordResetForm(FlaskForm):
             DataRequired(),
             EqualTo("confirm_password", message="Passwords must match."),
         ],
-        render_kw={"placeholder": "Password"}
+        render_kw={"placeholder": "Password"},
     )
     confirm_password = PasswordField(
-        "Confirm new password", validators=[DataRequired()], render_kw={"placeholder": "Confirm Password"}
+        "Confirm new password",
+        validators=[DataRequired()],
+        render_kw={"placeholder": "Confirm Password"},
     )
     submit = SubmitField("Reset Password")

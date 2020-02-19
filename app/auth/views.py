@@ -1,5 +1,14 @@
-from flask import render_template, url_for, flash, redirect, request, abort, \
-g, session, current_app
+from flask import (
+    render_template,
+    url_for,
+    flash,
+    redirect,
+    request,
+    abort,
+    g,
+    session,
+    current_app,
+)
 from flask_login import login_user, logout_user, login_required, current_user
 from ..email import send_email
 from . import auth
@@ -44,22 +53,25 @@ def register():
     """View function to handle user registration"""
     form = RegistrationForm()
     if form.validate_on_submit():
-        if form.email.data == current_app.config["ADMIN_EMAIL"]:
-            role = Role.query.filter_by(name = "Administrator").first()
+        email = form.email.data.lower()
+        if email == current_app.config["ADMIN_EMAIL"]:
+            role = Role.query.filter_by(name="Administrator").first()
         else:
             role = Role.query.get(form.role.data)
         user = User(
             first_name=form.first_name.data,
             last_name=form.last_name.data,
             company=form.company.data,
-            email=form.email.data.lower(),
+            email=email,
             password=form.password.data,
-            role=role
+            role=role,
         )
         db.session.add(user)
         db.session.commit()
         if user.role.name == "Event Organizer":
-            flash("Registration successful!. You will be asked for your payment information upon login.")
+            flash(
+                "Registration successful!. You will be asked for your payment information upon login."
+            )
         else:
             flash("Registration successful!. Please login.")
         return redirect(url_for("auth.login"))
@@ -72,18 +84,22 @@ def payments():
     """Return the template for the page that allows the user to enter 
     their payment information.
     """
-    if current_user.has_paid or current_user.role.name != "Event Organizer":
+    if (
+        current_user.is_anonymous
+        or current_user.has_paid
+        or current_user.role.name != "Event Organizer"
+    ):
         return redirect(url_for("main.index"))
     publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
     description = "Purchase Subscription"
     amount = 2999
     url = url_for("auth.charge", amount=amount)
     return render_template(
-        "auth/payments.html", 
-        publishable_key=publishable_key, 
+        "auth/payments.html",
+        publishable_key=publishable_key,
         description=description,
         url=url,
-        amount=amount
+        amount=amount,
     )
 
 
@@ -93,19 +109,22 @@ def charge(amount):
     """View function to handle the POST request sent when a
     user makes a payment.
     """
-    #need to add more validation to this route
-    if current_user.has_paid or current_user.role.name != "Event Organizer":
+    # need to add more validation to this route
+    if (
+        current_user.is_anonymous
+        or current_user.has_paid
+        or current_user.role.name != "Event Organizer"
+    ):
         return redirect(url_for("main.index"))
     try:
         customer = current_app.stripe.Customer.create(
-            email=request.form["stripeEmail"],
-            source=request.form["stripeToken"]
+            email=request.form["stripeEmail"], source=request.form["stripeToken"]
         )
         charge = current_app.stripe.Charge.create(
             customer=customer.id,
             amount=amount,
             currency="usd",
-            description="Purchase Subscription"
+            description="Purchase Subscription",
         )
         current_user.has_paid = True
         db.session.commit()
@@ -114,7 +133,7 @@ def charge(amount):
             "Welcome!",
             "auth/email/confirmation",
             user=current_user,
-            charge=charge
+            charge=charge,
         )
         flash("A confirmation email has been sent to your email address.")
         return redirect(url_for("main.index"))
@@ -194,5 +213,3 @@ def reset_password(token):
                 return redirect(url_for("main.index"))
         return render_template("auth/reset_password.html", form=form)
     return redirect(url_for("main.index"))
-
-

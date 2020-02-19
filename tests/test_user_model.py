@@ -58,8 +58,12 @@ class UserModelTestCase(unittest.TestCase):
         password hashes
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user_one = TestModelFactory.create_user(password="password_one", company="ABC Corp", email="greg@gmail.com")
-        user_two = TestModelFactory.create_user(password="password_two", company="DEF Corp", email="brad@gmail.com")
+        user_one = TestModelFactory.create_user(
+            password="password_one", company="ABC Corp", email="greg@gmail.com"
+        )
+        user_two = TestModelFactory.create_user(
+            password="password_two", company="DEF Corp", email="brad@gmail.com"
+        )
         user_one.role = role
         user_two.role = role
         db.session.add_all([user_one, user_two])
@@ -159,8 +163,12 @@ class UserModelTestCase(unittest.TestCase):
         of another user. Only one user can have a particular email address.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user_one = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
-        user_two = TestModelFactory.create_user(password="password_two", email="joe@gmail.com", company="DEF Corp")
+        user_one = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
+        user_two = TestModelFactory.create_user(
+            password="password_two", email="joe@gmail.com", company="DEF Corp"
+        )
         user_one.role = role
         user_two.role = role
         db.session.add_all([user_one, user_two])
@@ -173,8 +181,12 @@ class UserModelTestCase(unittest.TestCase):
     def test_is_organizer(self):
         """Test to ensure that a user is the event organizer."""
         role = TestModelFactory.create_role("Event Organizer")
-        user_one = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
-        user_two = TestModelFactory.create_user(password="password_two", email="joe@gmail.com", company="DEF Corp")
+        user_one = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
+        user_two = TestModelFactory.create_user(
+            password="password_two", email="joe@gmail.com", company="DEF Corp"
+        )
         user_one.role = role
         user_two.role = role
         venue = TestModelFactory.create_venue()
@@ -198,7 +210,7 @@ class UserModelTestCase(unittest.TestCase):
         self.assertFalse(user.can(Permission.SPONSOR_EVENT))
         self.assertFalse(user.can(Permission.ADMIN))
         self.assertTrue(user.can(Permission.CREATE_EVENT))
-        
+
     def test_sponsor_permissions(self):
         """Test the permissions of a user with the 
         permissions to sponsor an event.
@@ -212,7 +224,7 @@ class UserModelTestCase(unittest.TestCase):
         self.assertFalse(user.can(Permission.ADMIN))
         self.assertTrue(user.can(Permission.SPONSOR_EVENT))
         self.assertFalse(user.can(Permission.CREATE_EVENT))
-        
+
     def test_admin_permissions(self):
         """Test the permissions of a user with administrator permissions."""
         role = TestModelFactory.create_role("Administrator")
@@ -243,8 +255,7 @@ class UserModelTestCase(unittest.TestCase):
         db.session.add(user)
         db.session.commit()
 
-        self.assertTrue(
-            (datetime.utcnow() - user.member_since).total_seconds() < 3)
+        self.assertTrue((datetime.utcnow() - user.member_since).total_seconds() < 3)
 
     def test_save_event(self):
         """Test that a user can save an event."""
@@ -398,7 +409,6 @@ class UserModelTestCase(unittest.TestCase):
         self.assertEqual(past_events, 1)
         self.assertEqual(all_events, 1)
 
-
     def test_num_events_sponsored_excluding_pending_sponsorships(self):
         """Test the number of events sponsored by a user.
         If a sponsorship doesn't have a timestamp or confirmation code,
@@ -486,6 +496,5 @@ class UserModelTestCase(unittest.TestCase):
         self.assertEqual(profile_photo_path, "images/test_image.jpg")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-    

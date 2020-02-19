@@ -9,7 +9,6 @@ from app.models import Sponsorship
 class SponsorshipModelTestCase(unittest.TestCase):
     """Class to test the Sponsorship Model."""
 
-
     def setUp(self):
         """Create application instance and insert necessary
         information into the database before each test.
@@ -123,7 +122,7 @@ class SponsorshipModelTestCase(unittest.TestCase):
         self.assertIsNotNone(query_obj)
         self.assertEqual(sponsorship, query_obj)
 
-        #update the sponsorship obejct so it is not pending and check that the query returns null
+        # update the sponsorship obejct so it is not pending and check that the query returns null
         sponsorship.timestamp = datetime.now()
         sponsorship.confirmation_code = str(uuid.uuid4())
         db.session.commit()
@@ -132,8 +131,5 @@ class SponsorshipModelTestCase(unittest.TestCase):
         self.assertIsNone(query_obj)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-
-
-

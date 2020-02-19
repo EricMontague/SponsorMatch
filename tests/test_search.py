@@ -4,8 +4,7 @@ from app import create_app
 from .testing_data import TestModelFactory
 from app.search import add_to_index, remove_from_index, query_index, delete_index
 from app.models import Event
-from elasticsearch2.exceptions import NotFoundError, RequestError, \
-    SerializationError
+from elasticsearch2.exceptions import NotFoundError, RequestError, SerializationError
 
 
 class SearchTestCase(unittest.TestCase):
@@ -34,7 +33,9 @@ class SearchTestCase(unittest.TestCase):
         """Test to confirm that indices are created automatically
         if they don't already exist.
         """
-        event = TestModelFactory.create_event(title="Eric's Foobar", status="live", id=1)
+        event = TestModelFactory.create_event(
+            title="Eric's Foobar", status="live", id=1
+        )
         add_to_index("testing_index", "testing", event)
         self.assertTrue(self.app.elasticsearch.indices.exists("testing_index"))
 
@@ -51,11 +52,11 @@ class SearchTestCase(unittest.TestCase):
         to an index in Elasticsearch.
         """
         event = TestModelFactory.create_event(title="Foobar", status="live", id=1)
-     
+
         add_to_index("testing_index", "testing", event)
 
-        #delay needed otherwise the GET request to Elasticsearch API
-        #will get there before the resource is ready to be retrieved
+        # delay needed otherwise the GET request to Elasticsearch API
+        # will get there before the resource is ready to be retrieved
         time.sleep(2)
         ids, num_results = query_index("testing_index", "Foobar", 1, 1)
         self.assertEqual(ids[0], event.id)
@@ -66,7 +67,7 @@ class SearchTestCase(unittest.TestCase):
         from Elasticsearch.
         """
         event = TestModelFactory.create_event(title="Foobar", status="live", id=1)
-        
+
         add_to_index("testing_index", "testing", event)
         time.sleep(2)
         ids, num_results = query_index("testing_index", "Foobar", 1, 1)
@@ -78,22 +79,24 @@ class SearchTestCase(unittest.TestCase):
         ids, num_results = query_index("testing_index", "Foobar", 1, 1)
         self.assertEqual(ids, [])
         self.assertEqual(num_results, 0)
-        
+
     def test_query_index_exact_matches(self):
         """Test that ensures that Elasticsearch
         returns accurate query results when the exact phrase
         is searched for.
         """
-        #instantiate objects
+        # instantiate objects
         event_one = TestModelFactory.create_event(title="Foobar", status="live", id=1)
-        event_two = TestModelFactory.create_event(title="Eric's Party", status="live", id=2)
-       
-        #add both to the index
+        event_two = TestModelFactory.create_event(
+            title="Eric's Party", status="live", id=2
+        )
+
+        # add both to the index
         add_to_index("testing_index", "testing", event_one)
         add_to_index("testing_index", "testing", event_two)
 
         time.sleep(2)
-        #run queries and check for expected and unexpected results
+        # run queries and check for expected and unexpected results
         ids, num_results = query_index("testing_index", "Foobar", 1, 2)
         self.assertEqual(ids[0], event_one.id)
         self.assertNotEqual(ids[0], event_two.id)
@@ -104,7 +107,7 @@ class SearchTestCase(unittest.TestCase):
         self.assertNotEqual(ids[0], event_one.id)
         self.assertEqual(num_results, 1)
 
-        #search should be case insensitive
+        # search should be case insensitive
         ids, num_results = query_index("testing_index", "eric's party", 1, 2)
         self.assertEqual(ids[0], event_two.id)
         self.assertNotEqual(ids[0], event_one.id)
@@ -114,21 +117,23 @@ class SearchTestCase(unittest.TestCase):
         """Test that elasticsearch provides no search results
         when an incorrect query is sent.
         """
-        #instantiate objects
+        # instantiate objects
         event_one = TestModelFactory.create_event(title="Foobar", status="live", id=1)
-        event_two = TestModelFactory.create_event(title="Eric's Party", status="live", id=2)
+        event_two = TestModelFactory.create_event(
+            title="Eric's Party", status="live", id=2
+        )
 
-        #add both to the index
+        # add both to the index
         add_to_index("testing_index", "testing", event_one)
         add_to_index("testing_index", "testing", event_two)
 
         time.sleep(2)
-        #search should return nothing
+        # search should return nothing
         ids, num_results = query_index("testing_index", "Philly", 1, 2)
         self.assertEqual(ids, [])
         self.assertEqual(num_results, 0)
 
-        #description is not a searchable attribute
+        # description is not a searchable attribute
         ids, num_results = query_index("testing_index", "This is the best event", 1, 2)
         self.assertEqual(ids, [])
         self.assertEqual(num_results, 0)
@@ -137,13 +142,17 @@ class SearchTestCase(unittest.TestCase):
         """Test that Elasticsearch still provides search results
         on partial matches of queries.
         """
-        #instantiate objects
-        event_one = TestModelFactory.create_event(title="Eric's Foobar", status="live", id=1)
-        event_two = TestModelFactory.create_event(title="Eric's Party", status="live", id=2)
-        #add both to the index
+        # instantiate objects
+        event_one = TestModelFactory.create_event(
+            title="Eric's Foobar", status="live", id=1
+        )
+        event_two = TestModelFactory.create_event(
+            title="Eric's Party", status="live", id=2
+        )
+        # add both to the index
         add_to_index("testing_index", "testing", event_one)
         add_to_index("testing_index", "testing", event_two)
-        
+
         time.sleep(2)
 
         ids, num_results = query_index("testing_index", "Foo", 1, 2)
@@ -181,41 +190,40 @@ class SearchTestCase(unittest.TestCase):
         """Test that invalid parameters to the function
         throw the approriate exceptions.
         """
-        #instantiate objects
+        # instantiate objects
         event = TestModelFactory.create_event(title="Foobar", status="live", id=1)
         add_to_index("testing_index", "testing", event)
 
         time.sleep(2)
 
-        #searching sugin a list
+        # searching sugin a list
         with self.assertRaises(RequestError):
             ids, num_results = query_index("testing_index", ["Eric's", "Foobar"], 1, 1)
 
-        #searching using a model
+        # searching using a model
         with self.assertRaises(SerializationError):
             ids, num_results = query_index("testing_index", event, 1, 1)
 
-        #zero as a starting page number
+        # zero as a starting page number
         with self.assertRaises(RequestError):
             ids, num_results = query_index("testing_index", "Eric's Foobar", 0, 1)
 
-        #negative results per page
+        # negative results per page
         with self.assertRaises(RequestError):
             ids, num_results = query_index("testing_index", "Eric's Foobar", 1, -1)
 
-        #string page number
+        # string page number
         with self.assertRaises(TypeError):
             ids, num_results = query_index("testing_index", "Eric's Foobar", "1", 1)
 
-        #string results per page
+        # string results per page
         with self.assertRaises(RequestError):
             ids, num_results = query_index("testing_index", "Eric's Foobar", 1, "1")
 
-
-        #searching with an index that doesn't exist
+        # searching with an index that doesn't exist
         with self.assertRaises(NotFoundError):
             ids, num_results = query_index("Sponsorship", "Eric's Foobar", 1, 1)
-        
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

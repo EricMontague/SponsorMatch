@@ -2,7 +2,7 @@ import unittest
 import uuid
 from datetime import datetime, timedelta, date, time
 from app import create_app, db
-from . testing_data import TestModelFactory
+from .testing_data import TestModelFactory
 from app.models import ImageType, Event
 
 
@@ -132,7 +132,7 @@ class EventModelTestCase(unittest.TestCase):
         db.session.add_all([user, event])
         db.session.commit()
 
-        #return datetime object with no arguments passed in
+        # return datetime object with no arguments passed in
         date_obj = event.start_date()
         self.assertIsInstance(date_obj, date)
         self.assertEqual(date_obj, date(2020, 2, 9))
@@ -142,19 +142,19 @@ class EventModelTestCase(unittest.TestCase):
         self.assertEqual(date_string, "Sun, Feb 9")
         self.assertNotEqual(date_string, "Sunday, Feb 9")
 
-        #should have no leading zero
+        # should have no leading zero
         self.assertNotEqual(date_string, "Sun, Feb 09")
-        
-         #should have the comma in the output
+
+        # should have the comma in the output
         self.assertNotEqual(date_string, "Sun Feb 9")
 
-        #should have spaces in the output
+        # should have spaces in the output
         self.assertNotEqual(date_string, "SunFeb 9")
 
-        #should be capitalized
+        # should be capitalized
         self.assertNotEqual(date_string, "sun feb 9")
 
-        #other invalid input
+        # other invalid input
         date_string = event.start_date("foobar")
         self.assertIsInstance(date_string, str)
         self.assertEqual(date_string, "foobar")
@@ -166,7 +166,7 @@ class EventModelTestCase(unittest.TestCase):
             event.start_date(12.456)
 
         with self.assertRaises(TypeError):
-            event.start_date([1,2,3])
+            event.start_date([1, 2, 3])
 
         with self.assertRaises(TypeError):
             event.start_date({"a": 1})
@@ -196,7 +196,7 @@ class EventModelTestCase(unittest.TestCase):
         db.session.add_all([user, event])
         db.session.commit()
 
-        #return datetime object with no arguments passed in
+        # return datetime object with no arguments passed in
         date_obj = event.end_date()
         self.assertIsInstance(date_obj, date)
         self.assertEqual(date_obj, date(2020, 2, 9))
@@ -206,19 +206,19 @@ class EventModelTestCase(unittest.TestCase):
         self.assertEqual(date_string, "Sun, Feb 9")
         self.assertNotEqual(date_string, "Sunday, Feb 9")
 
-        #should have no leading zero
+        # should have no leading zero
         self.assertNotEqual(date_string, "Sun, Feb 09")
-        
-         #should have the comma in the output
+
+        # should have the comma in the output
         self.assertNotEqual(date_string, "Sun Feb 9")
 
-        #should have spaces in the output
+        # should have spaces in the output
         self.assertNotEqual(date_string, "SunFeb 9")
 
-        #should be capitalized
+        # should be capitalized
         self.assertNotEqual(date_string, "sun feb 9")
 
-        #other invalid input
+        # other invalid input
         date_string = event.end_date("foobar")
         self.assertIsInstance(date_string, str)
         self.assertEqual(date_string, "foobar")
@@ -230,7 +230,7 @@ class EventModelTestCase(unittest.TestCase):
             event.start_date(12.456)
 
         with self.assertRaises(TypeError):
-            event.start_date([1,2,3])
+            event.start_date([1, 2, 3])
 
         with self.assertRaises(TypeError):
             event.start_date({"a": 1})
@@ -268,21 +268,19 @@ class EventModelTestCase(unittest.TestCase):
         self.assertIsInstance(time_string, str)
         self.assertEqual(time_string, "9:12 AM")
 
-        #check for different spacing
+        # check for different spacing
         self.assertNotEqual(time_string, "9: 12 AM")
 
-        #check that colon is there
+        # check that colon is there
         self.assertNotEqual(time_string, "912 AM")
 
-        #no leading zero should be there
+        # no leading zero should be there
         self.assertNotEqual(time_string, "09:12 AM")
 
-        
-
-        #other invalid input
+        # other invalid input
         time_string = event.start_time("foobar")
         self.assertIsInstance(time_string, str)
-        self.assertEqual(time_string, "foobar") 
+        self.assertEqual(time_string, "foobar")
 
         with self.assertRaises(TypeError):
             event.start_time(2200)
@@ -291,7 +289,7 @@ class EventModelTestCase(unittest.TestCase):
             event.start_time(12.456)
 
         with self.assertRaises(TypeError):
-            event.start_time([1,2,3])
+            event.start_time([1, 2, 3])
 
         with self.assertRaises(TypeError):
             event.start_time({"a": 1})
@@ -316,12 +314,10 @@ class EventModelTestCase(unittest.TestCase):
         event = TestModelFactory.create_event("Test Event", "draft")
         event.user = user
         event.venue = venue
-        event.start_datetime=datetime(2020, 2, 8, 7, 12, 12)
-        event.end_datetime=datetime(2020, 2, 9, 9, 12, 12)
+        event.start_datetime = datetime(2020, 2, 8, 7, 12, 12)
+        event.end_datetime = datetime(2020, 2, 9, 9, 12, 12)
         db.session.add_all([user, event])
         db.session.commit()
-
-
 
         time_obj = event.end_time()
         self.assertIsInstance(time_obj, time)
@@ -331,21 +327,19 @@ class EventModelTestCase(unittest.TestCase):
         self.assertIsInstance(time_string, str)
         self.assertEqual(time_string, "9:12 AM")
 
-        #check for different spacing
+        # check for different spacing
         self.assertNotEqual(time_string, "9: 12 AM")
 
-        #check that colon is there
+        # check that colon is there
         self.assertNotEqual(time_string, "912 AM")
 
-        #no leading zero should be there
+        # no leading zero should be there
         self.assertNotEqual(time_string, "09:12 AM")
 
-        
-
-        #other invalid input
+        # other invalid input
         time_string = event.end_time("foobar")
         self.assertIsInstance(time_string, str)
-        self.assertEqual(time_string, "foobar") 
+        self.assertEqual(time_string, "foobar")
 
         with self.assertRaises(TypeError):
             event.end_time(2200)
@@ -354,7 +348,7 @@ class EventModelTestCase(unittest.TestCase):
             event.end_time(12.456)
 
         with self.assertRaises(TypeError):
-            event.end_time([1,2,3])
+            event.end_time([1, 2, 3])
 
         with self.assertRaises(TypeError):
             event.end_time({"a": 1})
@@ -479,13 +473,17 @@ class EventModelTestCase(unittest.TestCase):
         """Test to ensure that the misc_images property
         returns images in the correct format.
         """
-        path_one = "/Users/ericmontague/sponsormatch/app/static/images/test_image_one.jpg"
-        path_two = "/Users/ericmontague/sponsormatch/app/static/images/test_image_two.jpg"
+        path_one = (
+            "/Users/ericmontague/sponsormatch/app/static/images/test_image_one.jpg"
+        )
+        path_two = (
+            "/Users/ericmontague/sponsormatch/app/static/images/test_image_two.jpg"
+        )
         role = TestModelFactory.create_role("Event Organizer")
         user = TestModelFactory.create_user()
         user.role = role
         venue = TestModelFactory.create_venue()
-        
+
         event = TestModelFactory.create_event("Test Event", "live")
         event.user = user
         event.venue = venue
@@ -503,8 +501,8 @@ class EventModelTestCase(unittest.TestCase):
         db.session.commit()
 
         paths = event.misc_images
-        self.assertEqual(paths[0],"images/test_image_one.jpg")
-        self.assertEqual(paths[1],"images/test_image_two.jpg")
+        self.assertEqual(paths[0], "images/test_image_one.jpg")
+        self.assertEqual(paths[1], "images/test_image_two.jpg")
 
     def test_num_sponsors(self):
         """Test that an event is reporting the correct
@@ -529,6 +527,5 @@ class EventModelTestCase(unittest.TestCase):
         self.assertEqual(event.num_sponsors(), 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-

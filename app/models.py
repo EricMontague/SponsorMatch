@@ -10,11 +10,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
-#association table between users and events tables
-saved_events = db.Table("saved_events",
+# association table between users and events tables
+saved_events = db.Table(
+    "saved_events",
     db.Column("user_id", db.Integer, db.ForeignKey("users.id"), nullable=False),
     db.Column("event_id", db.Integer, db.ForeignKey("events.id"), nullable=False),
-    db.PrimaryKeyConstraint("user_id", "event_id")
+    db.PrimaryKeyConstraint("user_id", "event_id"),
 )
 
 
@@ -34,7 +35,7 @@ class SponsorshipStatus:
     PENDING = "pending"
 
 
-class Permission():
+class Permission:
     """Class to represent user permissions."""
 
     CREATE_EVENT = 1
@@ -42,10 +43,11 @@ class Permission():
     ADMIN = 4
 
 
-class SearchableMixin():
+class SearchableMixin:
     """Mixin class that extends the functionality of a model to be able
     to perform searches and updates on Elasticsearch.
     """
+
     @classmethod
     def search(cls, query, page, results_per_page):
         """Perform a search on Elasticsearch and return the corresponding objects
@@ -57,10 +59,12 @@ class SearchableMixin():
         whens = []
         for index, id_ in enumerate(ids):
             whens.append((id_, index))
-        #order by + case statement used to preserve the order of the results
-        #essentially sorts the output using the index as the key
-        return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(whens, value=cls.id)), total
+        # order by + case statement used to preserve the order of the results
+        # essentially sorts the output using the index as the key
+        return (
+            cls.query.filter(cls.id.in_(ids)).order_by(db.case(whens, value=cls.id)),
+            total,
+        )
 
     @classmethod
     def before_commit(cls, session):
@@ -71,7 +75,7 @@ class SearchableMixin():
         session._changes = {
             "add": list(session.new),
             "update": list(session.dirty),
-            "delete": list(session.deleted)
+            "delete": list(session.deleted),
         }
 
     @classmethod
@@ -103,7 +107,7 @@ class SearchableMixin():
         if index is None:
             index = cls.__tablename__
         delete_index(index)
-        
+
 
 db.event.listen(db.session, "before_commit", SearchableMixin.before_commit)
 db.event.listen(db.session, "after_commit", SearchableMixin.after_commit)
@@ -126,24 +130,19 @@ class User(UserMixin, db.Model):
     about = db.Column(db.Text(), nullable=True)
     profile_photo_path = db.Column(db.Text(), unique=True, nullable=True)
     events = db.relationship(
-        "Event", 
-        backref="user", 
-        lazy="dynamic",
-        cascade="all, delete-orphan"
+        "Event", backref="user", lazy="dynamic", cascade="all, delete-orphan"
     )
     saved_events = db.relationship(
         "Event",
         secondary=saved_events,
         backref=db.backref("users", lazy="dynamic"),
-        lazy="dynamic"
+        lazy="dynamic",
     )
     sponsorships = db.relationship(
-        "Sponsorship",
-        back_populates="sponsor",
-        cascade="all, delete-orphan"
+        "Sponsorship", back_populates="sponsor", cascade="all, delete-orphan"
     )
-    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False) 
-    
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
+
     @property
     def password(self):
         raise AttributeError("password is not a readable attribute")
@@ -276,7 +275,13 @@ class User(UserMixin, db.Model):
 
     def has_purchased(self, package):
         """Return True if the user has already purchased the given package."""
-        return any([sponsorship.package == package for sponsorship in self.sponsorships if not sponsorship.is_pending()])
+        return any(
+            [
+                sponsorship.package == package
+                for sponsorship in self.sponsorships
+                if not sponsorship.is_pending()
+            ]
+        )
 
     def profile_photo(self):
         """Return the directory that the user's profile photo is in along with the image name.
@@ -299,7 +304,7 @@ class User(UserMixin, db.Model):
 class AnonymousUser(AnonymousUserMixin):
     """Class that extends Flask Login's AnonymousUserMixin functionality."""
 
-    #Anonymous users always have no permissions
+    # Anonymous users always have no permissions
     def can(self, permissions):
         return False
 
@@ -308,8 +313,6 @@ class AnonymousUser(AnonymousUserMixin):
 
 
 login_manager.anonymous_user = AnonymousUser
-
-
 
 
 class Role(db.Model):
@@ -321,7 +324,6 @@ class Role(db.Model):
     permissions = db.Column(db.Integer, default=0, nullable=False)
     users = db.relationship("User", backref="role", lazy="dynamic")
 
-
     @staticmethod
     def insert_roles():
         """Insert role names into the roles table"""
@@ -329,10 +331,10 @@ class Role(db.Model):
             "Event Organizer": [Permission.CREATE_EVENT],
             "Sponsor": [Permission.SPONSOR_EVENT],
             "Administrator": [
-                Permission.CREATE_EVENT, 
-                Permission.SPONSOR_EVENT, 
-                Permission.ADMIN
-            ]
+                Permission.CREATE_EVENT,
+                Permission.SPONSOR_EVENT,
+                Permission.ADMIN,
+            ],
         }
         for role_name in role_names:
             role = Role.query.filter_by(name=role_name).first()
@@ -358,17 +360,17 @@ class Role(db.Model):
         """Reset all user permissions"""
         self.permissions = 0
 
-    #need to review this
+    # need to review this
     def has_permissions(self, perm):
         """Return True if the user has the given permissions."""
         return self.permissions & perm == perm
-   
+
     def __repr__(self):
         """Return a string representation of the role class. Used
         for debugging purposes
         """
         return "<Role: %r>" % self.name
-    
+
 
 class Image(db.Model):
     """Class to represent an image"""
@@ -376,13 +378,11 @@ class Image(db.Model):
     __tablename__ = "images"
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.Text(), unique=True, index=True, nullable=False)
-    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False) 
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     image_type_id = db.Column(
         db.Integer, db.ForeignKey("image_types.id"), nullable=False
     )
-    event_id = db.Column(
-        db.Integer, db.ForeignKey("events.id"), nullable=False
-    )
+    event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
 
     def __repr__(self):
         """Return a string representation of the Image class.
@@ -418,8 +418,7 @@ class ImageType(db.Model):
         """Retur na string representation of an ImageType object.
         Used for debugging purposes.
         """
-        return "<Type: %r>" %self.name
-
+        return "<Type: %r>" % self.name
 
 
 class Video(db.Model):
@@ -429,15 +428,13 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.Text, index=True, nullable=False)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    event_id = db.Column(
-        db.Integer, db.ForeignKey("events.id"), nullable=False
-    )
+    event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
 
     def __repr__(self):
         """Return a string representation of a Video object.
         Used for debugging purposes.
         """
-        return "<Video at: %r>" %self.url
+        return "<Video at: %r>" % self.url
 
 
 class Event(SearchableMixin, db.Model):
@@ -457,7 +454,7 @@ class Event(SearchableMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     published = db.Column(db.Boolean, default=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    venue_id = db.Column(db.Integer, db.ForeignKey("venues.id"), nullable=False)  
+    venue_id = db.Column(db.Integer, db.ForeignKey("venues.id"), nullable=False)
     event_type_id = db.Column(
         db.Integer, db.ForeignKey("event_types.id"), nullable=False
     )
@@ -465,29 +462,18 @@ class Event(SearchableMixin, db.Model):
         db.Integer, db.ForeignKey("event_categories.id"), nullable=False
     )
     images = db.relationship(
-        "Image", 
-        backref="event", 
-        lazy="dynamic",
-        cascade="all, delete-orphan"
+        "Image", backref="event", lazy="dynamic", cascade="all, delete-orphan"
     )
     packages = db.relationship(
-        "Package",
-        backref="event",
-        lazy="dynamic",
-        cascade="all, delete-orphan"
+        "Package", backref="event", lazy="dynamic", cascade="all, delete-orphan"
     )
     video = db.relationship(
-        "Video",
-        backref="event",
-        lazy=True,
-        uselist=False,
-        cascade="all, delete-orphan"
+        "Video", backref="event", lazy=True, uselist=False, cascade="all, delete-orphan"
     )
     sponsorships = db.relationship(
-        "Sponsorship",
-        back_populates="event"
+        "Sponsorship", back_populates="event", cascade="all, delete-orphan"
     )
-  
+
     @hybrid_method
     def is_ongoing(self):
         """Return True if the event is ongoing."""
@@ -506,7 +492,10 @@ class Event(SearchableMixin, db.Model):
     @has_ended.expression
     def has_ended(cls):
         """Return True if the event has ended."""
-        return db.and_(db.or_(cls.published, cls.published == False), cls.end_datetime <= datetime.now())
+        return db.and_(
+            db.or_(cls.published, cls.published == False),
+            cls.end_datetime <= datetime.now(),
+        )
 
     def is_draft(self):
         """Return True if the event is in draft status."""
@@ -549,22 +538,22 @@ class Event(SearchableMixin, db.Model):
     def total_sales(self):
         """Return the total package sales for the event."""
         return sum([package.num_purchased * package.price for package in self.packages])
-    
+
     def num_packages_sold(self):
         """Return the number of packages sold for this event."""
         return sum([package.num_purchased for package in self.packages])
-      
+
     def num_packages_available(self):
         """Return the number of packages available for this event."""
         return sum([package.available_packages for package in self.packages])
 
     def price_range(self):
         """Return the price range for the event's packages."""
-        #initialize low and high variables
-        #iterate through event's packages
-            #check if the price of a package is greater than high,
-            #if not, check if it is greater than low
-        #return price range
+        # initialize low and high variables
+        # iterate through event's packages
+        # check if the price of a package is greater than high,
+        # if not, check if it is greater than low
+        # return price range
 
         low = self.packages[0].price
         high = self.packages[0].price
@@ -725,11 +714,7 @@ class Venue(db.Model):
     city = db.Column(db.String(64), nullable=False)
     state = db.Column(db.String(64), nullable=False)
     zip_code = db.Column(db.String(10), nullable=False)
-    events = db.relationship(
-        "Event", 
-        backref="venue", 
-        lazy="dynamic"
-    )
+    events = db.relationship("Event", backref="venue", lazy="dynamic")
 
     def __repr__(self):
         """Return a string representation of an Address object.
@@ -761,42 +746,7 @@ class Package(db.Model):
     available_packages = db.Column(db.Integer, nullable=False)
     package_type = db.Column(db.String(64), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
-    sponsorships = db.relationship(
-        "Sponsorship",
-        back_populates="package"
-    )
-   
-    @staticmethod
-    def insert_packages():
-        """Method to insert default packages into the database."""
-        deadline = datetime.now() + timedelta(days=30)
-        packages = [
-            ("Gold", 4000, "1-50", deadline, 10, "Cash"),
-            ("Silver", 2000, "1-50", deadline, 10, "Cash"),
-            ("Bronze", 1000, "1-50", deadline, 10, "Cash"),
-            ("Social Media Shoutout", 500, "1-50", deadline, 10, "Cash"),
-            ("Logo On Flyer", 500, "1-50", deadline, 10, "Cash")
-        ]
-        for name, price, attendees, time, available, type_ in packages:
-            package = Package.query.filter_by(
-                name=name,
-                price=price,
-                attendees=attendees,
-                deadline=time,
-                avaiable_packages=available,
-                package_type=type_
-            ).first()
-            if package is None:
-                package = Package(
-                    name=name,
-                    price=price,
-                    attendees=attendees,
-                    deadline=time,
-                    avaiable_packages=available,
-                    package_type=type_
-                )
-                db.session.add(package)
-        db.session.commit()
+    sponsorships = db.relationship("Sponsorship", back_populates="package")
 
     def is_sold_out(self):
         """Return True if the package is sold out."""
@@ -805,13 +755,12 @@ class Package(db.Model):
     def num_for_sale(self):
         """Return the number of available packages."""
         return self.available_packages - self.num_purchased
-    
 
     def __repr__(self):
         """Return the string representation of a Package.
         Used for debugging purposes.
         """
-        return "<Package Name: %r>" %self.name
+        return "<Package Name: %r>" % self.name
 
 
 class Sponsorship(db.Model):
@@ -821,7 +770,7 @@ class Sponsorship(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey("events.id"), primary_key=True)
     sponsor_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     package_id = db.Column(db.Integer, db.ForeignKey("packages.id"), primary_key=True)
-    timestamp = db.Column(db.DateTime, nullable=True) 
+    timestamp = db.Column(db.DateTime, nullable=True)
     confirmation_code = db.Column(db.String(64), nullable=True)
     event = db.relationship("Event", back_populates="sponsorships")
     sponsor = db.relationship("User", back_populates="sponsorships")
@@ -857,7 +806,8 @@ class Sponsorship(db.Model):
         """Returns a string representation of a sponsorship deal. Used for debugging
         purposes.
         """
-        return "<[Event: %r, Sponsor: %r, Package: %r]>" %(self.event_id, self.sponsor_id, self.package_id)
-
-
-
+        return "<[Event: %r, Sponsor: %r, Package: %r]>" % (
+            self.event_id,
+            self.sponsor_id,
+            self.package_id,
+        )

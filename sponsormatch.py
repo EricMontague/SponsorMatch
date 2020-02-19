@@ -1,10 +1,22 @@
 import os
 import click
 import sys
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from app import create_app, db
-from app.models import User, Role, Image, Event, EventType, \
-    Venue, EventCategory, ImageType, Package, Video, Permission, Sponsorship
+from app.models import (
+    User,
+    Role,
+    Image,
+    Event,
+    EventType,
+    Venue,
+    EventCategory,
+    ImageType,
+    Package,
+    Video,
+    Permission,
+    Sponsorship,
+)
 
 
 app = create_app(os.environ.get("FLASK_CONFIG") or "default")
@@ -24,10 +36,20 @@ def make_shell_context():
     """Allow the models to be automatically imported
     when a flask shell session is started
     """
-    return dict(db=db, User=User, Role=Role, Image=Image,
-        Event=Event, EventType=EventType, Venue=Venue, EventCategory=EventCategory,
-        ImageType=ImageType, Package=Package, Video=Video, Permission=Permission,
-        Sponsorship=Sponsorship
+    return dict(
+        db=db,
+        User=User,
+        Role=Role,
+        Image=Image,
+        Event=Event,
+        EventType=EventType,
+        Venue=Venue,
+        EventCategory=EventCategory,
+        ImageType=ImageType,
+        Package=Package,
+        Video=Video,
+        Permission=Permission,
+        Sponsorship=Sponsorship,
     )
 
 
@@ -67,6 +89,18 @@ def test(coverage, test_names):
         COV.erase()
 
 
+@app.cli.command()
+def deploy():
+    """Run deployment tasks."""
+    # migrate database to latest revision
+    upgrade()
+
+    # create or update roles, event types, categories, and image types
+    Role.insert_roles()
+    EventType.insert_event_types()
+    EventCategory.insert_event_categories()
+    ImageType.insert_image_types()
+
+
 if __name__ == "__main__":
     app.run(debug=False)
-    

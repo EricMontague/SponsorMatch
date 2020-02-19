@@ -3,10 +3,8 @@ from .testing_data import TestModelFactory
 from app import create_app, db
 
 
-
 class PackageModelTestCase(unittest.TestCase):
     """Class to test the Package Model."""
-
 
     def setUp(self):
         """Create application instance and insert necessary
@@ -40,7 +38,7 @@ class PackageModelTestCase(unittest.TestCase):
         package.event = event
         db.session.add_all([user, event, package])
         db.session.commit()
-        
+
         package.num_purchased = package.available_packages
         self.assertTrue(package.is_sold_out())
 
@@ -65,6 +63,5 @@ class PackageModelTestCase(unittest.TestCase):
         self.assertEqual(package.num_for_sale(), 9)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-    

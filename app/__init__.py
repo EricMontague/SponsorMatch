@@ -33,19 +33,28 @@ def create_app(config_name):
     patch_request_class(app)
     stripe.api_key = app.config["STRIPE_SECRET_KEY"]
     app.stripe = stripe
-     
-    #if statement is so that I have the option pf
-    #not having Elasticsearch run during testing
-    if app.config["ELASTICSEARCH_URL"]: 
+
+    # if statement is so that I have the option pf
+    # not having Elasticsearch run during testing
+    if app.config["ELASTICSEARCH_URL"]:
         app.elasticsearch = Elasticsearch([app.config["ELASTICSEARCH_URL"]])
 
+    # redirect requests sent to http to secure https when deployed on Heroku
+    if app.config["SSL_REDIRECT"]:
+        from flask_sslify import SSLify
+
+        sslify = SSLify(app)
+
     from .main import main as main_blueprint
+
     app.register_blueprint(main_blueprint)
 
     from .auth import auth as auth_blueprint
+
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
     from .settings import settings as settings_blueprint
+
     app.register_blueprint(settings_blueprint, url_prefix="/settings")
 
     return app

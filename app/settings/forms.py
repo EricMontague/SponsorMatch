@@ -9,8 +9,15 @@ from wtforms import (
     TextAreaField,
 )
 from wtforms.fields.html5 import URLField
-from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo, \
-    URL, Optional
+from wtforms.validators import (
+    DataRequired,
+    Length,
+    Email,
+    Regexp,
+    EqualTo,
+    URL,
+    Optional,
+)
 from ..models import User
 
 
@@ -46,14 +53,11 @@ class ChangeEmailForm(FlaskForm):
 
 class CloseAccountForm(FlaskForm):
     """Class to represent a form to let a user close their account"""
+
     confirm = StringField('Type "CLOSE"', validators=[DataRequired()])
     submit = SubmitField("Close your account")
 
     def validate_confirm(self, field):
         """Custom validator for the confirm field"""
         if not field.data == "CLOSE":
-            raise ValidationError(
-                'Please enter "CLOSE".'
-                )
-
-
+            raise ValidationError('Please enter "CLOSE".')

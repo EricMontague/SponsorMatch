@@ -8,19 +8,22 @@ from .models import Permission
 
 
 def permission_required(permission):
-	"""Function to be used as a decorator to check
+    """Function to be used as a decorator to check
 	user permissions.
 	"""
-	def decorator(func):
-		@functools.wraps(func)
-		def decorated_function(*args, **kwargs):
-			if not current_user.can(permission):
-				abort(403)
-			return func(*args, **kwargs)
-		return decorated_function
-	return decorator
+
+    def decorator(func):
+        @functools.wraps(func)
+        def decorated_function(*args, **kwargs):
+            if not current_user.can(permission):
+                abort(403)
+            return func(*args, **kwargs)
+
+        return decorated_function
+
+    return decorator
 
 
 def admin_required(func):
-	"""Check if the user has admim permissions."""
-	return permission_required(Permission.ADMIN)(func)
+    """Check if the user has admim permissions."""
+    return permission_required(Permission.ADMIN)(func)

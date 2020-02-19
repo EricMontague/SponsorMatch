@@ -34,11 +34,11 @@ def account_information():
     form.job_title.data = current_user.job_title
     form.website.data = current_user.website
     return render_template(
-        "settings/settings.html", 
+        "settings/settings.html",
         form=form,
         title=title,
         heading=heading,
-        button_classes=button_classes
+        button_classes=button_classes,
     )
 
 
@@ -62,11 +62,11 @@ def change_password():
         else:
             flash("You entered an invalid password.")
     return render_template(
-        "settings/settings.html", 
+        "settings/settings.html",
         form=form,
         title=title,
         heading=heading,
-        button_classes=button_classes
+        button_classes=button_classes,
     )
 
 
@@ -99,11 +99,11 @@ def change_email():
         else:
             flash("You entered an invalid password.")
     return render_template(
-        "settings/settings.html", 
+        "settings/settings.html",
         form=form,
         title=title,
         heading=heading,
-        button_classes=button_classes
+        button_classes=button_classes,
     )
 
 
@@ -111,8 +111,8 @@ def change_email():
 @login_required
 def confirm_email_change(token):
     """View function to confirm the token sent to the user to change their email"""
-    #used so that only a user who actually submitted an email change request
-    #can access this route
+    # used so that only a user who actually submitted an email change request
+    # can access this route
     if session.get("email_change_request"):
         if current_user.change_email(token):
             db.session.commit()
@@ -141,13 +141,10 @@ def close_account():
         flash("Your account has been closed.")
         return redirect(url_for("main.index"))
     return render_template(
-        "settings/settings.html", 
+        "settings/settings.html",
         form=form,
         title=title,
         heading=heading,
         button_classes=button_classes,
-        message=message
+        message=message,
     )
-
-
-

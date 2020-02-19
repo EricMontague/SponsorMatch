@@ -3,4 +3,5 @@ __pycache__
 .ipynb_checkpoints
 Data Structures_files
 Data Structures.htm
-Vent
+venv
+.env

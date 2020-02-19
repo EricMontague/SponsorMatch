@@ -1,8 +1,3 @@
-"""This module contains various configuration classes
-to be used by the application.
-"""
-
-
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -12,6 +7,8 @@ class Config:
     """Base class for application configuration"""
 
     # stored in a .flaskenv file
+    # hard to guess string is used only for development.
+    # A real key is generated for production
     SECRET_KEY = os.environ.get("SECRET KEY", "hard to guess string")
     STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
     STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
@@ -23,14 +20,14 @@ class Config:
     MAIL_SUBJECT_PREFIX = "[SponsorMatch]"
     MAIL_SENDER = "montaguepython55@gmail.com"
     ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
-    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+    ELASTICSEARCH_URL = os.environ.get("ELASTICSEARCH_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    EVENTS_PER_PAGE =  12
+    EVENTS_PER_PAGE = 12
     UPLOADED_IMAGES_DEST = os.environ.get(
-        "UPLOADS_URL", 
-        os.path.join(basedir, "app/static/images")
+        "UPLOADS_URL", os.path.join(basedir, "app/static/images")
     )
-    # UPLOADED_IMAGES_DENY = []
+    SSL_REDIRECT = False
+
 
 class DevelopmentConfig(Config):
     """Class to setup the development configuration for the application"""
@@ -39,7 +36,6 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DEV_DATABASE_URL"
     ) or "sqlite:///" + os.path.join(basedir, "data-dev.sqlite")
-    # "mysql://root@localhost/sponsormatch-dev"
 
 
 class TestingConfig(Config):
@@ -57,10 +53,59 @@ class ProductionConfig(Config):
         "DATABASE_URL"
     ) or "sqlite:///" + os.path.join(basedir, "data.sqlite")
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        # email errors to the administrator
+        import logging
+        from logging.handlers import SMTPHandler
+
+        credentials = None
+        secure = None
+        if getattr(cls, "MAIL_USERNAME", None) is not None:
+            credentials = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)
+            if getattr(cls, "MAIL_USE_TLS", None):
+                secure = ()
+        mail_handler = SMTPHandler(
+            mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
+            fromaddr=cls.MAIL_SENDER,
+            toaddrs=[cls.ADMIN_EMAIL],
+            subtject=cls.MAIL_SUBJECT_PREFIX + " Application Error",
+            credentials=credentials,
+            secure=secure,
+        )
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
+
+
+class HerokuConfig(ProductionConfig):
+    """Class to setup configurations for heroku."""
+
+    SSL_REDIRECT = True if os.environ.get("DYNO") else False
+
+    @classmethod
+    def init_app(cls, app):
+        ProductionConfig.init_app(app)
+
+        # log to stderr
+        import logging
+        from logging import StreamHandler
+
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+
+        # handle reverse proxy server headers
+        from werkzeug.contrib.fixers import ProxyFix
+
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
 
 config = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
     "production": ProductionConfig,
     "default": DevelopmentConfig,
+    "heroku": HerokuConfig,
 }

@@ -12,14 +12,17 @@ Flask-Login==0.4.1
 Flask-Mail==0.9.1
 Flask-Migrate==2.5.2
 Flask-SQLAlchemy==2.4.1
+Flask-SSLify==0.1.5
 Flask-Uploads==0.2.1
 Flask-WTF==0.14.2
+gunicorn==20.0.4
 idna==2.8
 is-safe-url==1.0
 itsdangerous==1.1.0
 Jinja2==2.10.3
 Mako==1.1.0
 MarkupSafe==1.1.1
+psycopg2==2.8.4
 python-dateutil==2.8.1
 python-dotenv==0.10.3
 python-editor==1.0.4

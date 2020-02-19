@@ -14,16 +14,13 @@ from wtforms import (
     HiddenField,
     BooleanField,
     FieldList,
-    FormField
+    FormField,
 )
 from wtforms.fields.html5 import DateField, URLField
-from wtforms.validators import DataRequired, Length, Optional, URL, \
-    NumberRange, Email
-from ..import images
-from ..form_helpers import TIME_FORMAT, STATES, PACKAGE_TYPES, PEOPLE_RANGES, \
-    TIMES
-from ..models import EventCategory, EventType, Package, Role, \
-    User
+from wtforms.validators import DataRequired, Length, Optional, URL, NumberRange, Email
+from .. import images
+from ..form_helpers import TIME_FORMAT, STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES
+from ..models import EventCategory, EventType, Package, Role, User
 
 
 class FormMixin:
@@ -38,9 +35,9 @@ class FormMixin:
             choice_value = dict(choice_list).get(choice_id)
             if choices == "TIMES":
                 return datetime.strptime(choice_value, TIME_FORMAT).time()
-            return choice_value 
+            return choice_value
         else:
-            return None     
+            return None
 
     @staticmethod
     def choice_id(choice_value, choices):
@@ -48,7 +45,9 @@ class FormMixin:
         form element.
         """
         choices = choices.upper()
-        reversed_choices = {choice: choice_id for choice_id, choice in globals()[choices]}
+        reversed_choices = {
+            choice: choice_id for choice_id, choice in globals()[choices]
+        }
         if reversed_choices:
             if choices == "TIMES":
                 choice_value = choice_value.strftime(TIME_FORMAT)
@@ -60,21 +59,24 @@ class FormMixin:
 class EditProfileForm(FlaskForm):
     """Class to represent a form to let a user edit their profile information"""
 
-    first_name = StringField(
-        "First Name", validators=[DataRequired(), Length(1, 64)]
-    )
-    last_name = StringField(
-        "Last Name", validators=[DataRequired(), Length(1, 64)]
-    )
+    first_name = StringField("First Name", validators=[DataRequired(), Length(1, 64)])
+    last_name = StringField("Last Name", validators=[DataRequired(), Length(1, 64)])
     company = StringField(
         "Company/Organization", validators=[DataRequired(), Length(1, 64)]
     )
-    about = TextAreaField("About the Organizer", render_kw={"class": "form-control", "rows": 6, "placeholder": "Tell us about your organization"})
+    about = TextAreaField(
+        "About the Organizer",
+        render_kw={
+            "class": "form-control",
+            "rows": 6,
+            "placeholder": "Tell us about your organization",
+        },
+    )
     job_title = StringField("Job title", validators=[Length(0, 64)])
     website = URLField(
-        "Website", 
+        "Website",
         validators=[URL(message="Please provide a valid url."), Optional()],
-        default=None
+        default=None,
     )
     submit = SubmitField("Save")
 
@@ -84,18 +86,18 @@ class EditProfileForm(FlaskForm):
 
     def validate_company(self, field):
         """Custom validation for the company field."""
-        if self.company.data != self.user.company and \
-                User.query.filter_by(company=self.company.data).first():
+        if (
+            self.company.data != self.user.company
+            and User.query.filter_by(company=self.company.data).first()
+        ):
             raise ValidationError("Company already registered.")
 
-    
+
 class EditProfileAdminForm(EditProfileForm):
     """Class to represent a form that allows the admin to edit a user's
     profile information."""
 
-    email = StringField(
-        "Email", validators=[DataRequired(), Length(1, 64),Email()]
-    )
+    email = StringField("Email", validators=[DataRequired(), Length(1, 64), Email()])
     role = SelectField("Role", coerce=int)
     has_paid = BooleanField("User has Paid")
     submit = SubmitField("Save")
@@ -103,34 +105,39 @@ class EditProfileAdminForm(EditProfileForm):
     def __init__(self, user, *args, **kwargs):
         super(EditProfileAdminForm, self).__init__(user, *args, **kwargs)
         self.role.choices = [
-            (role.id, role.name)
-            for role in Role.query.order_by(Role.name).all()
+            (role.id, role.name) for role in Role.query.order_by(Role.name).all()
         ]
         self.user = user
 
     def validate_email(self, field):
         """Custom validation for the email field."""
-        if field.data != self.user.email and \
-                User.query.filter_by(email = field.data).first():
+        if (
+            field.data != self.user.email
+            and User.query.filter_by(email=field.data).first()
+        ):
             raise ValidationError("Email already registered")
 
 
 class UploadImageForm(FlaskForm):
     """Class to represent a form to let a user upload an image."""
 
-    image = FileField("Upload image", validators=[
-        FileRequired("Please upload an image."),
-        FileAllowed(["png", "jpg", "jpeg"], "File type not allowed.") 
-    ])
+    image = FileField(
+        "Upload image",
+        validators=[
+            FileRequired("Please upload an image."),
+            FileAllowed(["png", "jpg", "jpeg"], "File type not allowed."),
+        ],
+    )
     upload = SubmitField("Upload")
 
 
 class RemoveImageForm(FlaskForm):
     """Class to represent a form to let a user remove an image."""
-    submit = SubmitField("Remove")
-    
 
-class CreateEventForm(FormMixin,FlaskForm):
+    submit = SubmitField("Remove")
+
+
+class CreateEventForm(FormMixin, FlaskForm):
     """Class to represent a form to allow a user to enter basic event information
     when creating an event.
     """
@@ -141,25 +148,12 @@ class CreateEventForm(FormMixin,FlaskForm):
     venue_name = StringField("Venue Name", validators=[DataRequired(), Length(1, 64)])
     address = StringField("Address", validators=[DataRequired(), Length(1, 64)])
     city = StringField("City", validators=[DataRequired(), Length(1, 64)])
-    state = SelectField(
-        "State", choices=[(0, "Select State...")] + STATES, coerce=int
-    )
+    state = SelectField("State", choices=[(0, "Select State...")] + STATES, coerce=int)
     zip_code = StringField("ZIP Code", validators=[DataRequired(), Length(5, 10)])
-    start_date = DateField(
-        "Start date",
-        default=date.today()
-    )
+    start_date = DateField("Start date", default=date.today())
     end_date = DateField("End date", default=date.today())
-    start_time = SelectField(
-        "Start time",
-        choices=TIMES,
-        coerce=int
-    )
-    end_time = SelectField(
-        "End time",
-        choices=TIMES,
-        coerce=int
-    )
+    start_time = SelectField("Start time", choices=TIMES, coerce=int)
+    end_time = SelectField("End time", choices=TIMES, coerce=int)
     submit = SubmitField("Save & Continue")
 
     def __init__(self, **kwargs):
@@ -192,7 +186,7 @@ class CreateEventForm(FormMixin,FlaskForm):
         """Custom validator to ensure that the start date field
         can't be set to a date before the current date
         """
-        #field.data should be a datetime object
+        # field.data should be a datetime object
         if field.data < date.today():
             raise ValidationError("Start date can't be a date in the past.")
 
@@ -200,7 +194,7 @@ class CreateEventForm(FormMixin,FlaskForm):
         """Custom validation method to ensure that the end date cannot be
         before the start date
         """
-        #field.data should be a datetime object
+        # field.data should be a datetime object
         if field.data < self.start_date.data:
             raise ValidationError("End date must be on or after start date.")
 
@@ -209,39 +203,41 @@ class CreateEventForm(FormMixin,FlaskForm):
         the current day, that the start time field can't be set to a time earlier 
         than the current time.
         """
-        #convert string time to a time object
+        # convert string time to a time object
         start_time = CreateEventForm.choice_value(field.data, "TIMES")
         start_datetime = datetime.combine(self.start_date.data, start_time)
-        #check if user's event is today and if time is before the current time
-        if  start_datetime.date() == datetime.today().date() and \
-                start_datetime < datetime.now():
+        # check if user's event is today and if time is before the current time
+        if (
+            start_datetime.date() == datetime.today().date()
+            and start_datetime < datetime.now()
+        ):
             raise ValidationError("Start time can't be in the past.")
 
     def validate_end_time(self, field):
         """Custom validation method to ensure that the end time cannot be
         before the start time.
         """
-        #convert string time to a time object
+        # convert string time to a time object
         start_time = CreateEventForm.choice_value(self.start_time.data, "TIMES")
-        #datetime object
+        # datetime object
         end_time = CreateEventForm.choice_value(field.data, "TIMES")
         if end_time <= start_time:
             if self.start_date.data == self.end_date.data:
                 raise ValidationError("End time must be after start time.")
-            
- 
+
+
 class EventDetailsForm(FlaskForm):
     """Form to allow the user to enter event details in a longer format"""
 
     description = TextAreaField(
-        "Event Description", 
-        validators=[DataRequired()], 
-        render_kw={'class': 'form-control', 'rows': 6}
+        "Event Description",
+        validators=[DataRequired()],
+        render_kw={"class": "form-control", "rows": 6},
     )
     pitch = TextAreaField(
-        "Your sponsorship pitch", 
-        validators=[DataRequired()], 
-        render_kw={'class': 'form-control', 'rows': 6}
+        "Your sponsorship pitch",
+        validators=[DataRequired()],
+        render_kw={"class": "form-control", "rows": 6},
     )
     submit = SubmitField("Save & Continue")
 
@@ -249,25 +245,20 @@ class EventDetailsForm(FlaskForm):
 class EventPackagesForm(FormMixin, FlaskForm):
     """Form to allow the user to select sponsorship packages for their event."""
 
-    name = StringField(
-        "Name", validators=[DataRequired(), Length(1, 64)]
-    )
-    price = DecimalField(
-        "Price", validators=[NumberRange(min=1, max=2147483647)]
-    )
+    name = StringField("Name", validators=[DataRequired(), Length(1, 64)])
+    price = DecimalField("Price", validators=[NumberRange(min=1, max=2147483647)])
     audience = SelectField("Audience Reached", coerce=int, choices=PEOPLE_RANGES)
-    description = TextAreaField("Description", validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5})
+    description = TextAreaField(
+        "Description",
+        validators=[DataRequired()],
+        render_kw={"class": "form-control", "rows": 5},
+    )
     available_packages = IntegerField(
-        "Number of available packages", 
-        validators=[NumberRange(min=1, max=2147483647)]
+        "Number of available packages", validators=[NumberRange(min=1, max=2147483647)]
     )
-    package_type = SelectField(
-        "Type", 
-        coerce=int,
-        choices=PACKAGE_TYPES
-    )
+    package_type = SelectField("Type", coerce=int, choices=PACKAGE_TYPES)
     submit = SubmitField("Save")
-    
+
     def validate_audience(self, field):
         """Custom validation for the audience field."""
         if field.data == 1:
@@ -279,12 +270,12 @@ class UploadVideoForm(FlaskForm):
     for videos."""
 
     video_url = URLField(
-        "Add Video", 
+        "Add Video",
         validators=[DataRequired(), URL(message="Please provide a valid url.")],
-        render_kw={"placeholder": "http://www.youtube.com/"}
+        render_kw={"placeholder": "http://www.youtube.com/"},
     )
     add = SubmitField("Upload")
-    
+
     @staticmethod
     def parse_url(url):
         """Parse the YouTube video url and reformat it so that it can be
@@ -297,11 +288,12 @@ class UploadVideoForm(FlaskForm):
             return url
         return domain + video_id
 
-    
+
 class RemoveVideoForm(FlaskForm):
     """Class to represent a form to allow a user to delete a video
     they've uploaded to their event.
     """
+
     remove = SubmitField("Remove")
 
 
@@ -310,14 +302,14 @@ class MultipleImageForm(FlaskForm):
     images to their event.
     """
 
-    images = MultipleFileField("Upload Image(s)", validators=[
-        DataRequired("Please upload at least one image")
-    ])
+    images = MultipleFileField(
+        "Upload Image(s)", validators=[DataRequired("Please upload at least one image")]
+    )
     upload = SubmitField("Upload")
 
     def validate_images(self, field):
         """Custom validation for the images field."""
-        #FileRequired class not working for MultipleFileField
+        # FileRequired class not working for MultipleFileField
         allowed = ["png", "jpg", "jpeg"]
         for data in field.data:
             if data.filename.split(".")[-1] not in allowed:
@@ -352,7 +344,11 @@ class ContactForm(FlaskForm):
         "Email Address", validators=[DataRequired(), Length(1, 64), Email()]
     )
     subject = StringField("Subject", validators=[DataRequired(), Length(1, 64)])
-    message = TextAreaField("Message", validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 6})
+    message = TextAreaField(
+        "Message",
+        validators=[DataRequired()],
+        render_kw={"class": "form-control", "rows": 6},
+    )
     submit = SubmitField("Send")
 
 
@@ -360,14 +356,16 @@ class SearchForm(FlaskForm):
     """Class to represent a search bar."""
 
     query = StringField(
-        "Search", validators=[DataRequired()], render_kw={"placeholder": "Search events"}
+        "Search",
+        validators=[DataRequired()],
+        render_kw={"placeholder": "Search events"},
     )
 
     def __init__(self, *args, **kwargs):
-        #form data will be in the query string of the url
+        # form data will be in the query string of the url
         if "formdata" not in kwargs:
             kwargs["formdata"] = request.args
-        #need to disable for search to work
+        # need to disable for search to work
         if "csrf_enabled" not in kwargs:
             kwargs["csrf_enabled"] = False
         super(SearchForm, self).__init__(*args, **kwargs)
@@ -381,9 +379,7 @@ class AdvancedSearchForm(FormMixin, FlaskForm):
     start_date = DateField("Start Date", default=date.today())
     end_date = DateField("End Date", default=date.today())
     city = StringField("City", validators=[Optional(), Length(1, 64)])
-    state = SelectField(
-        "State", choices=[(0, "Select State...")] + STATES, coerce=int
-    )
+    state = SelectField("State", choices=[(0, "Select State...")] + STATES, coerce=int)
     category = SelectField("Categories", coerce=int)
     submit = SubmitField("Search")
 
@@ -403,7 +399,7 @@ class AdvancedSearchForm(FormMixin, FlaskForm):
         """Custom validator to ensure that the start date field
         can't be set to a date before the current date
         """
-        #field.data should be a datetime object
+        # field.data should be a datetime object
         if field.data < date.today():
             raise ValidationError("Start date can't be a date in the past.")
 
@@ -411,7 +407,7 @@ class AdvancedSearchForm(FormMixin, FlaskForm):
         """Custom validation method to ensure that the end date cannot be
         before the start date
         """
-        #field.data should be a datetime object
+        # field.data should be a datetime object
         if field.data < self.start_date.data:
             raise ValidationError("End date must be on or after start date.")
 
@@ -425,12 +421,9 @@ class DropdownForm(FlaskForm):
     """Form to represent a dropdown menu of options."""
 
     options = SelectField(
-        choices=[(1, "All"), (2, "Live"), (3, "Past"), (4, "Draft")], 
-        coerce=int
+        choices=[(1, "All"), (2, "Live"), (3, "Past"), (4, "Draft")], coerce=int
     )
 
     def __init__(self, choices, **kwargs):
         super(DropdownForm, self).__init__(**kwargs)
         self.options.choices = choices
-
-

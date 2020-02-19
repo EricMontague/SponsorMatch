@@ -4,8 +4,7 @@ from datetime import datetime, timedelta
 from app import create_app, db
 from .testing_data import TestModelFactory
 from app.models import Event
-from elasticsearch2.exceptions import NotFoundError, RequestError, \
-    SerializationError
+from elasticsearch2.exceptions import NotFoundError, RequestError, SerializationError
 
 
 class EventSearchTestCase(unittest.TestCase):
@@ -38,7 +37,9 @@ class EventSearchTestCase(unittest.TestCase):
         accurate search results for exact matches.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue = TestModelFactory.create_venue()
         event = TestModelFactory.create_event("Eric's Party", "live")
@@ -46,16 +47,16 @@ class EventSearchTestCase(unittest.TestCase):
         event.user = user
         db.session.add_all([user, event])
         db.session.commit()
-    
-        #need to wait 2 seconds before sending the GET request to the Elasticsearch API
-        #or else the resource won't be there
+
+        # need to wait 2 seconds before sending the GET request to the Elasticsearch API
+        # or else the resource won't be there
         time.sleep(2)
 
         query_obj, num_results = Event.search("Eric's Party", 1, 1)
         self.assertEqual(query_obj.first(), event)
         self.assertEqual(num_results, 1)
 
-        #lowercase should work too
+        # lowercase should work too
         query_obj, num_results = Event.search("eric's party", 1, 1)
         self.assertEqual(query_obj.first(), event)
         self.assertEqual(num_results, 1)
@@ -66,7 +67,9 @@ class EventSearchTestCase(unittest.TestCase):
         doesn't exist in Elasticsearch.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue = TestModelFactory.create_venue()
         event = TestModelFactory.create_event("Eric's Party", "live")
@@ -77,12 +80,12 @@ class EventSearchTestCase(unittest.TestCase):
 
         time.sleep(2)
 
-        #search should return nothing
+        # search should return nothing
         query_obj, num_results = Event.search("Philly", 1, 1)
         self.assertIsNone(query_obj.first())
         self.assertEqual(num_results, 0)
 
-        #description is not a searchable attribute
+        # description is not a searchable attribute
         query_obj, num_results = Event.search(event.description, 1, 1)
         self.assertIsNone(query_obj.first())
         self.assertEqual(num_results, 0)
@@ -92,12 +95,16 @@ class EventSearchTestCase(unittest.TestCase):
         appropriate reulsts for partial matches.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue_one = TestModelFactory.create_venue(address="123 Main St.")
         venue_two = TestModelFactory.create_venue(address="456 Main St.")
         event_one = TestModelFactory.create_event("Eric's Foobar", "live")
-        event_two = TestModelFactory.create_event("Eric's Party", "live", event_type="Convetion", event_category="Sports")
+        event_two = TestModelFactory.create_event(
+            "Eric's Party", "live", event_type="Convetion", event_category="Sports"
+        )
         event_one.user = user
         event_two.user = user
         event_one.venue = venue_one
@@ -143,7 +150,9 @@ class EventSearchTestCase(unittest.TestCase):
         throw the approriate exceptions.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue = TestModelFactory.create_venue()
         event = TestModelFactory.create_event("Eric's Foobar", "live")
@@ -154,36 +163,38 @@ class EventSearchTestCase(unittest.TestCase):
 
         time.sleep(2)
 
-        #searching sugin a list
+        # searching sugin a list
         with self.assertRaises(RequestError):
             query_obj, num_results = Event.search(["Eric's", "Foobar"], 1, 1)
 
-        #searching using a model
+        # searching using a model
         with self.assertRaises(SerializationError):
             query_obj, num_results = Event.search(event, 1, 1)
 
-        #zero as a starting page number
+        # zero as a starting page number
         with self.assertRaises(RequestError):
             query_obj, num_results = Event.search("Eric's Foobar", 0, 1)
 
-        #negative results per page
+        # negative results per page
         with self.assertRaises(RequestError):
             query_obj, num_results = Event.search("Eric's Foobar", 1, -1)
 
-        #string page number
+        # string page number
         with self.assertRaises(TypeError):
             query_obj, num_results = Event.search("Eric's Foobar", "1", 1)
 
-        #string results per page
+        # string results per page
         with self.assertRaises(RequestError):
             query_obj, num_results = Event.search("Eric's Foobar", 1, "1")
-        
+
     def test_add_after_commit(self):
         """Test to confirm that events added to the database
         are reflected in Elasticsearch after each commit.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue = TestModelFactory.create_venue()
         event = TestModelFactory.create_event("Foobar", "live")
@@ -203,7 +214,9 @@ class EventSearchTestCase(unittest.TestCase):
         are reflected in Elasticsearch after each commit.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue = TestModelFactory.create_venue()
         event = TestModelFactory.create_event("Foobar", "live")
@@ -232,7 +245,9 @@ class EventSearchTestCase(unittest.TestCase):
         are reflected in Elasticsearch after each commit.
         """
         role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user(password="password_one", email="dave@gmail.com", company="ABC Corp")
+        user = TestModelFactory.create_user(
+            password="password_one", email="dave@gmail.com", company="ABC Corp"
+        )
         user.role = role
         venue = TestModelFactory.create_venue()
         event = TestModelFactory.create_event("Foobar", "live")
@@ -243,18 +258,18 @@ class EventSearchTestCase(unittest.TestCase):
 
         time.sleep(2)
 
-        #confirm that the event is in Elasticsearch
+        # confirm that the event is in Elasticsearch
         query_obj, num_results = Event.search("Foobar", 1, 1)
         self.assertEqual(query_obj.first(), event)
         self.assertEqual(num_results, 1)
 
-        #update title
+        # update title
         event.title = "Eric's Party"
         db.session.commit()
 
         time.sleep(2)
 
-        #check that the update wa recognized
+        # check that the update wa recognized
         query_obj, num_results = Event.search("Eric's Party", 1, 1)
         self.assertEqual(query_obj.first(), event)
         self.assertEqual(num_results, 1)
@@ -264,5 +279,5 @@ class EventSearchTestCase(unittest.TestCase):
         self.assertEqual(num_results, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

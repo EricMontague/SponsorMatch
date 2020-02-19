@@ -1,5 +1,6 @@
 from flask import current_app
 
+
 def add_to_index(index, doc_type, model):
     """Add fields from the given model to the given index.
 
@@ -20,6 +21,7 @@ def add_to_index(index, doc_type, model):
         index=index, id=model.id, doc_type=doc_type, body=payload
     )
 
+
 def remove_from_index(index, doc_type, model):
     """Remove a document in the given index based on the id
 	of the given model.
@@ -35,7 +37,7 @@ def remove_from_index(index, doc_type, model):
     if not current_app.elasticsearch:
         return
     current_app.elasticsearch.delete(index=index, id=model.id, doc_type=doc_type)
-    
+
 
 def query_index(index, query, page, results_per_page):
     """Query the given index and return the ids of the documents
@@ -55,10 +57,12 @@ def query_index(index, query, page, results_per_page):
     search = current_app.elasticsearch.search(
         index=index,
         body={
-            "query": {"multi_match": {"query": query, "lenient": "true", "fields": ["*"]}},
+            "query": {
+                "multi_match": {"query": query, "lenient": "true", "fields": ["*"]}
+            },
             "from": (page - 1) * results_per_page,
-            "size": results_per_page
-        }
+            "size": results_per_page,
+        },
     )
     ids = [int(hit["_id"]) for hit in search["hits"]["hits"]]
     num_results = search["hits"]["total"]
@@ -75,4 +79,3 @@ def delete_index(index):
     if current_app.elasticsearch:
         if current_app.elasticsearch.indices.exists(index):
             current_app.elasticsearch.indices.delete(index)
-    
