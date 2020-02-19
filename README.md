@@ -24,6 +24,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 
 ## Todo
  - Deploy to Heroku
+ - Find a different fake package that supports accurate city, state combinations.
  - Upgrade the version of Elasticsearch to the latest version
  - Refactor the backend, specifically splitting up the main blueprint.
  - Refactor the HTML to look more structured and easy to follow
