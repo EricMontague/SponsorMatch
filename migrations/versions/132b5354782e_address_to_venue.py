@@ -32,7 +32,7 @@ def upgrade():
     sa.UniqueConstraint('zip_code')
     )
     
-    op.add_column('events', sa.Column('venue_id', sa.Integer(), nullable=False))
+    op.add_column('events', sa.Column('venue_id', sa.Integer(), nullable=True))
     op.drop_constraint(None, 'events', type_='foreignkey')
     op.create_foreign_key(None, 'events', 'venues', ['venue_id'], ['id'])
     op.drop_column('events', 'venue')
