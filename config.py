@@ -107,5 +107,5 @@ config = {
     "testing": TestingConfig,
     "production": ProductionConfig,
     "default": DevelopmentConfig,
-    "heroku": HerokuConfig,
+    "heroku": HerokuConfig
 }
