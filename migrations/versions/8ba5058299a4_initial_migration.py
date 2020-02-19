@@ -1,8 +1,8 @@
-"""empty message
+"""initial migration
 
-Revision ID: 0ca2f16ec665
-Revises: 026fab68d528
-Create Date: 2019-11-30 19:26:56.464007
+Revision ID: 8ba5058299a4
+Revises: 
+Create Date: 2020-02-19 16:30:52.845566
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0ca2f16ec665'
-down_revision = '026fab68d528'
+revision = '8ba5058299a4'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -33,42 +33,22 @@ def upgrade():
     op.create_table('image_types',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
-    )
-    op.create_table('packages',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=64), nullable=False),
-    sa.Column('price', sa.Numeric(precision=4, scale=2), nullable=False),
-    sa.Column('audience', sa.String(length=64), nullable=False),
-    sa.Column('custom', sa.Boolean(), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('deadline', sa.DateTime(), nullable=False),
-    sa.Column('available_packages', sa.Integer(), nullable=False),
-    sa.Column('package_type', sa.String(length=64), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_image_types_name'), 'image_types', ['name'], unique=True)
     op.create_table('roles',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('permissions', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
-    op.create_table('subscriptions',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('plan', sa.String(length=64), nullable=False),
-    sa.Column('price', sa.Numeric(precision=4, scale=2), nullable=False),
-    sa.Column('default', sa.Boolean(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('plan')
-    )
-    op.create_index(op.f('ix_subscriptions_default'), 'subscriptions', ['default'], unique=False)
     op.create_table('venues',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('address', sa.String(length=64), nullable=False),
     sa.Column('city', sa.String(length=64), nullable=False),
-    sa.Column('state', sa.String(length=2), nullable=False),
+    sa.Column('state', sa.String(length=64), nullable=False),
     sa.Column('zip_code', sa.String(length=10), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -78,36 +58,33 @@ def upgrade():
     sa.Column('first_name', sa.String(length=64), nullable=False),
     sa.Column('last_name', sa.String(length=64), nullable=False),
     sa.Column('company', sa.String(length=64), nullable=False),
-    sa.Column('phone_number', sa.String(length=12), nullable=True),
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=False),
-    sa.Column('confirmed', sa.Boolean(), nullable=False),
+    sa.Column('has_paid', sa.Boolean(), nullable=False),
     sa.Column('member_since', sa.DateTime(), nullable=False),
     sa.Column('job_title', sa.String(length=64), nullable=True),
     sa.Column('website', sa.String(length=64), nullable=True),
-    sa.Column('about_me', sa.Text(), nullable=True),
+    sa.Column('about', sa.Text(), nullable=True),
+    sa.Column('profile_photo_path', sa.Text(), nullable=True),
     sa.Column('role_id', sa.Integer(), nullable=False),
-    sa.Column('subscription_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
-    sa.ForeignKeyConstraint(['subscription_id'], ['subscriptions.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('company'),
-    sa.UniqueConstraint('phone_number'),
+    sa.UniqueConstraint('profile_photo_path'),
     sa.UniqueConstraint('website')
     )
+    op.create_index(op.f('ix_users_company'), 'users', ['company'], unique=True)
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_table('events',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=64), nullable=False),
-    sa.Column('start_date', sa.DateTime(), nullable=False),
-    sa.Column('end_date', sa.DateTime(), nullable=False),
-    sa.Column('start_time', sa.DateTime(), nullable=False),
-    sa.Column('end_time', sa.DateTime(), nullable=False),
-    sa.Column('attendees', sa.String(length=64), nullable=False),
+    sa.Column('start_datetime', sa.DateTime(), nullable=True),
+    sa.Column('end_datetime', sa.DateTime(), nullable=True),
+    sa.Column('attendees', sa.String(length=64), nullable=True),
+    sa.Column('male_to_female', sa.String(length=64), nullable=True),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('pitch', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('live', sa.Boolean(), nullable=False),
+    sa.Column('published', sa.Boolean(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('venue_id', sa.Integer(), nullable=False),
     sa.Column('event_type_id', sa.Integer(), nullable=False),
@@ -118,42 +95,81 @@ def upgrade():
     sa.ForeignKeyConstraint(['venue_id'], ['venues.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('event_packages',
-    sa.Column('event_id', sa.Integer(), nullable=False),
-    sa.Column('package_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['event_id'], ['events.id'], ),
-    sa.ForeignKeyConstraint(['package_id'], ['packages.id'], ),
-    sa.PrimaryKeyConstraint('event_id', 'package_id')
-    )
+    op.create_index(op.f('ix_events_end_datetime'), 'events', ['end_datetime'], unique=False)
+    op.create_index(op.f('ix_events_start_datetime'), 'events', ['start_datetime'], unique=False)
     op.create_table('images',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('path', sa.Text(), nullable=False),
     sa.Column('uploaded_at', sa.DateTime(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('image_type_id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['event_id'], ['events.id'], ),
     sa.ForeignKeyConstraint(['image_type_id'], ['image_types.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_images_path'), 'images', ['path'], unique=True)
+    op.create_table('packages',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('price', sa.Numeric(precision=4, scale=2), nullable=False),
+    sa.Column('audience', sa.String(length=64), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('num_purchased', sa.Integer(), nullable=False),
+    sa.Column('available_packages', sa.Integer(), nullable=False),
+    sa.Column('package_type', sa.String(length=64), nullable=False),
+    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['event_id'], ['events.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('saved_events',
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['event_id'], ['events.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('path')
+    sa.PrimaryKeyConstraint('user_id', 'event_id')
+    )
+    op.create_table('videos',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('url', sa.Text(), nullable=False),
+    sa.Column('uploaded_at', sa.DateTime(), nullable=False),
+    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['event_id'], ['events.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_videos_url'), 'videos', ['url'], unique=False)
+    op.create_table('sponsorships',
+    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.Column('sponsor_id', sa.Integer(), nullable=False),
+    sa.Column('package_id', sa.Integer(), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('confirmation_code', sa.String(length=64), nullable=True),
+    sa.ForeignKeyConstraint(['event_id'], ['events.id'], ),
+    sa.ForeignKeyConstraint(['package_id'], ['packages.id'], ),
+    sa.ForeignKeyConstraint(['sponsor_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('event_id', 'sponsor_id', 'package_id')
     )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('sponsorships')
+    op.drop_index(op.f('ix_videos_url'), table_name='videos')
+    op.drop_table('videos')
+    op.drop_table('saved_events')
+    op.drop_table('packages')
+    op.drop_index(op.f('ix_images_path'), table_name='images')
     op.drop_table('images')
-    op.drop_table('event_packages')
+    op.drop_index(op.f('ix_events_start_datetime'), table_name='events')
+    op.drop_index(op.f('ix_events_end_datetime'), table_name='events')
     op.drop_table('events')
     op.drop_index(op.f('ix_users_email'), table_name='users')
+    op.drop_index(op.f('ix_users_company'), table_name='users')
     op.drop_table('users')
     op.drop_index(op.f('ix_venues_address'), table_name='venues')
     op.drop_table('venues')
-    op.drop_index(op.f('ix_subscriptions_default'), table_name='subscriptions')
-    op.drop_table('subscriptions')
     op.drop_table('roles')
-    op.drop_table('packages')
+    op.drop_index(op.f('ix_image_types_name'), table_name='image_types')
     op.drop_table('image_types')
     op.drop_table('event_types')
     op.drop_index(op.f('ix_event_categories_name'), table_name='event_categories')
