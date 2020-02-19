@@ -36,7 +36,6 @@ def upgrade():
     op.drop_constraint(None, 'events', type_='foreignkey')
     op.create_foreign_key(None, 'events', 'venues', ['venue_id'], ['id'])
     op.drop_column('events', 'venue')
-    op.drop_column('events', 'address_id')
     op.create_unique_constraint(None, 'users', ['website'])
     # ### end Alembic commands ###
 
