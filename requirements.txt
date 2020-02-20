@@ -4,7 +4,7 @@ certifi==2019.11.28
 chardet==3.0.4
 Click==7.0
 dominate==2.4.0
-elasticsearch2==2.5.1
+elasticsearch==7.5.1
 Faker==3.0.0
 Flask==1.1.1
 Flask-Bootstrap==3.3.7.1

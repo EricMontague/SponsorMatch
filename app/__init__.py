@@ -1,6 +1,6 @@
 import stripe
 from flask import Flask
-from elasticsearch2 import Elasticsearch
+from elasticsearch import Elasticsearch
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
