@@ -108,7 +108,8 @@ def deploy(fake_data):
     #add fake data to the database
     if fake_data:
         fake = FakeDataGenerator(40, 40)
-        fake.add_all(reset_db=False)
+        # fake.add_all(reset_db=False)
+        fake.add_users()
 
 
 if __name__ == "__main__":
