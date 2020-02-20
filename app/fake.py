@@ -47,7 +47,7 @@ class FakeDataGenerator:
         self.add_events()
         self.add_packages()
         self.add_sponsorships()
-        # Event.reindex()  # makes sure that all event data is uploaded to Elasticsearch
+        Event.reindex()  # makes sure that all event data is uploaded to Elasticsearch
 
     def add_users(self):
         """Add fake user data to the database."""
