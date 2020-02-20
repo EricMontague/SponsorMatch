@@ -3,6 +3,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 <br>
 ### App available at: https://sponsormatch.herokuapp.com/
 <br>
+
 ### Using the application on Heroku: 
 If testing the application out as an event organizer, you will be asked to provide a credit card number to complete your registration. Use 4242 4242 4242 4242 as the credit card number as this is one of Stripe's test credit card numbers. This is the same credit card number you should use when purchasing a package if you sign up as a sponsor as well. Also, the application will send real emails, so be sure to type in your email and not someone else's upon registering.
 
