@@ -92,12 +92,9 @@ def test(coverage, test_names):
 
 @app.cli.command()
 @click.option(
-    "--reset-db/--no-reset-db", default=False, help="Reset the database before deployment."
-)
-@click.option(
     "--fake-data/--no-fake-data", default=False, help="Add fake data to the database before deployment."
 )
-def deploy(reset_db, fake_data):
+def deploy(fake_data):
     """Run the below set of tasks before deployment."""
     # migrate database to latest revision
     upgrade()
@@ -111,7 +108,7 @@ def deploy(reset_db, fake_data):
     #add fake data to the database
     if fake_data:
         fake = FakeDataGenerator(40, 40)
-        fake.add_all(reset_db=reset_db)
+        fake.add_all()
 
 
 if __name__ == "__main__":
