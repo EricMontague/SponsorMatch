@@ -111,7 +111,7 @@ def upgrade():
     op.create_table('packages',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
-    sa.Column('price', sa.Numeric(precision=4, scale=2), nullable=False),
+    sa.Column('price', sa.Numeric(precision=6, scale=2), nullable=False),
     sa.Column('audience', sa.String(length=64), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('num_purchased', sa.Integer(), nullable=False),
