@@ -451,7 +451,6 @@ class Event(SearchableMixin, db.Model):
     male_to_female = db.Column(db.String(64), nullable=True)
     description = db.Column(db.Text, nullable=True)
     pitch = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     published = db.Column(db.Boolean, default=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey("venues.id"), nullable=False)
@@ -739,7 +738,7 @@ class Package(db.Model):
     __tablename__ = "packages"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
-    price = db.Column(db.Numeric(4, 2), nullable=False)
+    price = db.Column(db.Numeric(6, 2), nullable=False)
     audience = db.Column(db.String(64), nullable=False)
     description = db.Column(db.Text, nullable=True)
     num_purchased = db.Column(db.Integer, default=0, nullable=False)
