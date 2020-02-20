@@ -3,6 +3,7 @@ import click
 import sys
 from flask_migrate import Migrate, upgrade
 from app import create_app, db
+from app.fake import FakeDataGenerator
 from app.models import (
     User,
     Role,
@@ -90,8 +91,11 @@ def test(coverage, test_names):
 
 
 @app.cli.command()
-def deploy():
-    """Run deployment tasks."""
+@click.option(
+    "--fake-data/--no-fake-data", default=False, help="Run a series of tasks to setup the db before deployment."
+)
+def deploy(fake_data):
+    """Run the below set of tasks before deployment."""
     # migrate database to latest revision
     upgrade()
 
@@ -100,6 +104,11 @@ def deploy():
     EventType.insert_event_types()
     EventCategory.insert_event_categories()
     ImageType.insert_image_types()
+
+    #add fake data to the database
+    if fake_data:
+        fake = FakeDataGenerator(40, 40)
+        fake.add_all(reset_db=False)
 
 
 if __name__ == "__main__":

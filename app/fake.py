@@ -34,14 +34,15 @@ class FakeDataGenerator:
         self.packages_per_event = packages_per_event
         self.sponsors_per_event = sponsors_per_event
 
-    def add_all(self):
+    def add_all(self, reset_db=False):
         """Create all necessary tables and create all resources."""
-        db.drop_all()
-        db.create_all()
-        EventCategory.insert_event_categories()
-        EventType.insert_event_types()
-        Role.insert_roles()
-        ImageType.insert_image_types()
+        if reset_db:
+            db.drop_all()
+            db.create_all()
+            EventCategory.insert_event_categories()
+            EventType.insert_event_types()
+            Role.insert_roles()
+            ImageType.insert_image_types()
         self.add_users()
         self.add_events()
         self.add_packages()
