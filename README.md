@@ -31,9 +31,9 @@ Also, the application will send real emails, so be aware of this when using it. 
 <br>
 
 ## Todo
- - ~~Deploy to Heroku
+ - ~~Deploy to Heroku~~
  - Find a different fake package that supports accurate city, state combinations.
- - ~~Upgrade the version of Elasticsearch to the latest version
+ - ~~Upgrade the version of Elasticsearch to the latest version~~
  - Refactor the backend, specifically splitting up the main blueprint.
  - Refactor the HTML to look more structured and easy to follow
  - Refactor the frontend(clean up the CSS) to make the application responsive for mobile and fix the issues with image resizing
