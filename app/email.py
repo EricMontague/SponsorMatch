@@ -1,15 +1,3 @@
-"""This module contains functions for sending emails
-
-Functions:
-
-Dependencies:
-    Thread:
-    current_app
-    render_template
-    Message
-    mail: Flask-Mail extension
-
-"""
 from threading import Thread
 from flask import current_app, render_template
 from flask_mail import Message
@@ -25,19 +13,7 @@ def send_async_email(app, msg):
 
 
 def send_email(to, subject, template, **kwargs):
-    """Send an email to a recipient
-	
-	Args:
-	    to (str): The email address of the recipient
-	    subject (str): The subject of the email
-	    template (str): The path of the email template to
-	        use as the body of the email
-	    **kwargs (optional): Allows for additional keyword-value
-	        pairs to be used in the email template(s)
-	
-	Returns:
-	    thread object
-	"""
+    """Send an email to a recipient"""
     app = current_app._get_current_object()
     # subject, sender and recipients
     msg = Message(

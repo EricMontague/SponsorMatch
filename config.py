@@ -27,6 +27,7 @@ class Config:
         "UPLOADS_URL", os.path.join(basedir, "app/static/images")
     )
     SSL_REDIRECT = False
+    HOMEPAGE_URL = os.environ.get("HOMEPAGE_URL", None)
 
     @staticmethod
     def init_app(app):
@@ -44,7 +45,6 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Class to setup the testing configuration for the application"""
-
     TESTING = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URL") or "sqlite://"
