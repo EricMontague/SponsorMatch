@@ -19,12 +19,11 @@ class HerokuPinger:
 		
 		#only need to ping servers during hours when someone might
 		#visit the site
-		
+		retries = 0
 		while True:
 			lower_bound = datetime.time(8, 0)
 			upper_bound = datetime.time(18, 0)
 			if lower_bound <= datetime.datetime.now().time() <= upper_bound:
-				retries = 0
 				while retries < 3:
 					try:
 						response = requests.get(url, timeout=10)
