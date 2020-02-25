@@ -55,10 +55,6 @@ def add_attributes(app):
     if app.config["ELASTICSEARCH_URL"]:
         app.elasticsearch = Elasticsearch([app.config["ELASTICSEARCH_URL"]])
 
-    #used to ping Heroku's dyno's to prevent them from sleeping
-    if not app.config["TESTING"]:
-        app.heroku_pinger = HerokuPinger()
-
 
 def create_app(config_name):
     """Return an instance of the application

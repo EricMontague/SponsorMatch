@@ -24,11 +24,6 @@ app = create_app(os.environ.get("FLASK_CONFIG") or "default")
 migrate = Migrate(app, db)
 
 
-if app.heroku_pinger:
-    with app.app_context():
-        app.heroku_pinger.ping_homepage(app.config["HOMEPAGE_URL"])
-
-
 COV = None
 if os.environ.get("FLASK_COVERAGE"):
     import coverage
