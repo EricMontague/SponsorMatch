@@ -27,7 +27,7 @@ class HerokuPinger:
 				retries = 0
 				while retries < 3:
 					try:
-						response = requests.get(url, timeout=)
+						response = requests.get(url, timeout=10)
 						response.raise_for_status()
 						if response.status_code == 200:
 							break
