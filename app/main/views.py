@@ -105,7 +105,7 @@ def advanced_search():
     if form.validate_on_submit():
         page = request.args.get("page", 1, type=int)
         state = AdvancedSearchForm.choice_value(form.state.data, "STATES")
-        # when switched to MySQL, this will need to be updated
+        
         query = (
             Event.query.join(Venue, Venue.id == Event.venue_id)
             .filter(Venue.state == state)

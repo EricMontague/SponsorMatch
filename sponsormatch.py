@@ -20,7 +20,7 @@ from app.models import (
 )
 
 
-app = create_app(os.environ.get("FLASK_CONFIG") or "default")
+app = create_app(os.environ.get("FLASK_ENV") or "default")
 migrate = Migrate(app, db)
 
 
