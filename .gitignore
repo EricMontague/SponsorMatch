@@ -1,7 +1,4 @@
 __pycache__
-.flaskenv
-.ipynb_checkpoints
 Data Structures_files
 Data Structures.htm
-venv
-.env
+.*
