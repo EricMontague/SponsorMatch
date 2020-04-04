@@ -4,7 +4,7 @@ from app import create_app
 from .testing_data import TestModelFactory
 from app.search import add_to_index, remove_from_index, query_index, delete_index
 from app.models import Event
-from elasticsearch2.exceptions import NotFoundError, RequestError, SerializationError
+from elasticsearch.exceptions import NotFoundError, RequestError, SerializationError
 
 
 class SearchTestCase(unittest.TestCase):
