@@ -85,13 +85,25 @@ class EditProfileForm(FlaskForm):
         self.user = user
 
     def validate_company(self, field):
-        """Custom validation for the company field."""
+        """Custom validation for the company field to ensure that a duplicate
+        company name can't be added.
+        """
         if (
             self.company.data != self.user.company
             and User.query.filter_by(company=self.company.data).first()
         ):
             raise ValidationError("Company already registered.")
 
+    def validate_website(self, field):
+        """Custom validation for the website field
+        to ensure that a duplicate company website url can't be added.
+        """
+        if (
+            self.website.data != self.user.website
+            and User.query.filter_by(website=self.website.data).first()
+        ):
+            raise ValidationError("Company website already registerd.")
+        
 
 class EditProfileAdminForm(EditProfileForm):
     """Class to represent a form that allows the admin to edit a user's
