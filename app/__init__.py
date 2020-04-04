@@ -7,7 +7,6 @@ from flask_mail import Mail
 from flask_login import LoginManager
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from config import config
-from app.ping import HerokuPinger
 
 
 bootstrap = Bootstrap()
@@ -67,6 +66,4 @@ def create_app(config_name):
     add_attributes(app)
     register_blueprints(app)
     return app
-
-
 
