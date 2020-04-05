@@ -1,8 +1,12 @@
+"""This script runs the application and contains some
+convenient command line tools
+"""
+
+
 import os
 import click
 import sys
-from flask_migrate import Migrate, upgrade
-from app import create_app, db
+from app import create_app
 from app.fake import FakeDataGenerator
 from app.models import (
     User,
@@ -18,10 +22,12 @@ from app.models import (
     Permission,
     Sponsorship,
 )
+from flask_migrate import upgrade
+from app.extensions import db
 
 
 app = create_app(os.environ.get("FLASK_ENV") or "default")
-migrate = Migrate(app, db)
+
 
 
 COV = None
@@ -112,4 +118,4 @@ def deploy(fake_data):
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

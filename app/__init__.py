@@ -1,33 +1,35 @@
 import stripe
 from flask import Flask
 from elasticsearch import Elasticsearch
-from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
-from flask_mail import Mail
-from flask_login import LoginManager
-from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from config import config
+from app.extensions import (
+    bootstrap,
+    db, 
+    mail, 
+    login_manager,
+    images,
+    configure_uploads,
+    patch_request_class
+)
+from config import CONFIG_MAPPER
 
-
-bootstrap = Bootstrap()
-db = SQLAlchemy()
-mail = Mail()
-login_manager = LoginManager()
-images = UploadSet("images", extensions=["jpg", "jpeg", "png"])
-login_manager.login_view = "auth.login"
 
 
 def register_blueprints(app):
     """Register blueprints with the application."""
-    from .main import main as main_blueprint
+    from app.blueprints import main as main_blueprint
+    from app.blueprints import auth as auth_blueprint
+    from app.blueprints import settings as settings_blueprint
+    from app.blueprints import users as users_blueprint
+    from app.blueprints import manage as manage_blueprint
+    from app.blueprints import events as events_blueprint
+
     app.register_blueprint(main_blueprint)
-
-    from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
-
-    from .settings import settings as settings_blueprint
     app.register_blueprint(settings_blueprint, url_prefix="/settings")
-
+    app.register_blueprint(users_blueprint, url_prefix="/users")
+    app.register_blueprint(manage_blueprint, url_prefix="/manage")
+    app.register_blueprint(events_blueprint, url_prefix="/events")
+    
 
 def register_extensions(app):
     """Register the application instance with the extensions."""
@@ -49,7 +51,7 @@ def add_attributes(app):
     stripe.api_key = app.config["STRIPE_SECRET_KEY"]
     app.stripe = stripe
 
-    # if statement is so that I have the option pf
+    # if statement is so that I have the option of
     # not having Elasticsearch run during testing
     if app.config["ELASTICSEARCH_URL"]:
         app.elasticsearch = Elasticsearch([app.config["ELASTICSEARCH_URL"]])
@@ -61,7 +63,7 @@ def create_app(config_name):
 	the necessary Flask extensions.
 	"""
     app = Flask(__name__.split(".")[0])
-    app.config.from_object(config[config_name])
+    app.config.from_object(CONFIG_MAPPER[config_name])
     register_extensions(app)
     add_attributes(app)
     register_blueprints(app)

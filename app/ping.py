@@ -1,3 +1,7 @@
+"""This module contains a class to be used to keep Heroku's dynos up
+and running.
+"""
+
 import requests
 import time
 import datetime
@@ -40,7 +44,7 @@ class HerokuPinger:
 			time.sleep(60 * 30) #sleep for 30 minutes
 
 	def ping_homepage(self, url):
-		# app = current_app._get_current_object()
+		"""Send a GET request to the heroku homepage."""
 		if url is not None:
 			thread = Thread(target=self.ping, args=[url])
 			thread.start()

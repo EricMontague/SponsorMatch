@@ -1,3 +1,6 @@
+"""This script contains various configuration classes for the application."""
+
+
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -107,7 +110,7 @@ class HerokuConfig(ProductionConfig):
         
 
 
-config = {
+CONFIG_MAPPER = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
     "production": ProductionConfig,
