@@ -4,7 +4,7 @@ occur in the users blueprint.
 
 
 from flask import render_template
-from users import users
+from app.blueprints.users import users
 
 
 @users.app_errorhandler(404)

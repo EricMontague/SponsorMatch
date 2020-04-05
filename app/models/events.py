@@ -2,9 +2,10 @@
 
 
 import math
+from sqlalchemy.ext.hybrid import hybrid_method
 from datetime import datetime
 from app.extensions import db
-from app.helpers import SearchableMixin
+from app.helpers.mixins import SearchableMixin
 
 
 class EventStatus:

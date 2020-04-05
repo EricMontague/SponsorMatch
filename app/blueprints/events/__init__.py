@@ -7,4 +7,4 @@ from flask import Blueprint
 events = Blueprint("events", __name__)
 
 
-from events import views
+from app.blueprints.events import views

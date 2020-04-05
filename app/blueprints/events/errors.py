@@ -4,7 +4,7 @@ occur in the events blueprint.
 
 
 from flask import render_template
-from events import events
+from app.blueprints.events import events
 
 
 @events.app_errorhandler(404)

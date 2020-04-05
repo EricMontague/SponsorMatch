@@ -1,11 +1,11 @@
 """This package contains all of the models for the application."""
 
 
-from models.events import Event, EventCategory, EventType, EventStatus
-from modelsimages import Image, ImageType
-from models.packages import Package
-from models.roles import Role, Permission
-from models.sponsorships import Sponsorship, SponsorshipStatus
-from models.users import User
-from models.videos import Video
-from models.venues import Venue
+from app.models.events import Event, EventCategory, EventType, EventStatus
+from app.models.images import Image, ImageType
+from app.models.packages import Package
+from app.models.roles import Role, Permission
+from app.models.sponsorships import Sponsorship, SponsorshipStatus
+from app.models.users import User
+from app.models.videos import Video
+from app.models.venues import Venue

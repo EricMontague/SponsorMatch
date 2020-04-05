@@ -12,9 +12,8 @@ from wtforms import (
 )
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Optional, Email
-from app.helpers import STATES
-from ..models import EventCategory, EventType
-from app.helpers import FormMixin
+from app.helpers import STATES, FormMixin
+from app.models import EventCategory, EventType
 
 
 class SearchForm(FlaskForm):

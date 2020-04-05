@@ -14,14 +14,14 @@ from flask import (
 )
 from flask_login import login_user, logout_user, login_required, current_user
 from app.helpers import send_email
-from auth import auth
-from auth.forms import (
+from app.blueprints.auth import auth
+from app.blueprints.auth.forms import (
     LoginForm,
     RegistrationForm,
     PasswordResetRequestForm,
     PasswordResetForm,
 )
-from app.main.forms import SearchForm
+from app.blueprints.main.forms import SearchForm
 from app.models import User, Role
 from app.extensions import db, login_manager
 

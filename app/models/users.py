@@ -7,9 +7,9 @@ from flask_login import UserMixin, AnonymousUserMixin
 from app.extensions import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from models.events import EventStatus, saved_events
-from models.roles import Permission
-from models.sponsorships import SponsorshipStatus
+from app.models.events import EventStatus, saved_events
+from app.models.roles import Permission
+from app.models.sponsorships import SponsorshipStatus
 
 
 class User(UserMixin, db.Model):

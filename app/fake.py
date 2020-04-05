@@ -7,8 +7,8 @@ import uuid
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
-from app.main.forms import PEOPLE_RANGES, TIMES, TIME_FORMAT
-from app import db
+from app.helpers import PEOPLE_RANGES, TIMES, TIME_FORMAT
+from app.extensions import db
 from app.models import (
     User,
     Role,

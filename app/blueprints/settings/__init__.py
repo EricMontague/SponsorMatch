@@ -9,4 +9,4 @@ from flask import Blueprint
 settings = Blueprint("settings", __name__)
 
 
-from settings import views
+from app.blueprints.settings import views

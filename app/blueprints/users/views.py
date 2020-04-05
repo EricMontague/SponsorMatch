@@ -3,7 +3,7 @@
 
 import os
 from flask_login import login_required, current_user
-from users import users
+from app.blueprints.users import users
 from app.extensions import db
 from flask import (
     render_template,
@@ -24,8 +24,8 @@ from app.models import (
     EventStatus,
     SponsorshipStatus
 )
-from app.events.forms import UploadImageForm, RemoveImageForm
-from app.users.forms import EditProfileForm, EditProfileAdminForm
+from app.blueprints.events.forms import UploadImageForm, RemoveImageForm
+from app.blueprints.users.forms import EditProfileForm, EditProfileAdminForm
 from app.helpers import admin_required
 
 

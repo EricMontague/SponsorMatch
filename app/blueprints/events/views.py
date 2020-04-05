@@ -5,9 +5,9 @@ import os
 import uuid
 from datetime import datetime
 from flask_login import login_required, current_user
-from events import events
+from app.blueprints.events import events
 from sqlalchemy.exc import IntegrityError
-from app.email import send_email
+from app.helpers import send_email
 from app.extensions import db, images
 from flask import (
     render_template,
@@ -20,7 +20,7 @@ from flask import (
     session,
     jsonify
 )
-from events.forms import (
+from app.blueprints.events.forms import (
     CreateEventForm,
     EventDetailsForm,
     EventPackagesForm,

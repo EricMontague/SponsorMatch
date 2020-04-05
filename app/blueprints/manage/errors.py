@@ -4,7 +4,7 @@ occur in the manage blueprint.
 
 
 from flask import render_template
-from manage import manage
+from app.blueprints.manage import manage
 
 
 @manage.app_errorhandler(404)

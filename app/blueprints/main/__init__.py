@@ -3,8 +3,9 @@ from flask import Blueprint
 
 main = Blueprint("main", __name__)
 
-from . import views, errors
-from ..models import Permission, EventStatus, SponsorshipStatus
+
+from app.blueprints.main import views, errors
+from app.models import Permission, EventStatus, SponsorshipStatus
 
 
 # makes the Permission class available to all templates

@@ -4,7 +4,7 @@ occur in the settings blueprint.
 
 
 from flask import render_template
-from main import main
+from app.blueprints.settings import settings
 
 
 @settings.app_errorhandler(404)

@@ -3,12 +3,11 @@
 
 from flask_wtf import FlaskForm
 from app.models import EventCategory, EventType
-from app.helpers import FormMixin
 from datetime import datetime, date
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.fields.html5 import DateField, URLField
 from wtforms.validators import DataRequired, Length, URL, NumberRange, Email
-from app.helpers import STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES
+from app.helpers import STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES, FormMixin
 from wtforms import (
     SubmitField,
     StringField,

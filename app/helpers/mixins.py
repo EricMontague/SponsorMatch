@@ -2,9 +2,9 @@
 
 
 from datetime import datetime
-from app import db
-from helpers.search import add_to_index, remove_from_index, query_index, delete_index
-from helpers.form_constants import TIME_FORMAT
+from app.extensions import db
+from app.helpers.search import add_to_index, remove_from_index, query_index, delete_index
+from app.helpers.form_constants import TIME_FORMAT
 
 
 class FormMixin:

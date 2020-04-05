@@ -7,9 +7,9 @@ from flask_login import current_user, login_required
 from app.models import User, Permission
 from app.helpers import send_email
 from app.extensions import db
-from settings.forms import ChangePasswordForm, ChangeEmailForm, CloseAccountForm
-from settings import settings
-from app.users.forms import EditProfileForm
+from app.blueprints.settings import settings
+from app.blueprints.settings.forms import ChangePasswordForm, ChangeEmailForm, CloseAccountForm
+from app.blueprints.users.forms import EditProfileForm
 from app.helpers import permission_required
 
 

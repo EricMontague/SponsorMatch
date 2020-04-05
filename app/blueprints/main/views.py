@@ -13,8 +13,8 @@ from flask import (
     make_response
 )
 from flask_login import login_required, current_user
-from main import main
-from main.forms import AdvancedSearchForm, SearchForm
+from app.blueprints.main import main
+from app.blueprints.main.forms import AdvancedSearchForm, SearchForm
 from app.extensions import db
 from app.models import Event, Venue
    

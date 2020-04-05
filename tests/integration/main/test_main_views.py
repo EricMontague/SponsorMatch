@@ -6,6 +6,8 @@ from app.extensions import db
 from app.models import User, Role, Event, EventType, EventCategory, Venue, Package
 
 
+#need to put some of these tests in the events folder instead since I changed
+#the project structure around
 class MainViewsTestCase(unittest.TestCase):
     """Class to test view functions in the main blueprint."""
 

@@ -3,10 +3,10 @@
 
 from datetime import datetime
 from flask_login import login_required, current_user
-from manage import manage
+from app.blueprints.manage import manage
 from app.extensions import db
 from flask import render_template, url_for, redirect, abort
-from manage.forms import DropdownForm
+from app.blueprints.manage.forms import DropdownForm
 from app.helpers import permission_required, admin_required
 from app.models import (
     User,
