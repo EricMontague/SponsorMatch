@@ -80,7 +80,7 @@ def create_event():
         )
         db.session.add(event)
         db.session.commit()
-        return redirect(url_for("main.event_details", id=event.id))
+        return redirect(url_for("events.event_details", id=event.id))
     return render_template("events/create_event.html", form=form, event=event)
 
 
@@ -93,7 +93,7 @@ def edit_basic_info(id):
     form.submit.label.text = "Update Event"
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     if form.validate_on_submit():
         event.title = form.title.data
         event_type = EventType.query.get(form.event_type.data)
@@ -111,7 +111,7 @@ def edit_basic_info(id):
         event.end_datetime = datetime.combine(form.end_date.data, end_time)
         db.session.commit()
         flash("Your changes were saved.")
-        return redirect(url_for("main.edit_basic_info", id=id))
+        return redirect(url_for("events.edit_basic_info", id=id))
     venue = event.venue
     form.title.data = event.title
     form.event_type.data = event.event_type.id
@@ -143,14 +143,14 @@ def event_details(id):
     main_image_path = event.main_image
 
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
 
     if details_form.validate_on_submit():
         event.description = details_form.description.data
         event.pitch = details_form.pitch.data
         db.session.commit()
         flash("Update successful.")
-        return redirect(url_for("main.event_details", id=event.id))
+        return redirect(url_for("events.event_details", id=event.id))
     # pre-fill fields
     details_form.description.data = event.description
     details_form.pitch.data = event.pitch
@@ -172,7 +172,7 @@ def add_event_image(id):
     form = UploadImageForm()
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     if form.validate_on_submit():
         filename = images.save(form.image.data)
         image_type = ImageType.query.filter_by(name="Main Event Image").first()
@@ -180,8 +180,8 @@ def add_event_image(id):
         db.session.add(image)
         db.session.commit()
         flash("Your image was successfully uploaded.")
-        return redirect(url_for("main.event_details", id=id))
-    return redirect(url_for("main.event_details", id=event.id))
+        return redirect(url_for("events.event_details", id=id))
+    return redirect(url_for("events.event_details", id=event.id))
 
 
 @events.route("/images/<string:filename>/delete", methods=["POST"])
@@ -190,7 +190,7 @@ def delete_image(filename):
     """View function to delete an image."""
     referrer = request.referrer
     path = "/Users/ericmontague/sponsormatch/app/static/images/" + filename
-    if request.endpoint == "main.edit_profile_admin":
+    if request.endpoint == "events.edit_profile_admin":
         user = User.query.filter_by(profile_photo_path=path).first_or_404()
     else:
         user = current_user._get_current_object()
@@ -204,7 +204,7 @@ def delete_image(filename):
         image = Image.query.filter_by(path=path).first_or_404()
         event = Event.query.get_or_404(image.event_id)
         if not current_user.is_organizer(event) and not current_user.is_administrator():
-            return redirect(url_for("main.index"))
+            return redirect(url_for("events.index"))
         db.session.delete(image)
         db.session.commit()
         flash("Your event image was successfully deleted.")
@@ -221,7 +221,7 @@ def demographics(id):
     form = DemographicsForm()
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     if form.validate_on_submit():
         if form.males.data + form.females.data != 100:
             flash("Sum of males and females must equal 100.")
@@ -233,7 +233,7 @@ def demographics(id):
             event.male_to_female = distribution
             db.session.commit()
             flash("Your information has been successfilly uploaded.")
-            return redirect(url_for("main.demographics", id=id))
+            return redirect(url_for("events.demographics", id=id))
     if event.attendees:
         form.attendees.data = DemographicsForm.choice_id(
             event.attendees, "PEOPLE_RANGES"
@@ -276,7 +276,7 @@ def packages(id):
     event = Event.query.get_or_404(id)
     packages = event.packages.all()
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     if form.validate_on_submit():
         package = Package(
             name=form.name.data,
@@ -292,7 +292,7 @@ def packages(id):
             event=event,
         )
         db.session.commit()
-        return redirect(url_for("main.packages", id=id))
+        return redirect(url_for("events.packages", id=id))
     return render_template(
         "events/packages.html", form=form, event=event, packages=packages
     )
@@ -309,7 +309,7 @@ def edit_package(event_id, package_id):
     event = Event.query.get_or_404(event_id)
     package = event.packages.filter(Package.id == package_id).first_or_404()
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     if form.validate_on_submit():
         package.name = form.name.data
         package.price = form.price.data
@@ -323,7 +323,7 @@ def edit_package(event_id, package_id):
         )
         db.session.commit()
         flash("Package details were successfully updated.")
-        return redirect(url_for("main.packages", id=event_id))
+        return redirect(url_for("events.packages", id=event_id))
     packages = event.packages.all()
     form.name.data = package.name
     form.price.data = package.price
@@ -347,11 +347,11 @@ def delete_package(event_id, package_id):
     """
     event = Event.query.get_or_404(event_id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     package = event.packages.filter(Package.id == package_id).first_or_404()
     db.session.delete(package)
     db.session.commit()
-    return jsonify({"url": url_for("main.packages", id=event.id)})
+    return jsonify({"url": url_for("events.packages", id=event.id)})
 
 
 @events.route("/<int:id>/video", methods=["POST"])
@@ -361,7 +361,7 @@ def add_video(id):
     """Add a video to the database for an event."""
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     upload_video_form = UploadVideoForm()
     if upload_video_form.validate_on_submit():
         video = Video(
@@ -370,11 +370,11 @@ def add_video(id):
         db.session.add(video)
         db.session.commit()
         flash("Your upload was successful.")
-        return redirect(url_for("main.media", id=id))
+        return redirect(url_for("events.media", id=id))
     else:
         session["upload_video_form_errors"] = upload_video_form.video_url.errors
         session["video_url"] = upload_video_form.video_url.data
-    return redirect(url_for("main.media", id=event.id))
+    return redirect(url_for("events.media", id=event.id))
 
 
 @events.route("/<int:id>/misc-images", methods=["POST"])
@@ -384,7 +384,7 @@ def add_misc_images(id):
     """Add multiple images to the database for an event."""
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     image_form = MultipleImageForm()
     if image_form.validate_on_submit():
         image_type = ImageType.query.filter_by(name="Misc").first()
@@ -396,10 +396,10 @@ def add_misc_images(id):
             db.session.add(image)
         db.session.commit()
         flash("Your upload was successful.")
-        return redirect(url_for("main.media", id=id))
+        return redirect(url_for("events.media", id=id))
     else:
         session["image_form_errors"] = image_form.images.errors
-    return redirect(url_for("main.media", id=event.id))
+    return redirect(url_for("events.media", id=event.id))
 
 
 @events.route("/<int:id>/media", methods=["GET", "POST"])
@@ -419,7 +419,7 @@ def media(id):
     video = event.video
     misc_image_paths = event.misc_images
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     return render_template(
         "events/media.html",
         upload_video_form=upload_video_form,
@@ -439,12 +439,12 @@ def delete_video(event_id, video_id):
     """View function to delete a video."""
     event = Event.query.get_or_404(event_id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     video = Video.query.get_or_404(video_id)
     db.session.delete(video)
     db.session.commit()
     flash("Your video has been deleted.")
-    return redirect(url_for("main.media", id=event_id))
+    return redirect(url_for("events.media", id=event_id))
 
 
 @events.route("/<int:id>/publish", methods=["POST"])
@@ -458,18 +458,18 @@ def publish(id):
     if (
         not current_user.is_organizer(event) and not current_user.is_administrator()
     ) or event.has_ended():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     if event.description is None or event.pitch is None:
         flash("You cannot publish an event without adding a description or pitch.")
-        return redirect(url_for("main.event_details", id=event.id))
+        return redirect(url_for("events.event_details", id=event.id))
     packages = event.packages.all()
     if packages == []:
         flash("You cannot publish an event without adding any packages.")
-        return redirect(url_for("main.packages", id=event.id))
+        return redirect(url_for("events.packages", id=event.id))
     event.published = True
     db.session.commit()
     flash("Your event has been published.")
-    return redirect(url_for("main.index"))
+    return redirect(url_for("events.index"))
 
 
 @events.route("/<int:id>", methods=["GET", "POST"])
@@ -496,7 +496,7 @@ def event(id):
             event=event,
         )
         flash("Your email was sent to the event organizer.")
-        return redirect(url_for("main.event", id=id))
+        return redirect(url_for("events.event", id=id))
     return render_template(
         "events/event.html",
         event=event,
@@ -546,7 +546,7 @@ def delete_event(id):
 
     event = Event.query.get(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     db.session.delete(event)
     db.session.commit()
     return jsonify({"message": "Your event has been successfully deleted."})
@@ -571,7 +571,7 @@ def save_event(id):
 @permission_required(Permission.SPONSOR_EVENT)
 def saved_events():
     """Return a page where sponsors can view their list of saved events."""
-    endpoint = "main.saved_events"
+    endpoint = "events.saved_events"
     events = current_user.saved_events.all()
     return render_template(
         "events/saved_events.html", events=events, endpoint=endpoint
@@ -590,7 +590,7 @@ def delete_saved_event(id):
         return jsonify(
             {"message": "The event was removed from your saved events list."}
         )
-    return redirect(url_for("main.index"))
+    return redirect(url_for("events.index"))
 
 
 @events.route("/<int:id>/sponsorships", methods=["POST"])
@@ -608,10 +608,10 @@ def create_sponsorships(id):
         try:
             sponsorship = Sponsorship(event=event, sponsor=user, package=package)
         except IntegrityError as err:  # need to test this
-            return jsonify({"message": err, "url": url_for("main.event", id=event.id)})
+            return jsonify({"message": err, "url": url_for("events.event", id=event.id)})
         db.session.add(sponsorship)
     db.session.commit()
-    return jsonify({"url": url_for("main.purchase", id=event.id)})
+    return jsonify({"url": url_for("events.purchase", id=event.id)})
 
 
 @events.route("/<int:id>/charge/<int:amount>", methods=["POST"])
@@ -630,7 +630,7 @@ def charge(id, amount):
         Sponsorship.event_id == event.id,
     ).all()
     if sponsorships == []:  # user has no pending deals for this event
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     try:
         customer = current_app.stripe.Customer.create(
             email=request.form["stripeEmail"], source=request.form["stripeToken"]
@@ -653,7 +653,7 @@ def charge(id, amount):
             ):  # out of stock
                 db.session.rollback()
                 flash("The package you attempted to purchase is sold out.")
-                return redirect(url_for("main.event", id=event.id))
+                return redirect(url_for("events.event", id=event.id))
         db.session.commit()
         send_email(
             user.email,
@@ -664,46 +664,46 @@ def charge(id, amount):
             amount=amount,
         )
         flash("Your purchase was successful. A confirmation email was sent to you.")
-        return redirect(url_for("main.manage_sponsorships", status="all"))
+        return redirect(url_for("events.manage_sponsorships", status="all"))
     # refactor needed. Maybe I can make a decorator to handle stripe errors?
     except current_app.stripe.error.CardError as err:
         # Since it's a decline, stripe.error.CardError will be caught
         db.session.rollback()
         flash("There was an error with your card, please try again.")
-        return redirect(url_for("main.event", id=event.id))
+        return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.RateLimitError as err:
         # Too many requests made to the API too quickly
         db.session.rollback()
         flash(
             "Sorry, we are experiencing high traffic volumes. Please wait 30 seconds before retrying your purchase."
         )
-        return redirect(url_for("main.event", id=event.id))
+        return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.InvalidRequestError as err:
         # Invalid parameters were supplied to Stripe's API
         db.session.rollback()
         flash("Invalid parameters were supplied, please try again.")
-        return redirect(url_for("main.event", id=event.id))
+        return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.AuthenticationError as err:
         # Authentication with Stripe's API failed
         db.session.rollback()
         flash(
             "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later."
         )
-        return redirect(url_for("main.event", id=event.id))
+        return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.APIConnectionError as err:
         # Network communication with Stripe failed
         db.session.rollback()
         flash(
             "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later."
         )
-        return redirect(url_for("main.event", id=event.id))
+        return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.StripeError as err:
         # Generic Stripe error
         db.session.rollback()
         flash(
             "We are having issues accessing the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later."
         )
-        return redirect(url_for("main.event", id=event.id))
+        return redirect(url_for("events.event", id=event.id))
     except Exception as err:
         # Something else happened, completely unrelated to Stripe
         db.session.rollback()
@@ -723,7 +723,7 @@ def purchase(id):
     form = ContactForm()
     event = Event.query.get_or_404(id)
     user = current_user._get_current_object()
-    endpoint = "main.purchase"
+    endpoint = "events.purchase"
     publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
     description = "Purchase Sponsorships"
     if form.validate_on_submit():
@@ -736,7 +736,7 @@ def purchase(id):
             event=event,
         )
         flash("Your email was sent to the event organizer.")
-        return redirect(url_for("main.purchase", id=event.id))
+        return redirect(url_for("events.purchase", id=event.id))
     # sponsorship deals for this event that haven't been completed yet
     amount = 0
     sponsorships = []
@@ -744,9 +744,9 @@ def purchase(id):
         if sponsorship.event_id == event.id and sponsorship.is_pending():
             sponsorships.append(sponsorship)
             amount += sponsorship.package.price * 100
-    url = url_for("main.charge", id=event.id, amount=amount)
+    url = url_for("events.charge", id=event.id, amount=amount)
     if sponsorships == []:  # user has no pending deals for this event
-        return redirect(url_for("main.index"))
+        return redirect(url_for("events.index"))
     flash(
         "Please note: Navigating away from or refreshing this page will cancel your purchase."
     )
@@ -785,8 +785,8 @@ def cancel_purchase(id):
                 db.session.rollback()
                 abort(500)
         db.session.commit()
-        return redirect(url_for("main.manage_sponsorships", status="all"))
+        return redirect(url_for("events.manage_sponsorships", status="all"))
     else:  # someone attempts to visit this route outside of the payment process
-        return redirect(url_for("main.manage_sponsorships", status="all"))
+        return redirect(url_for("events.manage_sponsorships", status="all"))
 
 

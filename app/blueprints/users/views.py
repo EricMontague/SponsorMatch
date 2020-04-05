@@ -129,13 +129,13 @@ def add_profile_photo():
                 os.remove(current_user.profile_photo_path)
             except OSError:
                 flash("Upload was unsuccessful, please try again.")
-                return redirect(url_for("main.edit_profile"))
+                return redirect(url_for("users.edit_profile"))
         current_user.profile_photo_path = images.path(filename)
         db.session.commit()
         flash("Your profile photo was successfully uploaded.")
     else:
         session["image_form_errors"] = form.image.errors
-    return redirect(url_for("main.edit_profile"))
+    return redirect(url_for("users.edit_profile"))
 
 
 @users.route("/edit-profile", methods=["GET", "POST"])
@@ -160,7 +160,7 @@ def edit_profile():
         db.session.add(current_user)
         db.session.commit()
         flash("Your profile information has been successfully updated.")
-        return redirect(url_for("main.edit_profile"))
+        return redirect(url_for("users.edit_profile"))
     # prefill form with the user's current information
     profile_form.first_name.data = current_user.first_name
     profile_form.last_name.data = current_user.last_name
@@ -193,13 +193,13 @@ def add_profile_photo_admin(id):
                 os.remove(user.profile_photo_path)
             else:
                 flash("Upload was unsuccessful, please try again.")
-                return redirect(url_for("main.edit_profile_admin", id=id))
+                return redirect(url_for("users.edit_profile_admin", id=id))
         user.profile_photo_path = images.path(filename)
         db.session.commit()
         flash("Photo was successfully uploaded.")
     else:
         session["image_form_errors"] = form.image.errors
-    return redirect(url_for("main.edit_profile_admin", id=id))
+    return redirect(url_for("users.edit_profile_admin", id=id))
 
 
 @users.route("/edit-profile/<int:id>", methods=["GET", "POST"])
@@ -227,7 +227,7 @@ def edit_profile_admin(id):
         db.session.add(user)
         db.session.commit()
         flash("The user's profile information has been successfully updated.")
-        return redirect(url_for("main.edit_profile_admin", id=user.id))
+        return redirect(url_for("users.edit_profile_admin", id=user.id))
     profile_form.first_name.data = user.first_name
     profile_form.last_name.data = user.last_name
     profile_form.company.data = user.company
