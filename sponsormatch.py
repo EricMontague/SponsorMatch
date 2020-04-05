@@ -60,6 +60,33 @@ def make_shell_context():
     )
 
 
+#temporary cli command to setup the environment. will delete this later
+#in favor of Docker containers
+@app.cli.command()
+@click.option(
+    "--fake-data/--no-fake-data", default=True, help="Setup the developement environment."
+)
+def setup_environment(fake_data):
+    """Cli command to setup the development environment. Starts up
+    Elasticsearch, sets up the database and inserts fake data into
+    the database if request.
+    """
+    #create database tables if they don't already exist
+    db.create_all()
+
+    # create or update roles, event types, categories, and image types
+    Role.insert_roles()
+    EventType.insert_event_types()
+    EventCategory.insert_event_categories()
+    ImageType.insert_image_types()
+
+    #add fake data to the database
+    if fake_data:
+        fake = FakeDataGenerator(40, 40)
+        fake.add_all()
+
+
+
 @app.cli.command()
 @click.option(
     "--coverage/--no coverage", default=False, help="Run tests under code coverage."
