@@ -2,4 +2,6 @@ __pycache__
 Data Structures_files
 Data Structures.htm
 .*
+data-dev.sqlite
 sponsormatch.code-workspace
+venv 
