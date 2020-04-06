@@ -13,7 +13,7 @@ from app.blueprints.users.forms import EditProfileForm
 from app.helpers import permission_required
 
 
-@settings.route("/account_information", methods=["GET", "POST"])
+@settings.route("/account-information", methods=["GET", "POST"])
 @login_required
 def account_information():
     """Return a page that let's the user edit their account information."""
@@ -45,7 +45,7 @@ def account_information():
     )
 
 
-@settings.route("/change_password", methods=["GET", "POST"])
+@settings.route("/change-password", methods=["GET", "POST"])
 @login_required
 def change_password():
     """View function that renders the page to allow a user to
@@ -61,7 +61,7 @@ def change_password():
             db.session.add(current_user)
             db.session.commit()
             flash("Your password has been successfully changed.")
-            return redirect(url_for("main.index"))
+            return redirect(url_for("settings.change_password"))
         else:
             flash("You entered an invalid password.")
     return render_template(
@@ -73,13 +73,13 @@ def change_password():
     )
 
 
-@settings.route("/change_email", methods=["GET", "POST"])
+@settings.route("/change-email", methods=["GET", "POST"])
 @login_required
 def change_email():
     """View function that reners a page to allow a user to
     change their email
     """
-    title = "Change Your Password"
+    title = "Change Your Email"
     heading = title
     button_classes = "btn btn-primary"
     form = ChangeEmailForm()
@@ -110,7 +110,7 @@ def change_email():
     )
 
 
-@settings.route("/confirm_email_change/<token>", methods=["GET"])
+@settings.route("/confirm-email-change/<token>", methods=["GET"])
 @login_required
 def confirm_email_change(token):
     """View function to confirm the token sent to the user to change their email"""
@@ -126,7 +126,7 @@ def confirm_email_change(token):
     return redirect(url_for("main.index"))
 
 
-@settings.route("/close_account", methods=["GET", "POST"])
+@settings.route("/close-account", methods=["GET", "POST"])
 @login_required
 def close_account():
     """View function to render the page that allows a user to

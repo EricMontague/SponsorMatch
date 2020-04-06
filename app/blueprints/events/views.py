@@ -490,7 +490,7 @@ def event(id):
         send_email(
             organizer.email,
             f"Event Inquiry - {form.subject.data}",
-            "email/contact_organizer",
+            "events/email/contact_organizer",
             organizer=organizer,
             form=form,
             event=event,
@@ -658,7 +658,7 @@ def charge(id, amount):
         send_email(
             user.email,
             "Your Recent Purchase",
-            "email/purchase",
+            "events/email/purchase",
             user=user,
             sponsorships=sponsorships,
             amount=amount,
@@ -730,7 +730,7 @@ def purchase(id):
         send_email(
             organizer.email,
             f"Event Inquiry - {form.subject.data}",
-            "email/contact_organizer",
+            "events/email/contact_organizer",
             organizer=organizer,
             form=form,
             event=event,

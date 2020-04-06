@@ -33,6 +33,9 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user is not None and user.verify_password(form.password.data):
+            if user.email == current_app.config["ADMIN_EMAIL"] and user.role.name != "Administator":
+                user.role = Role.query.filter_by(name="Administrator").first()
+                db.session.commit()
             login_user(user, form.remember_me.data)
             next_url = request.args.get("next")
             if next_url is None or not next_url.startswith("/"):
@@ -168,7 +171,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@auth.route("/request_password_reset", methods=["GET", "POST"])
+@auth.route("/request-password-reset", methods=["GET", "POST"])
 def request_password_reset():
     """View function for when a user forgets their password
     and makes a request to reset it
@@ -198,7 +201,7 @@ def request_password_reset():
     return render_template("auth/forgot_password.html", form=form)
 
 
-@auth.route("/reset_password/<token>", methods=["GET", "POST"])
+@auth.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     """View function for when a user resets their password"""
     if not current_user.is_anonymous:
