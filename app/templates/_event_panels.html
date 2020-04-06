@@ -6,15 +6,17 @@
 					&vellip;
 				</span>
 				<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
-					<li><a href="{{ url_for('main.event', id=event.id) }}">View</a></li>
-					{% if endpoint == "main.saved_events" %}
+					<li><a href="{{ url_for('events.event', id=event.id) }}">View</a></li>
+					{% if endpoint == "events.saved_events" %}
 						<li class="remove-event"><a>Remove</a></li>
 					{% else %}
-						<li class="save-event"><a>Save</a></li>
+						{% if current_user.can(Permission.SPONSOR_EVENT) %}
+							<li class="save-event"><a>Save</a></li>
+						{% endif %}
 					{% endif %}
 				</ul>
 			</div>
-			<a class="no-link-styling" href="{{ url_for('main.event', id=event.id) }}">
+			<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">
 				<div class="event-panel-content">
 					<div class="row">
 						<div class="col-md-6">

@@ -6,6 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_method
 from datetime import datetime
 from app.extensions import db
 from app.helpers.mixins import SearchableMixin
+from app.models.images import ImageType
 
 
 class EventStatus:

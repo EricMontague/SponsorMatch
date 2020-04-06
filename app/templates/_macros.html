@@ -46,22 +46,22 @@
 	{% elif blueprint=="event" %}
 		<nav class="nav nav-stacked edit-event-nav">
 		   <div class="sidebar-header">
-		   		<h3><a href="{{ url_for('main.edit_basic_info', id=model.id) }}">{{ header }}</a></h3>
+		   		<h3><a href="{{ url_for('events.edit_basic_info', id=model.id) }}">{{ header }}</a></h3>
 		   </div>
 		   <div class="switch-event">
 		   		{% if model.published %} 
-		   			<a href="{{ url_for('main.event', id=model.id) }}">View Event</a><span> | </span><a href="{{ url_for('main.manage_events', status='all') }}">Switch Event</a>
+		   			<a href="{{ url_for('events.event', id=model.id) }}">View Event</a><span> | </span><a href="{{ url_for('events.manage_events', status='all') }}">Switch Event</a>
 		   		{% else %}
-		   			<a href="{{ url_for('main.manage_events', status='all') }}">Switch Event</a>
+		   			<a href="{{ url_for('events.manage_events', status='all') }}">Switch Event</a>
 		   		{% endif %}
 		   	
 		   </div>
 		   <ul class="list-unstyled components">
-		   		<li><a href="{{ url_for('main.edit_basic_info', id=model.id) }}">Basic Info</a></li>
-				<li><a href="{{ url_for('main.event_details', id=model.id) }}">Event Details</a></li>
-				<li><a href="{{ url_for('main.demographics', id=model.id) }}">Demographics</a></li>
-				<li><a href="{{ url_for('main.media', id=model.id) }}">Media</a></li>
-				<li><a href="{{ url_for('main.packages', id=model.id) }}">Packages</a></li>
+		   		<li><a href="{{ url_for('events.edit_basic_info', id=model.id) }}">Basic Info</a></li>
+				<li><a href="{{ url_for('events.event_details', id=model.id) }}">Event Details</a></li>
+				<li><a href="{{ url_for('events.demographics', id=model.id) }}">Demographics</a></li>
+				<li><a href="{{ url_for('events.media', id=model.id) }}">Media</a></li>
+				<li><a href="{{ url_for('events.packages', id=model.id) }}">Packages</a></li>
 			</ul>
 		</nav>
 	{% endif %}

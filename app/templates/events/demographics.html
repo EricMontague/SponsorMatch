@@ -10,7 +10,7 @@
 
 	<div class="edit-event-content">
 		<div class="event-form-group">
-			<form class="demographics-form" method="POST" action="{{ url_for('main.demographics', id=event.id) }}" role="form">
+			<form class="demographics-form" method="POST" action="{{ url_for('events.demographics', id=event.id) }}" role="form">
 				{{ form.hidden_tag() }}
 				{{ wtf.form_errors(form, hiddens="only") }}
 				<div class="demographics">

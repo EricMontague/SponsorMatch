@@ -2,7 +2,7 @@
 	<ul class="users list-unstyled">
 		{% for user in users %}
 			<li class="user col-xs-12 col-sm-4 col-md-3 col-lg-3">
-				<a class="no-link-styling" href="{{ url_for('main.user_profile', company=user.company) }}">
+				<a class="no-link-styling" href="{{ url_for('users.user_profile', company=user.company) }}">
 					<div class="thumbnail">
 						{% if user.profile_photo_path %}
 							<img src="{{ url_for('static', filename='user.profile_photo') }}" alt="User Profile Photo">

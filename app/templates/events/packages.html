@@ -15,7 +15,7 @@
 
 					{% if not event.has_ended() %}
 						<div class="publish-event">
-							<form class="publish-event" method="POST" action="{{ url_for('main.publish', id=event.id) }}">
+							<form class="publish-event" method="POST" action="{{ url_for('events.publish', id=event.id) }}">
 								<input class="btn btn-success" type="submit" value="Publish Event"></input>
 							</form>
 						</div>
@@ -32,11 +32,11 @@
 										&vellip;
 									</span>
 									<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
-										<li><a class="dropdown-item no-link-styling" href="{{ url_for('main.edit_package', event_id=event.id, package_id=package.id) }}">Edit</a></li>
+										<li><a class="dropdown-item no-link-styling" href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">Edit</a></li>
 										<li class="delete-package"><a class="dropdown-item">Delete</a></li>
 									</ul>
 								</div>
-								<a class="no-link-styling" href="{{ url_for('main.edit_package', event_id=event.id, package_id=package.id) }}">
+								<a class="no-link-styling" href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
 									<div class="package-content">
 										<div class="package-details row">
 											<div class="col-md-6">
@@ -84,7 +84,7 @@
 					    	<div>
 					    		
 					    	</div>
-				      		<form id="addPackageForm" method="POST" action="{{ url_for('main.packages', id=event.id) }}" role="form">
+				      		<form id="addPackageForm" method="POST" action="{{ url_for('events.packages', id=event.id) }}" role="form">
 				      			{{ form.hidden_tag() }}
 								{{ wtf.form_errors(form, hiddens="only") }}
 								<div class="row">
@@ -146,7 +146,7 @@
 	if (path[path.length - 1] === "edit") {
 		$("#addPackageModal").modal("show");
 	    $("#addPackageModal").on("hidden.bs.modal", function(e) {
-			window.location.href = "{{ url_for('main.packages', id=event.id) }}";
+			window.location.href = "{{ url_for('events.packages', id=event.id) }}";
 		});
 		$(".modal-footer input").click(function() {
 			$("#addPackageForm").attr("action", fullPath.href);

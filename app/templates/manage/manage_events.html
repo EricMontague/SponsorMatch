@@ -29,12 +29,12 @@
 							&vellip;
 						</span>
 						<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
-							<li><a href="{{ url_for('main.event', id=event.id) }}">View</a></li>
-							<li><a href="{{ url_for('main.edit_basic_info', id=event.id) }}">Edit</a></li>
+							<li><a href="{{ url_for('events.event', id=event.id) }}">View</a></li>
+							<li><a href="{{ url_for('events.edit_basic_info', id=event.id) }}">Edit</a></li>
 							<li class="delete-event"><a>Delete</a></li>
 						</ul>
 					</div>
-					<a class="no-link-styling" href="{{ url_for('main.edit_basic_info', id=event.id) }}">
+					<a class="no-link-styling" href="{{ url_for('events.edit_basic_info', id=event.id) }}">
 						<div class="event-content">
 							<div class="row">
 								<div class="event-details col-md-6">

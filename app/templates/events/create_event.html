@@ -11,7 +11,7 @@
 	{% endif %}
 	<div class="{% if event %}edit-event-content{% endif %}">
 		<div class="event-form-group">
-			<form class="create-event-form" method="POST" action="{% if event %}{{ url_for('main.edit_basic_info', id=event.id) }}{% else %}{{ url_for('main.create_event') }}{% endif %}" role="form">
+			<form class="create-event-form" method="POST" action="{% if event %}{{ url_for('events.edit_basic_info', id=event.id) }}{% else %}{{ url_for('events.create_event') }}{% endif %}" role="form">
 				{{ form.hidden_tag() }}
 				{{ wtf.form_errors(form, hiddens="only") }}
 				<div class="basic-info">

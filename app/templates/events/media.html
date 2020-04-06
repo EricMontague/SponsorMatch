@@ -10,7 +10,7 @@
 	<div class="edit-event-content">
 		<div class="event-form-group">
 			<!-- Video Form -->
-			<form class="video-form" method="POST" role="form" action="{% if video %}{{ url_for('main.delete_video', event_id=event.id, video_id=video.id) }}{% else %}{{ url_for('main.add_video', id=event.id) }}{% endif %}">
+			<form class="video-form" method="POST" role="form" action="{% if video %}{{ url_for('events.delete_video', event_id=event.id, video_id=video.id) }}{% else %}{{ url_for('events.add_video', id=event.id) }}{% endif %}">
 				{% if video %}
 					{{ remove_video_form.hidden_tag() }}
 					{{ wtf.form_errors(remove_video_form, hiddens="only") }}
@@ -37,7 +37,7 @@
 			</form>
 			
 			<!-- Multiple Image Form -->
-			<form class="multi-image-form" method="POST" action="{{ url_for('main.add_misc_images', id=event.id) }}" role="form" enctype="multipart/form-data">
+			<form class="multi-image-form" method="POST" action="{{ url_for('events.add_misc_images', id=event.id) }}" role="form" enctype="multipart/form-data">
 				{{ image_form.hidden_tag() }}
 				{{ wtf.form_errors(image_form, hiddens="only") }}
 				<div class="multi-image">
@@ -59,7 +59,7 @@
 					{% for path in misc_image_paths %}
 						<div class="col-md-12">
 							<li class="list-unstyled misc-image"><img class="media" src="{{ url_for('static', filename=path) }}"></li>
-							{{ wtf.quick_form(remove_image_form, action=url_for('main.delete_image', filename=path.split("/")[-1]), button_map={"submit": "btn btn-danger delete-media"} )}}
+							{{ wtf.quick_form(remove_image_form, action=url_for('events.delete_image', filename=path.split("/")[-1]), button_map={"submit": "btn btn-danger delete-media"} )}}
 						</div>
 					{% endfor %}
 				</ul>

@@ -28,12 +28,12 @@
 				{% if current_user.is_authenticated %}
 					{% if current_user.can(Permission.CREATE_EVENT) %}
 						<li id="createEvent">
-							<a href="{{ url_for('main.create_event') }}">Create Event</a>
+							<a href="{{ url_for('events.create_event') }}">Create Event</a>
 						</li>
 					{% endif %}
 					{% if current_user.is_administrator() %}
 						<li>
-							<a href="{{ url_for('main.admin_panel', role_name='event organizer') }}">Admin Panel</a>
+							<a href="{{ url_for('manage.admin_panel', role_name='event organizer') }}">Admin Panel</a>
 						</li>
 					{% endif %}
 					<li id="account" class="dropdown">
@@ -42,19 +42,19 @@
 	                    </a>
 	                    <ul class="dropdown-menu">
 	                    	{% if current_user.is_administrator() %}
-	                    		<li><a href="{{ url_for('main.user_profile', company=current_user.company) }}">Admin Profile</a></li>
+	                    		<li><a href="{{ url_for('users.user_profile', company=current_user.company) }}">Admin Profile</a></li>
 	                    	{% elif current_user.can(Permission.CREATE_EVENT) %}
-	                    		<li><a href="{{ url_for('main.user_profile', company=current_user.company) }}">Organizer Profile</a></li>
+	                    		<li><a href="{{ url_for('users.user_profile', company=current_user.company) }}">Organizer Profile</a></li>
 	                    	{% else %}
-	                    		<li><a href="{{ url_for('main.user_profile', company=current_user.company) }}">Sponsor Profile</a></li>
+	                    		<li><a href="{{ url_for('users.user_profile', company=current_user.company) }}">Sponsor Profile</a></li>
 	                    	{% endif %}
 	                    	{% if current_user.can(Permission.CREATE_EVENT) %}
-	                    		<li><a href="{{ url_for('main.create_event') }}">Create Event</a></li>
-	                    		<li><a href="{{ url_for('main.manage_events', status='all') }}">Manage Events</a></li>
+	                    		<li><a href="{{ url_for('events.create_event') }}">Create Event</a></li>
+	                    		<li><a href="{{ url_for('manage.manage_events', status='all') }}">Manage Events</a></li>
 	                    	{% endif %}
 	                    	{% if current_user.can(Permission.SPONSOR_EVENT) %}
-		                    	<li><a href="{{ url_for('main.manage_sponsorships', status='all') }}">Manage Sponsorships</a></li>
-		                    	<li><a href="{{ url_for('main.saved_events') }}">Saved Events</a></li>
+		                    	<li><a href="{{ url_for('manage.manage_sponsorships', status='all') }}">Manage Sponsorships</a></li>
+		                    	<li><a href="{{ url_for('events.saved_events') }}">Saved Events</a></li>
 		                    {% endif %}
 	                    	<li><a href="{{ url_for('settings.account_information') }}">Settings</a></li>
 	                    	<li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>

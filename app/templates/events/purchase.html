@@ -7,7 +7,7 @@
 <div id="{{ event.id }}" class="container purchase">
 	<div class="page-header">
 		<h2>{{ event.title }} | {{ event.start_date("%b %-dth") }} - {{ event.end_date("%-dth %Y") }} </h2>
-		<p>by <a href="{{ url_for('main.user_profile', company=event.user.company) }}" target="_blank">{{ event.user.company }}</a></p>
+		<p>by <a href="{{ url_for('users.user_profile', company=event.user.company) }}" target="_blank">{{ event.user.company }}</a></p>
 		<p class="event-datetime">{{ event.start_date("%A, %b %-d, %Y") }} at {{ event.start_time("%-I:%M %p") }} - {{ event.end_date("%A, %b %-d, %Y") }} at {{ event.end_time("%-I:%M %p") }}</p>
 	</div>
 	<div class="purchase-body">
@@ -97,7 +97,7 @@
 						    	<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactModal">
 						     		Contact Organizer
 								</button> -->
-							    <a id="{{ event.user.company }}" class="view-profile" href="{{ url_for('main.user_profile', company=event.user.company) }}" target="_blank">View Organizer Profile</a>
+							    <a id="{{ event.user.company }}" class="view-profile" href="{{ url_for('users.user_profile', company=event.user.company) }}" target="_blank">View Organizer Profile</a>
 							    
 						    </div>
 						    <div class="events">
@@ -124,7 +124,7 @@
 		            </button>
 		        </div>
 			    <div class="modal-body">
-		      	    <form class="contact-form" method="POST" action="{{ url_for('main.event', id=event.id) }}" role="form">
+		      	    <form class="contact-form" method="POST" action="{{ url_for('events.event', id=event.id) }}" role="form">
 		      		    {{ form.hidden_tag() }}
 						{{ wtf.form_errors(form, hiddens="only") }}
 						<div class="row">

@@ -16,17 +16,17 @@
 					<p class="event-title">{{ event.title }} (Event Ended)</p>
 				{% endif %}
 				<p class="price-range">{{ event.price_range() }}</p>
-				<p class="event-organizer">by <a href="{{ url_for('main.user_profile', company=organizer.company) }}">{{ organizer.company }}</a></p>
+				<p class="event-organizer">by <a href="{{ url_for('users.user_profile', company=organizer.company) }}">{{ organizer.company }}</a></p>
 				{% if current_user.can(Permission.SPONSOR_EVENT) %}
 					<div class="save">
-						<a class="btn btn-primary save-btn" href="{{ url_for('main.save_event', id=event.id) }}">
+						<a class="btn btn-primary save-btn" href="{{ url_for('events.save_event', id=event.id) }}">
 							Save Event
 						</a>
 					</div>
 				{% endif %}
 				{% if current_user == event.user or current_user.is_administrator() %}
 					<div id="editEvent">
-						<a class="btn btn-info" href="{{ url_for('main.edit_basic_info', id=event.id) }}">Edit Event</a>
+						<a class="btn btn-info" href="{{ url_for('events.edit_basic_info', id=event.id) }}">Edit Event</a>
 					</div>
 				{% endif %}
 			</nav>
@@ -45,16 +45,16 @@
 				<p>{{ event.title }} (Event Ended)</p>
 			{% endif %}
 			<p>{{ event.start_date("%a, %b %-d") }}</p>
-			<p class="event-organizer">by <a href="{{ url_for('main.user_profile', company=organizer.company) }}">{{ organizer.company }}</a></p>
+			<p class="event-organizer">by <a href="{{ url_for('users.user_profile', company=organizer.company) }}">{{ organizer.company }}</a></p>
 			<div>
 				{% if current_user.can(Permission.SPONSOR_EVENT) %}
 					
-					<a class="btn btn-primary save-btn" href="{{ url_for('main.save_event', id=event.id) }}">Save Event</a>
+					<a class="btn btn-primary save-btn" href="{{ url_for('events.save_event', id=event.id) }}">Save Event</a>
 					
 				{% endif %}
 				{% if current_user == event.user or current_user.is_administrator() %}
 					
-					<a class="btn btn-info" href="{{ url_for('main.edit_basic_info', id=event.id) }}">Edit Event</a>
+					<a class="btn btn-info" href="{{ url_for('events.edit_basic_info', id=event.id) }}">Edit Event</a>
 					
 				{% endif %}
 			</div>
@@ -184,7 +184,7 @@
 	        </button>
 	     </div>
 	     <div class="modal-body">
-      		<form class="contact-form" method="POST" action="{{ url_for('main.event', id=event.id) }}" role="form">
+      		<form class="contact-form" method="POST" action="{{ url_for('events.event', id=event.id) }}" role="form">
       			{{ form.hidden_tag() }}
 				{{ wtf.form_errors(form, hiddens="only") }}
 				<div class="row">
