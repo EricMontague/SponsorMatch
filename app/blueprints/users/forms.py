@@ -36,6 +36,7 @@ class EditProfileForm(FlaskForm):
         "Website",
         validators=[URL(message="Please provide a valid url."), Optional()],
         default=None,
+        render_kw={"placeholder": "http://www.example.com"}
     )
     submit = SubmitField("Save")
 
