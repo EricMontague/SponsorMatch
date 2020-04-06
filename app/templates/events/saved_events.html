@@ -17,7 +17,7 @@
 		let eventId = $(this).parent().closest("li").attr("id");
 		$.ajax({
 			type: "POST",
-			url: `${window.origin}/saved_events/${eventId}/delete`,
+			url: `${window.origin}/events/saved-events/${eventId}/delete`,
 			success: function() {
 				$(`#${eventId}`).remove();
 			},

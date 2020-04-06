@@ -184,7 +184,7 @@
 	// Delete Sponsorship objects from db if the user navigates away from the page
 	$(window).on("unload", function() {
 		let eventId = $(".container.purchase").attr("id");
-		let success = navigator.sendBeacon(`${window.origin}/events/${eventId}/sponsorships/cancel_purchase`);
+		let success = navigator.sendBeacon(`${window.origin}/events/${eventId}/sponsorships/cancel-purchase`);
 		if (success === true) {
 			window.location.href = window.origin;
 		} else {

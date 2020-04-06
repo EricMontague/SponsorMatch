@@ -93,7 +93,7 @@
 
 	$("#options").change(function() {
 		let status = $("#options :selected").text().toLowerCase();
-		window.location.href = `${window.origin}/manage_events/${status}`
+		window.location.href = `${window.origin}/manage/events/${status}`
 	});
 </script>
 {% endblock %}

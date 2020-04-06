@@ -21,7 +21,7 @@
 <script type="text/javascript">
 	$("#options").change(function() {
 		let status = $("#options :selected").text().toLowerCase();
-		window.location.href = `${window.origin}/admin_panel/${status}`
+		window.location.href = `${window.origin}/manage/admin-panel/${status}`
 	});
 </script>
 {% endblock %}
