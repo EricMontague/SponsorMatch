@@ -75,8 +75,4 @@ class AdvancedSearchForm(FormMixin, FlaskForm):
         if field.data < self.start_date.data:
             raise ValidationError("End date must be on or after start date.")
 
-    def validate_state(self, field):
-        """Custom validation for the state field."""
-        if field.data == 0:
-            raise ValidationError("Please select a state.")
 
