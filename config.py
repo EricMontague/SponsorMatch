@@ -17,7 +17,7 @@ class Config:
     STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
     MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
     MAIL_PORT = int(os.environ.get("MAIL_PORT", "587"))
-    MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "true").lower() in ["true", "on", "1"]
+    MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "true").lower() in {"true", "on", "1"}
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_SUBJECT_PREFIX = "[SponsorMatch]"
@@ -78,7 +78,7 @@ class ProductionConfig(Config):
             mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
             fromaddr=cls.MAIL_SENDER,
             toaddrs=[cls.ADMIN_EMAIL],
-            subtject=cls.MAIL_SUBJECT_PREFIX + " Application Error",
+            subject=cls.MAIL_SUBJECT_PREFIX + " Application Error",
             credentials=credentials,
             secure=secure
         )
