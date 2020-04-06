@@ -66,10 +66,9 @@ def advanced_search():
     on the home page."""
     endpoint = "main.advanced_search"
     form = AdvancedSearchForm()
+    page = request.args.get("page", 1, type=int)
     if form.validate_on_submit():
-        page = request.args.get("page", 1, type=int)
         state = AdvancedSearchForm.choice_value(form.state.data, "STATES")
-        
         query = (
             Event.query.join(Venue, Venue.id == Event.venue_id)
             .filter(Venue.state == state)
@@ -117,10 +116,15 @@ def advanced_search():
         return render_template(
             "main/search.html", events=events, prev_url=prev_url, next_url=next_url
         )
-    events = Event.query.filter(Event.is_ongoing() == True).all()
-    return render_template("main/index.html", events=events, form=form)
-
-
+    pagination = Event.query.filter(Event.is_ongoing() == True).paginate(
+        page, per_page=current_app.config["EVENTS_PER_PAGE"], error_out=False
+    )
+    events = pagination.items
+    return render_template(
+        "main/index.html", events=events, form=form, pagination=pagination
+    )
+    
+    
 @main.route("/search")
 def search():
     """Return search results."""
