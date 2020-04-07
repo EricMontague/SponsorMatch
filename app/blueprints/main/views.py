@@ -75,7 +75,7 @@ def advanced_search():
             .filter(
                 func.Date(Event.start_datetime) >= form.start_date.data,
                 func.Date(Event.start_datetime) <= form.end_date.data,
-                Event.is_ongoing() == True,
+                Event.is_ongoing() == True
             )
         )
         # user selected all categories an omitted city
