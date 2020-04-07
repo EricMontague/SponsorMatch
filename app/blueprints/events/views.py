@@ -7,7 +7,6 @@ from datetime import datetime
 from flask_login import login_required, current_user
 from app.blueprints.events import events
 from sqlalchemy.exc import IntegrityError
-from app.helpers import send_email
 from app.extensions import db, images
 from flask import (
     render_template,
@@ -714,17 +713,7 @@ def purchase(id):
     endpoint = "events.purchase"
     publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
     description = "Purchase Sponsorships"
-    if form.validate_on_submit():
-        send_email(
-            organizer.email,
-            f"Event Inquiry - {form.subject.data}",
-            "events/email/contact_organizer",
-            organizer=organizer,
-            form=form,
-            event=event,
-        )
-        flash("Your email was sent to the event organizer.")
-        return redirect(url_for("events.purchase", id=event.id))
+    
     # sponsorship deals for this event that haven't been completed yet
     amount = 0
     sponsorships = []
