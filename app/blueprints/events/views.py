@@ -451,8 +451,7 @@ def publish(id):
     if event.description is None or event.pitch is None:
         flash("You cannot publish an event without adding a description or pitch.")
         return redirect(url_for("events.event_details", id=event.id))
-    packages = event.packages.all()
-    if packages == []:
+    if event.packages.count() == 0:
         flash("You cannot publish an event without adding any packages.")
         return redirect(url_for("events.packages", id=event.id))
     event.published = True
