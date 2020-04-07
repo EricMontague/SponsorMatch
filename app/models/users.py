@@ -182,6 +182,7 @@ class User(UserMixin, db.Model):
             ]
         )
 
+    @property
     def profile_photo(self):
         """Return the directory that the user's profile photo is in along with the image name.
         Example: images/my_photo.jpg
