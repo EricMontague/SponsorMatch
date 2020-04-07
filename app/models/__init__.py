@@ -6,6 +6,6 @@ from app.models.images import Image, ImageType
 from app.models.packages import Package
 from app.models.roles import Role, Permission
 from app.models.sponsorships import Sponsorship, SponsorshipStatus
-from app.models.users import User
+from app.models.users import User, AnonymousUser
 from app.models.videos import Video
 from app.models.venues import Venue
