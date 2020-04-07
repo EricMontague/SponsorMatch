@@ -1,3 +1,6 @@
+"""This module contains tests for the package model."""
+
+
 import unittest
 from integration.testing_data import TestModelFactory
 from app import create_app

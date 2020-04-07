@@ -1,3 +1,6 @@
+"""This module contains tests for the view functions in the auth blueprint."""
+
+
 import unittest
 from integration.testing_data import ViewFunctionTestData, TestModelFactory
 from app import create_app

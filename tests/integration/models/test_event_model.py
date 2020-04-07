@@ -1,3 +1,6 @@
+"""This module contains tests for the event model."""
+
+
 import unittest
 import uuid
 from datetime import datetime, timedelta, date, time

@@ -1,3 +1,6 @@
+"""This module contains test cases for the user model."""
+
+
 import unittest
 import time
 from datetime import datetime

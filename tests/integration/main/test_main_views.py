@@ -1,3 +1,6 @@
+"""This module contains tests for the view functions in the main blueprint."""
+
+
 import unittest
 from datetime import datetime, timedelta
 from integration.testing_data import ViewFunctionTestData, TestModelFactory

@@ -1,3 +1,8 @@
+"""This module contains test data to be used throughout the tests
+as well as classes for creating fake models for testing.
+"""
+
+
 import uuid
 from datetime import date, timedelta, datetime
 from app.models import (

@@ -1,3 +1,8 @@
+"""This module contains tests for the basic functionality and
+setup of the app.
+"""
+
+
 import unittest
 from flask import current_app
 from app import create_app

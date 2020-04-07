@@ -1,3 +1,6 @@
+"""This module contains tests for the sponsorship model."""
+
+
 import unittest
 import uuid
 from datetime import datetime
