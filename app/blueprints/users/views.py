@@ -208,7 +208,7 @@ def delete_image(filename):
     """View function to delete a profile image."""
     referrer = request.referrer
     path = "/Users/ericmontague/sponsormatch/app/static/images/" + filename
-    if request.endpoint == "users.edit_profile_admin": #admin trying to delete a user's photo
+    if current_user.is_administrator(): #admin trying to delete a user's photo
         user = User.query.filter_by(profile_photo_path=path).first_or_404()
     else: #user trying to delete their own photo
         user = current_user._get_current_object()
