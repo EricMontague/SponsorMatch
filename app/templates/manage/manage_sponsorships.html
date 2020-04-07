@@ -100,7 +100,7 @@
 		let packageId = $(this).attr("id");
 		$.ajax({
 			type: "GET",
-			url: `${window.origin}/packages/${packageId}`,
+			url: `${window.origin}/events/packages/${packageId}`,
 			dataType: "json",
 			success: function(response) {
 				$(".price").text(`Price: $${response.price}`);
