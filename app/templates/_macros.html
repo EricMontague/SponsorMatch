@@ -50,7 +50,7 @@
 		   </div>
 		   <div class="switch-event">
 		   		{% if model.published %} 
-		   			<a href="{{ url_for('events.event', id=model.id) }}">View Event</a><span> | </span><a href="{{ url_for('events.manage_events', status='all') }}">Switch Event</a>
+		   			<a href="{{ url_for('events.event', id=model.id) }}">View Event</a><span> | </span><a href="{{ url_for('manage.manage_events', status='all') }}">Switch Event</a>
 		   		{% else %}
 		   			<a href="{{ url_for('manage.manage_events', status='all') }}">Switch Event</a>
 		   		{% endif %}
