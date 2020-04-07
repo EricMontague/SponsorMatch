@@ -29,7 +29,9 @@
 							&vellip;
 						</span>
 						<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
-							<li><a href="{{ url_for('events.event', id=event.id) }}">View</a></li>
+							{% if event.published %}
+								<li><a href="{{ url_for('events.event', id=event.id) }}">View</a></li>
+							{% endif %}
 							<li><a href="{{ url_for('events.edit_basic_info', id=event.id) }}">Edit</a></li>
 							<li class="delete-event"><a>Delete</a></li>
 						</ul>

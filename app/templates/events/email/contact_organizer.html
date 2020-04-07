@@ -1,5 +1,5 @@
 <p>Hi {{ organizer.first_name + " " + organizer.last_name }},</p>
-<p>{{ form.name. data}} ({{ form.email.data }}) has been trying to get in contact with you about your event, <a href="{{ url_for('main.event', id=event.id, _external=True) }}">{{ event.title }}</a>. See their message below:
+<p>{{ form.name. data}} ({{ form.email.data }}) has been trying to get in contact with you about your event, <a href="{{ url_for('events.event', id=event.id, _external=True) }}">{{ event.title }}</a>. See their message below:
 </p>
 <p style="white-space: pre-wrap" >{{ form.message.data }}</p>
 <br>
