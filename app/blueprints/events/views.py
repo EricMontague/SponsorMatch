@@ -93,7 +93,7 @@ def edit_basic_info(id):
     form.submit.label.text = "Update Event"
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     if form.validate_on_submit():
         event.title = form.title.data
         event_type = EventType.query.get(form.event_type.data)
@@ -143,7 +143,7 @@ def event_details(id):
     main_image_path = event.main_image
 
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
 
     if details_form.validate_on_submit():
         event.description = details_form.description.data
@@ -172,7 +172,7 @@ def add_event_image(id):
     form = UploadImageForm()
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     if form.validate_on_submit():
         filename = images.save(form.image.data)
         image_type = ImageType.query.filter_by(name="Main Event Image").first()
@@ -187,27 +187,16 @@ def add_event_image(id):
 @events.route("/images/<string:filename>/delete", methods=["POST"])
 @login_required
 def delete_image(filename):
-    """View function to delete an image."""
+    """View function to delete an event image."""
     referrer = request.referrer
     path = "/Users/ericmontague/sponsormatch/app/static/images/" + filename
-    if request.endpoint == "events.edit_profile_admin":
-        user = User.query.filter_by(profile_photo_path=path).first_or_404()
-    else:
-        user = current_user._get_current_object()
-    if path == user.profile_photo_path:
-        if os.path.exists(path):
-            os.remove(path)
-        user.profile_photo_path = None
-        db.session.commit()
-        flash("Your profile photo was successfully deleted.")
-    else:  # deleting an event image
-        image = Image.query.filter_by(path=path).first_or_404()
-        event = Event.query.get_or_404(image.event_id)
-        if not current_user.is_organizer(event) and not current_user.is_administrator():
-            return redirect(url_for("events.index"))
-        db.session.delete(image)
-        db.session.commit()
-        flash("Your event image was successfully deleted.")
+    image = Image.query.filter_by(path=path).first_or_404()
+    event = Event.query.get_or_404(image.event_id)
+    if not current_user.is_organizer(event) and not current_user.is_administrator():
+        return redirect(url_for("main.index"))
+    db.session.delete(image)
+    db.session.commit()
+    flash("Your event image was successfully deleted.")
     return redirect(referrer)
 
 
@@ -221,7 +210,7 @@ def demographics(id):
     form = DemographicsForm()
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     if form.validate_on_submit():
         if form.males.data + form.females.data != 100:
             flash("Sum of males and females must equal 100.")
@@ -276,7 +265,7 @@ def packages(id):
     event = Event.query.get_or_404(id)
     packages = event.packages.all()
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     if form.validate_on_submit():
         package = Package(
             name=form.name.data,
@@ -309,7 +298,7 @@ def edit_package(event_id, package_id):
     event = Event.query.get_or_404(event_id)
     package = event.packages.filter(Package.id == package_id).first_or_404()
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     if form.validate_on_submit():
         package.name = form.name.data
         package.price = form.price.data
@@ -347,7 +336,7 @@ def delete_package(event_id, package_id):
     """
     event = Event.query.get_or_404(event_id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     package = event.packages.filter(Package.id == package_id).first_or_404()
     db.session.delete(package)
     db.session.commit()
@@ -361,7 +350,7 @@ def add_video(id):
     """Add a video to the database for an event."""
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     upload_video_form = UploadVideoForm()
     if upload_video_form.validate_on_submit():
         video = Video(
@@ -384,7 +373,7 @@ def add_misc_images(id):
     """Add multiple images to the database for an event."""
     event = Event.query.get_or_404(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     image_form = MultipleImageForm()
     if image_form.validate_on_submit():
         image_type = ImageType.query.filter_by(name="Misc").first()
@@ -419,7 +408,7 @@ def media(id):
     video = event.video
     misc_image_paths = event.misc_images
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     return render_template(
         "events/media.html",
         upload_video_form=upload_video_form,
@@ -439,7 +428,7 @@ def delete_video(event_id, video_id):
     """View function to delete a video."""
     event = Event.query.get_or_404(event_id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     video = Video.query.get_or_404(video_id)
     db.session.delete(video)
     db.session.commit()
@@ -458,7 +447,7 @@ def publish(id):
     if (
         not current_user.is_organizer(event) and not current_user.is_administrator()
     ) or event.has_ended():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     if event.description is None or event.pitch is None:
         flash("You cannot publish an event without adding a description or pitch.")
         return redirect(url_for("events.event_details", id=event.id))
@@ -469,7 +458,7 @@ def publish(id):
     event.published = True
     db.session.commit()
     flash("Your event has been published.")
-    return redirect(url_for("events.index"))
+    return redirect(url_for("main.index"))
 
 
 @events.route("/<int:id>", methods=["GET", "POST"])
@@ -546,7 +535,7 @@ def delete_event(id):
 
     event = Event.query.get(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     db.session.delete(event)
     db.session.commit()
     return jsonify({"message": "Your event has been successfully deleted."})
@@ -590,7 +579,7 @@ def delete_saved_event(id):
         return jsonify(
             {"message": "The event was removed from your saved events list."}
         )
-    return redirect(url_for("events.index"))
+    return redirect(url_for("main.index"))
 
 
 @events.route("/<int:id>/sponsorships", methods=["POST"])
@@ -630,7 +619,7 @@ def charge(id, amount):
         Sponsorship.event_id == event.id,
     ).all()
     if sponsorships == []:  # user has no pending deals for this event
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     try:
         customer = current_app.stripe.Customer.create(
             email=request.form["stripeEmail"], source=request.form["stripeToken"]
@@ -746,7 +735,7 @@ def purchase(id):
             amount += sponsorship.package.price * 100
     url = url_for("events.charge", id=event.id, amount=amount)
     if sponsorships == []:  # user has no pending deals for this event
-        return redirect(url_for("events.index"))
+        return redirect(url_for("main.index"))
     flash(
         "Please note: Navigating away from or refreshing this page will cancel your purchase."
     )
