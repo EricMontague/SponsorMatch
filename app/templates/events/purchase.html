@@ -141,12 +141,7 @@
 	$(window).on("unload", function() {
 		let eventId = $(".container.purchase").attr("id");
 		let success = navigator.sendBeacon(`${window.origin}/events/${eventId}/sponsorships/cancel-purchase`);
-		if (success === true) {
-			window.location.href = window.origin;
-		} else {
-			window.location.href = window.origin;
-		}
-		
+		window.location.href = window.origin;
 		return false;
 	});
 
