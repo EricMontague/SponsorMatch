@@ -93,12 +93,7 @@
 						     	<h4 class="company">{{ event.user.company }}</h4>
 						    </div>
 						    <div class="organizer-details">
-						    	<!-- Turn this into an ajax POST request later -->
-						    	<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactModal">
-						     		Contact Organizer
-								</button> -->
-							    <a id="{{ event.user.company }}" class="view-profile" href="{{ url_for('users.user_profile', company=event.user.company) }}" target="_blank">View Organizer Profile</a>
-							    
+							    <a id="{{ event.user.company }}" class="view-profile" href="{{ url_for('users.user_profile', company=event.user.company) }}" target="_blank">View Organizer Profile</a> 
 						    </div>
 						    <div class="events">
 						        <a id="upcomingEvents"><span class="badge">{{ event.user.num_events_hosted(EventStatus.LIVE) }}</span> upcoming events</a>
@@ -110,46 +105,6 @@
 			</div>
 		</div>
 	</div>
-		
-
-
-	<!-- Contact Modal -->
-	<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalCenterTitle" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-		    <div class="modal-content">
-		        <div class="modal-header">
-		            <h3 class="modal-title" id="contactTitle">Contact Organizer</h3>
-		            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		                <span aria-hidden="true">&times;</span>
-		            </button>
-		        </div>
-			    <div class="modal-body">
-		      	    <form class="contact-form" method="POST" action="{{ url_for('events.event', id=event.id) }}" role="form">
-		      		    {{ form.hidden_tag() }}
-						{{ wtf.form_errors(form, hiddens="only") }}
-						<div class="row">
-						    <div class="col-md-12">
-								{{ wtf.form_field(form.name) }}
-							</div>
-							<div class="col-md-12">
-								{{ wtf.form_field(form.email) }}
-							</div>
-							<div class="col-md-12">
-								{{ wtf.form_field(form.subject) }}
-							</div>
-							<div class="col-md-12">
-								{{ wtf.form_field(form.message) }}
-							</div>
-		      			</div>
-		      			<div class="modal-footer">
-					        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					        {{ wtf.form_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
-						</div>
-		      		</form>
-			     </div>
-		    </div>
-		</div>
-	</div>
 </div>
 	
 {% endblock %}
@@ -158,19 +113,20 @@
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript">
-	let regexPrice = /\d+\.\d{2}/;
 	let subtotal = 0;
 	let userCompany = $(".view-profile").attr("id");
 
-	//Show the modal if the user entered invalid data
-	// let formErrors = {{ form.errors | safe }};
-	// if ($.isEmptyObject(formErrors) === false) {
-	// 	$("#contactModal").modal("show");
-	// }
-
+	
 	// Calculate sales tax, order total, set form action attribute and script data-amount attribute
 	$(".subtotal").each(function(index) {
-		subtotal += parseFloat(regexPrice.exec($(this).text()));
+		let price = "";
+		let elementText = $(this).text();
+		for (let index = 0; index < elementText.length; index ++) {
+			if (elementText[index] === "." || $.isNumeric(elementText[index])) {
+				price += elementText[index];
+			} 
+		}
+		subtotal += parseFloat(price);
 	});
 	let calculateSalesTax = function() {
 		return (subtotal * 0.08).toFixed(2);
