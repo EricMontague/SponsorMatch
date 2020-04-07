@@ -1,3 +1,8 @@
+"""This module contains test cases to test the functionality
+between SQLAlchemy and Elasticsearch.
+"""
+
+
 import unittest
 import time
 from datetime import datetime, timedelta
@@ -5,7 +10,7 @@ from app import create_app
 from app.extensions import db
 from integration.testing_data import TestModelFactory
 from app.models import Event
-from elasticsearch2.exceptions import NotFoundError, RequestError, SerializationError
+from elasticsearch.exceptions import NotFoundError, RequestError, SerializationError
 
 
 class EventSearchTestCase(unittest.TestCase):
