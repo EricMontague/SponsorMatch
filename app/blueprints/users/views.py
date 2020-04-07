@@ -4,7 +4,7 @@
 import os
 from flask_login import login_required, current_user
 from app.blueprints.users import users
-from app.extensions import db
+from app.extensions import db, images
 from flask import (
     render_template,
     url_for,
@@ -201,6 +201,26 @@ def add_profile_photo_admin(id):
         session["image_form_errors"] = form.image.errors
     return redirect(url_for("users.edit_profile_admin", id=id))
 
+
+@users.route("/images/<string:filename>/delete", methods=["POST"])
+@login_required
+def delete_image(filename):
+    """View function to delete a profile image."""
+    referrer = request.referrer
+    path = "/Users/ericmontague/sponsormatch/app/static/images/" + filename
+    if request.endpoint == "users.edit_profile_admin": #admin trying to delete a user's photo
+        user = User.query.filter_by(profile_photo_path=path).first_or_404()
+    else: #user trying to delete their own photo
+        user = current_user._get_current_object()
+    if os.path.exists(path):
+        os.remove(path)
+        user.profile_photo_path = None
+        db.session.commit()
+        flash("Your profile photo was successfully deleted.")
+    else:
+        abort(404)
+    return redirect(referrer)
+    
 
 @users.route("/edit-profile/<int:id>", methods=["GET", "POST"])
 @login_required
