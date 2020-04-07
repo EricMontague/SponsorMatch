@@ -33,7 +33,7 @@
 					{% endif %}
 					{% if current_user.is_administrator() %}
 						<li>
-							<a href="{{ url_for('manage.admin_panel', role_name='event organizer') }}">Admin Panel</a>
+							<a href="{{ url_for('manage.admin_panel', role_name='all') }}">Admin Panel</a>
 						</li>
 					{% endif %}
 					<li id="account" class="dropdown">
