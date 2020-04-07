@@ -86,7 +86,7 @@ def manage_sponsorships(status):
     )
 
 
-@manage.route("/admin_panel/<role_name>")
+@manage.route("/admin-panel/<role_name>")
 @login_required
 @admin_required
 def admin_panel(role_name):
