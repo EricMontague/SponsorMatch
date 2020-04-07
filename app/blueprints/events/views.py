@@ -8,6 +8,7 @@ from flask_login import login_required, current_user
 from app.blueprints.events import events
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db, images
+from app.helpers import send_email
 from flask import (
     render_template,
     url_for,
@@ -643,7 +644,7 @@ def charge(id, amount):
                 return redirect(url_for("events.event", id=event.id))
         db.session.commit()
         send_email(
-            user.email,
+            customer.email,
             "Your Recent Purchase",
             "events/email/purchase",
             user=user,
@@ -651,7 +652,7 @@ def charge(id, amount):
             amount=amount,
         )
         flash("Your purchase was successful. A confirmation email was sent to you.")
-        return redirect(url_for("events.manage_sponsorships", status="all"))
+        return redirect(url_for("manage.manage_sponsorships", status="all"))
     # refactor needed. Maybe I can make a decorator to handle stripe errors?
     except current_app.stripe.error.CardError as err:
         # Since it's a decline, stripe.error.CardError will be caught
@@ -712,7 +713,6 @@ def purchase(id):
     user = current_user._get_current_object()
     endpoint = "events.purchase"
     publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
-    description = "Purchase Sponsorships"
     
     # sponsorship deals for this event that haven't been completed yet
     amount = 0
@@ -762,8 +762,7 @@ def cancel_purchase(id):
                 db.session.rollback()
                 abort(500)
         db.session.commit()
-        return redirect(url_for("events.manage_sponsorships", status="all"))
-    else:  # someone attempts to visit this route outside of the payment process
-        return redirect(url_for("events.manage_sponsorships", status="all"))
+    return redirect(url_for("manage.manage_sponsorships", status="all"))
+    
 
 
