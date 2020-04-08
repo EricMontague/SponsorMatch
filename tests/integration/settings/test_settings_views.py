@@ -39,7 +39,7 @@ class SettingsViewsTestCase(unittest.TestCase):
         db.session.commit()
 
         # Should be redirected if not logged in
-        response = self.client.get("/settings/change_password", follow_redirects=True)
+        response = self.client.get("/settings/change-password", follow_redirects=True)
         self.assertTrue(response.status_code, 200)
         self.assertTrue(
             "Please log in to access this page" in response.get_data(as_text=True)
@@ -55,7 +55,7 @@ class SettingsViewsTestCase(unittest.TestCase):
 
             # send GET request
             response = self.client.get(
-                "/settings/change_password", follow_redirects=True
+                "/settings/change-password", follow_redirects=True
             )
             self.assertTrue(response.status_code, 200)
             self.assertTrue("Account Information" in response.get_data(as_text=True))
@@ -65,7 +65,7 @@ class SettingsViewsTestCase(unittest.TestCase):
 
             # send POST request
             response = self.client.post(
-                "/settings/change_password",
+                "/settings/change-password",
                 data={
                     "old_password": ViewFunctionTestData.VALID_CHANGE_PASSWORD_DATA[
                         "old_password"
@@ -110,7 +110,7 @@ class SettingsViewsTestCase(unittest.TestCase):
             for data in ViewFunctionTestData.INVALID_CHANGE_PASSWORD_DATA:
                 with self.subTest(data=data):
                     response = self.client.post(
-                        "/settings/change_password",
+                        "/settings/change-password",
                         data={
                             "old_password": data["old_password"],
                             "new_password": data["new_password"],
@@ -133,7 +133,7 @@ class SettingsViewsTestCase(unittest.TestCase):
         db.session.commit()
 
         # Should be redirected if not logged in
-        response = self.client.get("/settings/close_account", follow_redirects=True)
+        response = self.client.get("/settings/close-account", follow_redirects=True)
         self.assertTrue(response.status_code, 200)
         self.assertTrue(
             "Please log in to access this page" in response.get_data(as_text=True)
@@ -148,7 +148,7 @@ class SettingsViewsTestCase(unittest.TestCase):
             )
 
             # Send GET request
-            response = self.client.get("/settings/close_account", follow_redirects=True)
+            response = self.client.get("/settings/close-account", follow_redirects=True)
             self.assertEqual(response.status_code, 200)
             self.assertTrue("Account Information" in response.get_data(as_text=True))
             self.assertTrue("Change Password" in response.get_data(as_text=True))
@@ -161,7 +161,7 @@ class SettingsViewsTestCase(unittest.TestCase):
 
             # Send post request
             response = self.client.post(
-                "/settings/close_account",
+                "/settings/close-account",
                 data={"confirm": "CLOSE"},
                 follow_redirects=True,
             )
@@ -197,7 +197,7 @@ class SettingsViewsTestCase(unittest.TestCase):
             for data in ViewFunctionTestData.INVALID_CLOSE_ACCOUNT_DATA:
                 with self.subTest(data=data):
                     response = self.client.post(
-                        "/settings/close_account",
+                        "/settings/close-account",
                         data={"confirm": data["confirm"]},
                         follow_redirects=True,
                     )
