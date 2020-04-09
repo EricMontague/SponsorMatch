@@ -31,7 +31,7 @@ class SettingsViewsTestCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_change_password_valid_input(self):
-        """Test for senfing valid input to the change password view function."""
+        """Test for sending valid input to the change password view function."""
         role = Role.query.filter_by(name="Event Organizer").first()
         user = TestModelFactory.create_user(password="password")
         user.role = role

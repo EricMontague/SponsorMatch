@@ -200,7 +200,7 @@ class SearchTestCase(unittest.TestCase):
 
         time.sleep(2)
 
-        # searching sugin a list
+        # searching using a list
         with self.assertRaises(RequestError):
             ids, num_results = query_index("testing_index", ["Eric's", "Foobar"], 1, 1)
 

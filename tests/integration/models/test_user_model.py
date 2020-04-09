@@ -496,7 +496,7 @@ class UserModelTestCase(unittest.TestCase):
         db.session.add(user)
         db.session.commit()
 
-        profile_photo_path = user.profile_photo()
+        profile_photo_path = user.profile_photo
         self.assertEqual(profile_photo_path, "images/test_image.jpg")
 
 

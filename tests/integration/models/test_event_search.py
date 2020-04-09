@@ -109,7 +109,7 @@ class EventSearchTestCase(unittest.TestCase):
         venue_two = TestModelFactory.create_venue(address="456 Main St.")
         event_one = TestModelFactory.create_event("Eric's Foobar", "live")
         event_two = TestModelFactory.create_event(
-            "Eric's Party", "live", event_type="Convetion", event_category="Sports"
+            "Eric's Party", "live", event_type="Convention", event_category="Sports"
         )
         event_one.user = user
         event_two.user = user
@@ -169,7 +169,7 @@ class EventSearchTestCase(unittest.TestCase):
 
         time.sleep(2)
 
-        # searching sugin a list
+        # searching using a list
         with self.assertRaises(RequestError):
             query_obj, num_results = Event.search(["Eric's", "Foobar"], 1, 1)
 
