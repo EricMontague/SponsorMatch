@@ -2,6 +2,7 @@
 Elasticsearch operations.
 """
 
+
 from flask import current_app
 
 
