@@ -23,10 +23,11 @@ from app.models import (
     Sponsorship,
 )
 from flask_migrate import upgrade
-from app.extensions import db
+from app.extensions import db, migrate
 
 
-app = create_app(os.environ.get("FLASK_ENV") or "default")
+app = create_app(os.environ.get("FLASK_CONFIG") or "default")
+migrate.init_app(app, db)
 
 
 
