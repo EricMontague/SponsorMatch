@@ -96,8 +96,11 @@ def setup_environment(fake_data):
 def test(coverage, test_names):
     """Run the unit tests. Typing the --no-coverage option or leaving
     the OPTION field blank, will run the unit tests without printing a
-    coverage report.
+    coverage report. Must be run from the root directory of the project.
     """
+    #add the root project directory to the python path so that the app directory
+    #and all subdirectories are able to be imported during tests
+    sys.path.insert(0, os.path.dirname(__file__))
     if coverage and not os.environ.get("FLASK_COVERAGE"):
         import subprocess
 
@@ -105,7 +108,6 @@ def test(coverage, test_names):
         sys.exit(subprocess.call(sys.argv))
 
     import unittest
-
     if test_names:
         tests = unittest.TestLoader().loadTestsFromNames(test_names)
     else:
