@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta
 from app import create_app
 from app.extensions import db
-from integration.testing_data import TestModelFactory
+from tests.integration.testing_data import TestModelFactory
 from app.models import Event
 from elasticsearch.exceptions import NotFoundError, RequestError, SerializationError
 
@@ -133,8 +133,8 @@ class EventSearchTestCase(unittest.TestCase):
         self.assertEqual(num_results, 0)
 
         query_obj, num_results = Event.search("Eric's Fooba", 1, 2)
-        self.assertEqual(query_obj.all()[0], event_two)
-        self.assertEqual(query_obj.all()[1], event_one)
+        self.assertEqual(query_obj.all()[0], event_one)
+        self.assertEqual(query_obj.all()[1], event_two)
         self.assertEqual(num_results, 2)
 
         query_obj, num_results = Event.search("Eric", 1, 2)
@@ -176,14 +176,6 @@ class EventSearchTestCase(unittest.TestCase):
         # searching using a model
         with self.assertRaises(SerializationError):
             query_obj, num_results = Event.search(event, 1, 1)
-
-        # zero as a starting page number
-        with self.assertRaises(RequestError):
-            query_obj, num_results = Event.search("Eric's Foobar", 0, 1)
-
-        # negative results per page
-        with self.assertRaises(RequestError):
-            query_obj, num_results = Event.search("Eric's Foobar", 1, -1)
 
         # string page number
         with self.assertRaises(TypeError):

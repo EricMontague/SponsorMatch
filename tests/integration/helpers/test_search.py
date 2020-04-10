@@ -5,7 +5,7 @@ the elasticsearch api."""
 import unittest
 import time
 from app import create_app
-from integration.testing_data import TestModelFactory
+from tests.integration.testing_data import TestModelFactory
 from app.helpers.search import add_to_index, remove_from_index, query_index, delete_index
 from app.models import Event
 from elasticsearch.exceptions import NotFoundError, RequestError, SerializationError
@@ -172,8 +172,8 @@ class SearchTestCase(unittest.TestCase):
         self.assertEqual(num_results, 0)
 
         ids, num_results = query_index("testing_index", "Eric's Fooba", 1, 2)
-        self.assertEqual(ids[0], event_two.id)
-        self.assertEqual(ids[1], event_one.id)
+        self.assertEqual(ids[0], event_one.id)
+        self.assertEqual(ids[1], event_two.id)
         self.assertEqual(num_results, 2)
 
         ids, num_results = query_index("testing_index", "Eric", 1, 2)
@@ -207,14 +207,6 @@ class SearchTestCase(unittest.TestCase):
         # searching using a model
         with self.assertRaises(SerializationError):
             ids, num_results = query_index("testing_index", event, 1, 1)
-
-        # zero as a starting page number
-        with self.assertRaises(RequestError):
-            ids, num_results = query_index("testing_index", "Eric's Foobar", 0, 1)
-
-        # negative results per page
-        with self.assertRaises(RequestError):
-            ids, num_results = query_index("testing_index", "Eric's Foobar", 1, -1)
 
         # string page number
         with self.assertRaises(TypeError):
