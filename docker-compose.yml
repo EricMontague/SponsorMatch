@@ -1,21 +1,19 @@
-version: "3"
+version: "3.7"
 
 services:
   
   sponsormatch:
     build: .
+    image: sponsormatch:latest
     ports:
-      - 8000:5000
+      - "8000:5000"
     env_file: .docker-env
-    links:
-      - sponsormatch-postgres: dbserver
-      - sponsormatch-elasticsearch: elasticsearch
     restart: always
 
   database:
     image: "postgres:latest"
     ports:
-      - 5432:5432
+      - "5432:5432"
     env_file: .database-env
     volumes:
       - database-data:/var/lib/postgresql/data
@@ -23,7 +21,6 @@ services:
 
   elasticsearch:
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.6.2"
-    container_name: sponsormatch-elasticsearch
     environment:
       - discovery.type=single-node
     ulimits:
@@ -38,7 +35,7 @@ services:
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
+      - "9200:9200"
     restart: always
 
 volumes:
