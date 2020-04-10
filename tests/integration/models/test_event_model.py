@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timedelta, date, time
 from app import create_app
 from app.extensions import db
-from integration.testing_data import TestModelFactory
+from tests.integration.testing_data import TestModelFactory
 from app.models import ImageType, Event
 
 

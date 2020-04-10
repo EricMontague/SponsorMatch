@@ -4,7 +4,7 @@
 import unittest
 import uuid
 from datetime import datetime
-from integration.testing_data import TestModelFactory
+from tests.integration.testing_data import TestModelFactory
 from app import create_app
 from app.extensions import db
 from app.models import Sponsorship

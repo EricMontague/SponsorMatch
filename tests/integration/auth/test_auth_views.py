@@ -2,7 +2,7 @@
 
 
 import unittest
-from integration.testing_data import ViewFunctionTestData, TestModelFactory
+from tests.integration.testing_data import ViewFunctionTestData, TestModelFactory
 from app import create_app
 from app.extensions import db
 from app.models import User, Role
