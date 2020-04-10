@@ -23,6 +23,7 @@ RUN apk del .build-deps
 
 COPY app app
 COPY migrations migrations
+COPY tests tests
 COPY sponsormatch.py config.py boot.sh ./
 RUN chmod +x boot.sh
 
