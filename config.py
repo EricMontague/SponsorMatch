@@ -50,7 +50,7 @@ class TestingConfig(Config):
     """Class to setup the testing configuration for the application"""
     TESTING = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URL") or "sqlite://"
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
 
 
 class ProductionConfig(Config):
