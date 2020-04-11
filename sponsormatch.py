@@ -141,7 +141,7 @@ def deploy(fake_data):
     EventCategory.insert_event_categories()
     ImageType.insert_image_types()
 
-    #add fake data to the database
+    #add fake data to the database if there isn't already fake data in the tables
     if fake_data:
         fake = FakeDataGenerator(40, 40)
         fake.add_all()
