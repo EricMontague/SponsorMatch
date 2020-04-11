@@ -1,7 +1,12 @@
 #!/bin/sh
 source venv/bin/activate
 while true; do
-    flask deploy --fake-data
+    if [[ -z "${USE_FAKE_DATA}" ]]; then
+        flask deploy
+    else
+        flask deploy --fake-data
+    fi
+
     if [[ "$?" == "0" ]]; then
         break
     fi
