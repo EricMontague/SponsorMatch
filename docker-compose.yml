@@ -8,6 +8,8 @@ services:
     ports:
       - "8000:5000"
     env_file: .docker-env
+    environment: 
+      - USE_FAKE_DATA
     restart: always
 
   database:
