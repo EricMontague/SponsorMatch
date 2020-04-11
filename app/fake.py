@@ -36,6 +36,7 @@ class FakeDataGenerator:
 
     def add_all(self):
         """Create all necessary tables and create all resources."""
+        
         self.add_users()
         self.add_events()
         self.add_packages()
