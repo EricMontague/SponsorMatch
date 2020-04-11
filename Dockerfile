@@ -1,7 +1,9 @@
 FROM python:3.7.7-alpine3.11
 
+
 ENV FLASK_APP sponsormatch.py
 ENV FLASK_CONFIG docker
+
 
 RUN adduser -D sponsormatch
 
@@ -23,7 +25,6 @@ RUN apk del .build-deps
 
 COPY app app
 COPY migrations migrations
-COPY tests tests
 COPY sponsormatch.py config.py boot.sh ./
 RUN chmod +x boot.sh
 
