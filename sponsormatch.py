@@ -100,7 +100,9 @@ def test(coverage, test_names):
     """
     #add the root project directory to the python path so that the app directory
     #and all subdirectories are able to be imported during tests
-    sys.path.insert(0, os.path.dirname(__file__))
+    directory = os.path.dirname(__file__)
+    if directory not in sys.path:
+        sys.path.insert(0, directory)
     if coverage and not os.environ.get("FLASK_COVERAGE"):
         import subprocess
 

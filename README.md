@@ -40,3 +40,6 @@ Also, the application will send real emails, so be aware of this when using it. 
  - Add a feature for discovering nearby events using a geolocation API
  - Add tests for the Stripe API
 
+
+## Credits
+  - Code for authentication as well as the Elasticsearch integration comes from [Miguel Grinberg](https://github.com/miguelgrinberg)
