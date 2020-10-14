@@ -474,15 +474,17 @@ def event(id):
     other_media["video"] = event.video
     other_media["misc_image_paths"] = event.misc_images
     packages = event.packages.all()
+    # commented out because the fake data generated for the demo of
+    # this app by the Faker package may inadvertently contain real email addresses
     if form.validate_on_submit():
-        send_email(
-            organizer.email,
-            f"Event Inquiry - {form.subject.data}",
-            "events/email/contact_organizer",
-            organizer=organizer,
-            form=form,
-            event=event,
-        )
+        # send_email(
+        #     organizer.email,
+        #     f"Event Inquiry - {form.subject.data}",
+        #     "events/email/contact_organizer",
+        #     organizer=organizer,
+        #     form=form,
+        #     event=event,
+        # )
         flash("Your email was sent to the event organizer.")
         return redirect(url_for("events.event", id=id))
     return render_template(
