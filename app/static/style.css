@@ -737,9 +737,7 @@ div.dropdown ul.ellipsis-menu {
 	margin-top: 15px;
 }
 
-.sponsorship-details {
-	
-}
+
 
 .sponsorship-details h4.event-title:hover {
 	text-decoration: underline;
@@ -921,6 +919,58 @@ table {
 	width: 80%;
 }
 
+.nav.edit-event-nav {
+	background-color: #f8f7fa;
+	width: 25%;
+	min-height: 100vh;
+	transition: transform 0.3s ease-in-out;
+}
+
+.nav.edit-event-nav h3 {
+	color: #222;
+	padding: 15px 15px 15px 25px
+
+}
+
+.nav.edit-event-nav .sidebar-header h3 a {
+	color: #222;
+	word-break: break-word;
+	text-decoration: none;
+}
+
+.nav.edit-event-nav .sidebar-header h3 a:hover {
+	color: #3659e3;
+	text-decoration: underline;
+}
+
+.switch-event {
+	padding-left: 25px;
+	padding-right: 15px;
+}
+
+.switch-event span {
+	color: #337AB7;
+}
+
+.nav.edit-event-nav ul.components {
+	margin-top: 20px;
+}
+
+.nav.edit-event-nav ul li a {
+	color: #222;
+	padding: 8px 25px;
+	font-size: 18px;
+	display: block;
+	text-decoration: none;
+	word-break: break-word;
+}
+
+
+.nav.edit-event-nav ul li a:hover {
+	background-color: #fff;
+	transition: background-color 0.3s;
+}
+
 
 @media (max-width: 768px) {
 	.container {
@@ -994,60 +1044,25 @@ table {
 	.profile-tabs #pastSponsorship a {
 		padding-left: 17px;
 	}
+
+	.nav.edit-event-nav {
+		position: absolute;
+		top: 50px;
+		float: none;
+		transform: translateX(-100%);
+		opacity: 0.9;
+		width: 50%;
+		z-index: 2;
+	}
+
+	.edit-event-content {
+		width: 100%;
+	}
 }
 
 
 
-.nav.edit-event-nav {
-	background-color: #f8f7fa;
-	width: 25%;
-	min-height: 100vh;
-}
 
-.nav.edit-event-nav h3 {
-	color: #222;
-	padding: 15px 15px 15px 25px
-
-}
-
-.nav.edit-event-nav .sidebar-header h3 a {
-	color: #222;
-	word-break: break-word;
-	text-decoration: none;
-}
-
-.nav.edit-event-nav .sidebar-header h3 a:hover {
-	color: #3659e3;
-	text-decoration: underline;
-}
-
-.switch-event {
-	padding-left: 25px;
-	padding-right: 15px;
-}
-
-.switch-event span {
-	color: #337AB7;
-}
-
-.nav.edit-event-nav ul.components {
-	margin-top: 20px;
-}
-
-.nav.edit-event-nav ul li a {
-	color: #222;
-	padding: 8px 25px;
-	font-size: 18px;
-	display: block;
-	text-decoration: none;
-	word-break: break-word;
-}
-
-
-.nav.edit-event-nav ul li a:hover {
-	background-color: #fff;
-	transition: background-color 0.3s;
-}
 
 
 /*CSS for Settings blueprint*/
@@ -1074,7 +1089,7 @@ table {
 
 .nav.settings-nav ul li a {
 	color: #222;
-	padding: 8px 0;
+	padding: 8px;
 	font-size: 16px;
 	display: block;
 	text-decoration: none;
@@ -1086,15 +1101,31 @@ table {
 	transition: background-color 0.3s;
 }
 
+#sidebar-toggle {
+	display: none;
+	position: absolute;
+	top: 50px;
+	right: 15px;
+	border: 1px solid #333;
+}
+
+#sidebar-toggle .icon-bar {
+	background: #333;
+}
+
+
 .settings .sidebar-wrapper {
 	width: 25%;
-	display: inline-block;
 	float: left;
+	transition: transform 0.3s ease-in-out;
+}
+
+.slide-in-sidebar {
+	transform: translateX(0) !important;
 }
 
 .settings .content-wrapper {
 	width: 75%;
-	display: inline-block;
 	float: right;
 	min-height: 100vh;
 }
@@ -1126,3 +1157,21 @@ table {
 
 
 
+@media screen and (max-width: 500px) {
+	.settings .sidebar-wrapper {
+		position: absolute;
+		top: 50px;
+		float: none;
+		width: 50%;
+		opacity: 0.9;
+		transform: translateX(-100%);
+	}
+	
+	.settings .content-wrapper {
+		width: 100%;
+		float: none;
+	}
+	#sidebar-toggle {
+		display: block;
+	}
+}
