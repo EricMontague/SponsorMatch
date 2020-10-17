@@ -1,13 +1,148 @@
 /*CSS that is applied globally */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
 
+:root {
+	--primary-color-override: #2fb7ec;
+	--primary-color-hover: rgb(0, 152, 211);
+	--dark-color-override: #192a32;
+	--light-color-override: #f0f5f7;
+	--medium-color-override: #7e9aa6;
+}
+
+body {
+	background: var(--light-color-override);
+	color: var(--dark-color-override);
+	font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";;
+}
+
+
+/* Visibility */
+.hidden {
+	display: none;
+}
+
+
+/* Spacing */
+
+.pl-4-plus {
+	padding-left: 2rem !important;
+}
+
+.px-4-plus {
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+}
+
+.extra-mb {
+	margin-bottom: 18rem;
+}
+
+/* Sizes */
+.vh-70 {
+	height: 70vh !important;
+}
+
+
+
+
+
+/* Forms */
+.has-search {
+	position: relative;
+}
+
+.has-search .form-control {
+	padding-left: 2.375rem;
+}
+
+ /* WebKit, Blink, Edge */
+.has-search .form-control::-webkit-input-placeholder { 
+	color: rgba(0, 0, 0, 0.4); 
+} 
+
+ /* Mozilla Firefox 4 to 18 */
+.has-search .form-control:-moz-placeholder { 
+	color: rgba(0, 0, 0, 0.4);
+} 
+
+ /* Mozilla Firefox 19+ */
+.has-search .form-control::-moz-placeholder { 
+	color: rgba(0, 0, 0, 0.4);
+ } 
+
+
+ /* Internet Explorer 10-11 */
+.has-search .form-control:-ms-input-placeholder { 
+	color: rgba(0, 0, 0, 0.4);
+} 
+ /* Microsoft Edge */ 
+.has-search .form-control::-ms-input-placeholder { 
+	color: rgba(0, 0, 0, 0.4);
+} 
+
+
+.has-search.form-group svg {
+	position: absolute;
+    z-index: 2;
+    display: block;
+    width: 1rem;
+	height: 1rem;
+	left: 0.5rem;
+    pointer-events: none;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+
+
+
+/* Background */
+.bg-white {
+	background: #fff;
+}
+
+/* Text */
+.text-primary-override {
+	color: var(--primary-color-override);
+}
+
+.text-primary-override:hover {
+	color: var(--primary-color-hover);
+}
+
+/* Buttons */
+.btn-primary-override {
+	color: #fff;
+	background: var(--primary-color-override);
+}
+
+.btn-primary-override:hover {
+	color: #fff;
+	background: var(--primary-color-hover);
+}
+
+/* Navbars */
+.navbar.navbar-light {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* Media Queries */
+
+/* @media (max-width: 576px) {
+	.navbar-collapse .form-inline {
+		order: 2;
+	}
+
+	.navbar-collapse ul.navbar-nav {
+		order: 1;
+	}
+} */
 
 .page-header {
 	border-bottom: 1px solid #ddd;
 }
 
-.extra-margin-bottom {
-	margin-bottom: 80px;
-}
 
 .flash-message {
   position: fixed;
@@ -19,47 +154,6 @@
 	font-weight: bold;
 }
 
-
-/*CSS for auth blueprint*/
-.form-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 70px;
-}
-
-
-.form-wrapper.registration {
-	margin-top: 40px;
-}
-
-.form-wrapper.registration h3 {
-	margin-bottom: 20px;
-}
-
-
-.form-wrapper.forgot-password {
-	margin-top: 90px;
-}
-
-.form-wrapper form {
-  margin-top: 10px;
-
-}
-
-.form-wrapper .registration-form {
-	margin-top: 45px;
-}
-
-.form-wrapper .login-text {
-	margin-top: 20px;
-}
-
-.form-wrapper .payment-message {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
 
 /*CSS for user blueprint*/
 .container.user-container .page-header {
