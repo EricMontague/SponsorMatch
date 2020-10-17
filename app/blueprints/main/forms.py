@@ -22,8 +22,9 @@ class SearchForm(FlaskForm):
     query = StringField(
         "Search",
         validators=[DataRequired()],
-        render_kw={"placeholder": "Search events"},
+        render_kw={"placeholder": "Find events"},
     )
+    search = SubmitField("Search")
 
     def __init__(self, *args, **kwargs):
         # form data will be in the query string of the url
