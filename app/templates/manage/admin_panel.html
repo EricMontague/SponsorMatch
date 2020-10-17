@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends "site_base.html" %}
+{% import "bootstrap/form.html" as wtf %}
 {% import "_macros.html" as macros %}
 
 {% block title %}Admin Panel{% endblock %}
@@ -9,7 +9,7 @@
 	<h1 class="page-header admin-header">Admin Panel</h1>
 	<div class="row manage-forms">
 		<div class="col-md-6">
-			{{ wtf.quick_form(dropdown_form) }}
+			{{ wtf.render_form(dropdown_form) }}
 		</div>
 	</div>
 	{% include "_users.html" %}
@@ -19,7 +19,7 @@
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript">
-	$("#options").change(function() {
+	$("#options").change(function () {
 		let status = $("#options :selected").text().toLowerCase();
 		window.location.href = `${window.origin}/manage/admin-panel/${status}`
 	});

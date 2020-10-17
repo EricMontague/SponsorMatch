@@ -1,16 +1,21 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends "site_base.html" %}
 
 {% block title %}SponsorMatch - Register{% endblock %}
 
 {% block page_content %}
 <div class="container">
-	<div class="form-wrapper registration">
-		<h3>Create an Account</h3>
-		<div class="col-xs-8 col-sm-5 col-md-4 col-lg-4">
-			{{ wtf.quick_form(form, button_map={"submit": "btn btn-primary btn-block register-btn"}) }}
+	<div class="row justify-content-center align-items-center vh-70">
+		<div class="col-md-8 col-lg-6 py-5">
+			<h3 class="text-center mb-3">Create an Account</h3>
+			<form>
+				{{ form.csrf_token() }}
+				{{ wtf.render_form_row([form.first_name, form.last_name], col_map={"first_name": "col-12 col-md-6", "last_name": "col-12 col-md-6"}) }}
+				{{ wtf.render_form_row([form.company, form.email], col_map={"company": "col-12 col-md-6", "email": "col-12 col-md-6"}) }}
+				{{ wtf.render_form_row([form.password, form.role], col_map={"password": "col-12 col-md-6", "role": "col-12 col-md-6"}) }}
+				{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary-override btn-block mt-4"}) }}
+			</form>
 		</div>
 	</div>
 </div>
-<div class="extra-margin-bottom"></div>
+
 {% endblock %}

@@ -1,46 +1,48 @@
-{% extends "base.html" %}
+{% extends "site_base.html" %}
 
 {% block title %}Search Results{% endblock %}
 
 {% block page_content %}
 <div class="container panel-container">
 	<h1 class="page-header">Search Results</h1>
-{% if events %}
+	{% if events %}
 	{% include "_event_panels.html" %}
 	<nav aria-label="...">
 		<ul class="pager">
-			<li{% if not prev_url %} class="disabled"{% endif %}><a href="{% if prev_url %}{{ prev_url }}{% else %}#{% endif %}">Previous</a></li>
-			<li{% if not next_url %} class="disabled"{% endif %}><a href="{% if next_url %}{{ next_url }}{% else %}#{% endif %}">Next</a></li>
+			<li{% if not prev_url %} class="disabled" {% endif %}><a
+					href="{% if prev_url %}{{ prev_url }}{% else %}#{% endif %}">Previous</a></li>
+				<li{% if not next_url %} class="disabled" {% endif %}><a
+						href="{% if next_url %}{{ next_url }}{% else %}#{% endif %}">Next</a></li>
 		</ul>
 	</nav>
-{% else %}
+	{% else %}
 	<div class="no-search-results">
 		<img src="{{ url_for('static', filename='images/magnifying_glass.jpg') }}">
 		<p>No Results Found</p>
 	</div>
-{% endif %}
-{% endblock %}
+	{% endif %}
+	{% endblock %}
 
 
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript">
-	$(".save-event").click(function() {
-		console.log(12);
-		let eventId = $(this).parent().closest("li").attr("id");
-		$.ajax({
-			type: "POST",
-			url: `${window.origin}/events/${eventId}/save`,
-			dataType: "json",
-			success: function(response) {
-				displayAlert(response.message);
-				$(".ellipsis-menu").dropdown("toggle");
-			},
-			error: function(jqXHR, exception) {
-				ajaxErrorHandler(jqXHR, exception);
-			}
+	{% block scripts %}
+	{{ super() }}
+	<script type="text/javascript">
+		$(".save-event").click(function () {
+			console.log(12);
+			let eventId = $(this).parent().closest("li").attr("id");
+			$.ajax({
+				type: "POST",
+				url: `${window.origin}/events/${eventId}/save`,
+				dataType: "json",
+				success: function (response) {
+					displayAlert(response.message);
+					$(".ellipsis-menu").dropdown("toggle");
+				},
+				error: function (jqXHR, exception) {
+					ajaxErrorHandler(jqXHR, exception);
+				}
+			});
+			return false;
 		});
-		return false;
-	});
-</script>
-{% endblock %}
+	</script>
+	{% endblock %}

@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends "site_base.html" %}
+{% import "bootstrap/form.html" as wtf %}
 {% import "_macros.html" as macros %}
 
 {% block title %}SponsorMatch{% endblock %}
@@ -11,35 +11,36 @@
 			<span id="welcome">
 				<p>Welcome,</p>
 				{% if current_user.is_authenticated %}
-				    <p>{{ current_user.first_name + " " + current_user.last_name }}!</p>
+				<p>{{ current_user.first_name + " " + current_user.last_name }}!</p>
 				{% else %}
-				    <p>Stranger!</p>
+				<p>Stranger!</p>
 				{% endif %}
 			</span>
 		</h1>
 		<div class="container advanced">
-			<form class="col-xs-10 col-sm-5 col-md-4 col-lg-4 advanced-search" method="POST" action="{{ url_for('main.advanced_search') }}" role="form`">
+			<form class="col-xs-10 col-sm-5 col-md-4 col-lg-4 advanced-search" method="POST"
+				action="{{ url_for('main.advanced_search') }}" role="form`">
 				{{ form.hidden_tag() }}
 				{{ wtf.form_errors(form, hiddens="only") }}
 				<h3 class="col-md-12">Find Events</h3>
 				<div class="row">
 					<div class="col-md-12">
-						{{ wtf.form_field(form.start_date) }} 
+						{{ wtf.render_field(form.start_date) }}
 					</div>
 					<div class="col-md-12">
-						{{ wtf.form_field(form.end_date) }}
+						{{ wtf.render_field(form.end_date) }}
 					</div>
 					<div class="col-md-12">
-						{{ wtf.form_field(form.city) }}
+						{{ wtf.render_field(form.city) }}
 					</div>
 					<div class="col-md-12">
-						{{ wtf.form_field(form.state) }}
+						{{ wtf.render_field(form.state) }}
 					</div>
 					<div class="col-md-12">
-						{{ wtf.form_field(form.category) }}
+						{{ wtf.render_field(form.category) }}
 					</div>
 					<div class="col-md-12">
-						{{ wtf.form_field(form.submit, button_map={"submit": "btn btn-danger"}) }}
+						{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-danger"}) }}
 					</div>
 				</div>
 			</form>
@@ -52,11 +53,11 @@
 		<li role="presentation"><a href="#">Near You (Coming soon)</a></li>
 	</ul>
 	{% include "_events.html" %}
-	
+
 	{% if pagination %}
-		<div class="pagination">
-			{{ macros.pagination_widget(pagination, "main.index") }}
-		</div>
+	<div class="pagination">
+		{{ macros.pagination_widget(pagination, "main.index") }}
+	</div>
 	{% endif %}
 </div>
 {% endblock %}

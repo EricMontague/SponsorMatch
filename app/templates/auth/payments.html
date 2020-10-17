@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "site_base.html" %}
 
 {% block title %}Payments{% endblock %}
 
@@ -8,19 +8,16 @@
         <h2 class="col-md-4 text-center">Purchase Your Subscription</h2>
         <div class="payment-message col-md-4">
             <p class="text-center">
-            	 We use Stripe as our secure payment provider. Please complete your signup process by purchasing your subscription below.
+                We use Stripe as our secure payment provider. Please complete your signup process by purchasing your
+                subscription below.
             </p>
         </div>
         <form method="POST" action="{{ url }}">
-        	<script
-                src="https://checkout.stripe.com/checkout.js"
-                class="stripe-button"
-                data-key="{{ publishable_key }}"
+            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="{{ publishable_key }}"
                 data-description="{{ description}}"
-                data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-                data-amount="{{ amount }}"
+                data-image="https://stripe.com/img/documentation/checkout/marketplace.png" data-amount="{{ amount }}"
                 data-locale="auto">
-              </script>
+                </script>
         </form>
     </div>
 </div>

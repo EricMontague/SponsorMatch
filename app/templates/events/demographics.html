@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends "site_base.html" %}
+{% import "bootstrap/form.html" as wtf %}
 {% import "_macros.html" as macros %}
 
 {% block title %}Event Demographics{% endblock %}
@@ -10,7 +10,8 @@
 
 	<div class="edit-event-content">
 		<div class="event-form-group">
-			<form class="demographics-form" method="POST" action="{{ url_for('events.demographics', id=event.id) }}" role="form">
+			<form class="demographics-form" method="POST" action="{{ url_for('events.demographics', id=event.id) }}"
+				role="form">
 				{{ form.hidden_tag() }}
 				{{ wtf.form_errors(form, hiddens="only") }}
 				<div class="demographics">
@@ -19,19 +20,19 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							{{ wtf.form_field(form.attendees) }}
+							{{ wtf.render_field(form.attendees) }}
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							{{ wtf.form_field(form.males) }}
+							{{ wtf.render_field(form.males) }}
 						</div>
 						<div class="col-md-12">
-							{{ wtf.form_field(form.females) }}
+							{{ wtf.render_field(form.females) }}
 						</div>
 					</div>
 				</div>
-				{{ wtf.form_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
+				{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
 			</form>
 		</div>
 	</div>

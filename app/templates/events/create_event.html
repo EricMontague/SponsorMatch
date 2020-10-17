@@ -1,19 +1,14 @@
-{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% import
+{% extends "site_base.html" %} {% import "bootstrap/form.html" as wtf %} {% import
 "_macros.html" as macros %} {% block title %}{% if event %}Basic Info{% else
 %}Create Event{% endif %}{% endblock %} {% block page_content %}
-<div
-  class="{% if event %}edit-event-container{% else %}create-event-container{% endif %}"
->
+<div class="{% if event %}edit-event-container{% else %}create-event-container{% endif %}">
   {% if event %} {{ macros.render_sidebar("event", event.title, event) }} {%
   endif %} {% if event %} {% include "sidebar_toggle.html" %} {% endif %}
   <div class="{% if event %}edit-event-content{% endif %}">
     <div class="event-form-group">
-      <form
-        class="create-event-form"
-        method="POST"
+      <form class="create-event-form" method="POST"
         action="{% if event %}{{ url_for('events.edit_basic_info', id=event.id) }}{% else %}{{ url_for('events.create_event') }}{% endif %}"
-        role="form"
-      >
+        role="form">
         {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
         <div class="basic-info">
           <div class="row">
@@ -21,15 +16,15 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              {{ wtf.form_field(form.title) }}
+              {{ wtf.render_field(form.title) }}
             </div>
           </div>
           <div class="row">
             <div class="col-md-6">
-              {{ wtf.form_field(form.event_type) }}
+              {{ wtf.render_field(form.event_type) }}
             </div>
             <div class="col-md-6">
-              {{ wtf.form_field(form.category) }}
+              {{ wtf.render_field(form.category) }}
             </div>
           </div>
         </div>
@@ -40,23 +35,23 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              {{ wtf.form_field(form.venue_name) }}
+              {{ wtf.render_field(form.venue_name) }}
             </div>
           </div>
           <div class="row">
             <div class="col-md-6">
-              {{ wtf.form_field(form.address) }}
+              {{ wtf.render_field(form.address) }}
             </div>
             <div class="col-md-6">
-              {{ wtf.form_field(form.city) }}
+              {{ wtf.render_field(form.city) }}
             </div>
           </div>
           <div class="row">
             <div class="col-md-6">
-              {{ wtf.form_field(form.state) }}
+              {{ wtf.render_field(form.state) }}
             </div>
             <div class="col-md-6">
-              {{ wtf.form_field(form.zip_code) }}
+              {{ wtf.render_field(form.zip_code) }}
             </div>
           </div>
         </div>
@@ -67,24 +62,24 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              {{ wtf.form_field(form.start_date) }}
+              {{ wtf.render_field(form.start_date) }}
             </div>
             <div class="col-md-6">
-              {{ wtf.form_field(form.start_time) }}
+              {{ wtf.render_field(form.start_time) }}
             </div>
           </div>
           <div class="row">
             <div class="col-md-6">
-              {{ wtf.form_field(form.end_date) }}
+              {{ wtf.render_field(form.end_date) }}
             </div>
             <div class="col-md-6">
-              {{ wtf.form_field(form.end_time) }}
+              {{ wtf.render_field(form.end_time) }}
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-3">
-            {{ wtf.form_field(form.submit, button_map={"submit": "btn
+            {{ wtf.render_field(form.submit, button_map={"submit": "btn
             btn-primary"}) }}
           </div>
         </div>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "site_base.html" %}
 {% import "_macros.html" as macros %}
 
 {% block title %}Saved Events{% endblock %}
@@ -13,17 +13,17 @@
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript">
-	$(".remove-event").click(function() {
+	$(".remove-event").click(function () {
 		let eventId = $(this).parent().closest("li").attr("id");
 		$.ajax({
 			type: "POST",
 			url: `${window.origin}/events/saved-events/${eventId}/delete`,
-			success: function() {
+			success: function () {
 				$(`#${eventId}`).remove();
 			},
-			error: function(jqXHR, exception) {
+			error: function (jqXHR, exception) {
 				ajaxErrorHandler(jqXHR, exception);
-			}	
+			}
 		});
 		return false;
 	});

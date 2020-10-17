@@ -1,20 +1,21 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends "site_base.html" %}
+{% import "bootstrap/form.html" as wtf %}
 
 {% block title %}SponsorMatch - Login{% endblock %}
 
 {% block page_content %}
 <div class="container">
-	<div class="form-wrapper">
-		<h3>Sign In</h3>
-		<div class="login col-xs-8 col-sm-5 col-md-4 col-lg-4">
-			{{ wtf.quick_form(form, button_map={"submit": "btn btn-primary btn-block login-btn"}) }}
-		</div>
-		<div class="col-md-4 login-text">
-			<p>Forgot your password? <a href="{{ url_for('auth.request_password_reset') }}">Click here to reset it</a>.</p>
+	<div class="row justify-content-center align-items-center vh-70">
+		<div class="col-md-6 col-lg-4 py-5">
+			<h3 class="text-center mb-3">Sign In</h3>
+
+			{{ wtf.render_form(form, extra_classes="mb-4", button_map={"submit": "btn btn-primary-override btn-block"}) }}
 			<p>New user? <a href="{{ url_for('auth.register') }}">Click here to register</a>.</p>
+			<p>Forgot your password? <a href="{{ url_for('auth.request_password_reset') }}">Reset it
+					here</a>.
+			</p>
+
 		</div>
 	</div>
 </div>
 {% endblock %}
-
