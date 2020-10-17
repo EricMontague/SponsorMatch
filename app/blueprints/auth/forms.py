@@ -43,7 +43,7 @@ class RegistrationForm(FlaskForm):
         render_kw={"placeholder": "Last Name"},
     )
     company = StringField(
-        "Company/Organization",
+        "Company",
         validators=[DataRequired(), Length(1, 64)],
         render_kw={"placeholder": "Company"},
     )
@@ -55,15 +55,9 @@ class RegistrationForm(FlaskForm):
     password = PasswordField(
         "Password",
         validators=[
-            DataRequired(),
-            EqualTo("confirm_password", message="Passwords must match."),
+            DataRequired()
         ],
         render_kw={"placeholder": "Password"},
-    )
-    confirm_password = PasswordField(
-        "Confirm password",
-        validators=[DataRequired()],
-        render_kw={"placeholder": "Confirm Password"},
     )
     role = SelectField("Choose account", coerce=int)
     submit = SubmitField("Create Account")
