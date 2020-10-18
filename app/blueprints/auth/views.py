@@ -41,7 +41,7 @@ def login():
             if next_url is None or not next_url.startswith("/"):
                 next_url = url_for("main.index")
             return redirect(next_url)
-        flash("Invalid email or password.")
+        flash("Invalid email or password.", "danger")
     return render_template("auth/login.html", form=form)
 
 
@@ -50,7 +50,7 @@ def login():
 def logout():
     """View function to handle user logouts"""
     logout_user()
-    flash("You have been logged out.")
+    flash("You have been logged out.", "info")
     return redirect(url_for("main.index"))
 
 
@@ -76,37 +76,16 @@ def register():
         db.session.commit()
         if user.role.name == "Event Organizer":
             flash(
-                "Registration successful!. You will be asked for your payment information upon login."
+                "Registration successful!. You will be asked for your payment information upon login.",
+                "success"
             )
         else:
-            flash("Registration successful!. Please login.")
+            flash("Registration successful!. Please login.", "success")
         return redirect(url_for("auth.login"))
+    print(form.errors)
     return render_template("auth/register.html", form=form)
 
 
-@auth.route("/payments")
-@login_required
-def payments():
-    """Return the template for the page that allows the user to enter 
-    their payment information.
-    """
-    if (
-        current_user.is_anonymous
-        or current_user.has_paid
-        or current_user.role.name != "Event Organizer"
-    ):
-        return redirect(url_for("main.index"))
-    publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
-    description = "Purchase Subscription"
-    amount = 2999
-    url = url_for("auth.charge", amount=amount)
-    return render_template(
-        "auth/payments.html",
-        publishable_key=publishable_key,
-        description=description,
-        url=url,
-        amount=amount,
-    )
 
 
 @auth.route("/charge/<int:amount>", methods=["POST"])
@@ -141,7 +120,7 @@ def charge(amount):
             user=current_user,
             charge=charge,
         )
-        flash("A confirmation email has been sent to your email address.")
+        flash("A confirmation email has been sent to your email address.", "info")
         return redirect(url_for("main.index"))
     except current_app.stripe.error.StripeError:
         abort(500)
@@ -192,12 +171,13 @@ def request_password_reset():
             )
             flash(
                 "An email with instructions to reset your password has been "
-                "sent to your email address."
+                "sent to your email address.",
+                "info"
             )
             session["password_reset"] = True
             return redirect(url_for("auth.login"))
         else:
-            flash("We couldn't find an account with that email address")
+            flash("We couldn't find an account with that email address", "info")
     return render_template("auth/forgot_password.html", form=form)
 
 
@@ -211,11 +191,11 @@ def reset_password(token):
         if form.validate_on_submit():
             if User.reset_password(token, form.password.data):
                 db.session.commit()
-                flash("Your password was successfully changed.")
+                flash("Your password was successfully changed.", "success")
                 session["password_reset"] = False
                 return redirect(url_for("auth.login"))
             else:
-                flash("Your password reset was unsuccessful.")
+                flash("Your password reset was unsuccessful.", "danger")
                 return redirect(url_for("main.index"))
         return render_template("auth/reset_password.html", form=form)
     return redirect(url_for("main.index"))
