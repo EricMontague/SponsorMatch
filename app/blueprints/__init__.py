@@ -7,3 +7,4 @@ from app.blueprints.settings import settings
 from app.blueprints.users import users
 from app.blueprints.manage import manage
 from app.blueprints.events import events
+from app.blueprints.payments import payments
