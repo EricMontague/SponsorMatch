@@ -15,6 +15,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET KEY", "hard to guess string")
     STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
     STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+    SUBSCRIPTION_AMOUNT = 2999  # 29.999
     MAIL_SERVER = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
     MAIL_PORT = int(os.environ.get("MAIL_PORT", "587"))
     MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "true").lower() in {"true", "on", "1"}
@@ -48,6 +49,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Class to setup the testing configuration for the application"""
+
     TESTING = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = "sqlite://"
@@ -57,7 +59,7 @@ class ProductionConfig(Config):
     """Class to setop the production configuration for the application"""
 
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
-    
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
@@ -78,7 +80,7 @@ class ProductionConfig(Config):
             toaddrs=[cls.ADMIN_EMAIL],
             subject=cls.MAIL_SUBJECT_PREFIX + " Application Error",
             credentials=credentials,
-            secure=secure
+            secure=secure,
         )
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
@@ -95,6 +97,7 @@ class HerokuConfig(ProductionConfig):
 
         # handle reverse proxy server headers
         from werkzeug.contrib.fixers import ProxyFix
+
         app.wsgi_app = ProxyFix(app.wsgi_app)
 
         # log to stderr
@@ -112,20 +115,21 @@ class DockerConfig(ProductionConfig):
     @classmethod
     def init__app(cls, app):
         ProductionConfig.init_app(app)
-    
-        #log to stderr
+
+        # log to stderr
         import logging
         from logging import StreamHandler
+
         file_handler = StreamHandler()
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
 
-        
+
 CONFIG_MAPPER = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,
     "production": ProductionConfig,
     "default": DevelopmentConfig,
     "heroku": HerokuConfig,
-    "docker": DockerConfig
+    "docker": DockerConfig,
 }
