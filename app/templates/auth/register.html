@@ -7,8 +7,8 @@
 	<div class="row justify-content-center align-items-center vh-70">
 		<div class="col-md-8 col-lg-6 py-5">
 			<h3 class="text-center mb-3">Create an Account</h3>
-			<form>
-				{{ form.csrf_token() }}
+			<form method="POST" action="{{ url_for('auth.register') }}">
+				{{ form.hidden_tag() }}
 				{{ wtf.render_form_row([form.first_name, form.last_name], col_map={"first_name": "col-12 col-md-6", "last_name": "col-12 col-md-6"}) }}
 				{{ wtf.render_form_row([form.company, form.email], col_map={"company": "col-12 col-md-6", "email": "col-12 col-md-6"}) }}
 				{{ wtf.render_form_row([form.password, form.role], col_map={"password": "col-12 col-md-6", "role": "col-12 col-md-6"}) }}
