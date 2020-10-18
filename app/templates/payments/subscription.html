@@ -1,0 +1,54 @@
+{% extends "site_base.html" %}
+
+{% block title %}Payments{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center vh-70">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Purchase Your Subscription</h2>
+
+            <p class="text-center mb-4 subscription-message">
+                We use Stripe as our secure payment provider. Please complete your signup process by purchasing your
+                subscription below.
+            </p>
+            <div id="checkout-button">Purchase</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- Stripe JS Library -->
+{% block scripts %}
+{{ super() }}
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+    // Create instance of the Stripe obkect
+    const stripe = Stripe({ publishable_key })
+    const checkoutButton = document.getElementById("checkout-button");
+
+    // Create a new Checkout Session on click
+    checkoutButton.addEventListener("click", function () {
+
+        fetch("/payments/create-checkout-session", {
+            method: "POST"
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: sesssion.id })
+            })
+            .then(function (result) {
+                // Handle potential browser or network error
+                if (result.error) {
+                    displayAlert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                displayAlert(error);
+            });
+    })
+</script>
+{% endblock %}
