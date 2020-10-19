@@ -1,12 +1,12 @@
 {% extends "site_base.html" %}
-{% import "_macros.html" as macros %}
+{% import "utils/_macros.html" as macros %}
 
 {% block title %}Saved Events{% endblock %}
 
 {% block page_content %}
 <div class="container saved-events">
 	<h1 class="page-header">Saved Events</h1>
-	{% include "_event_panels.html" %}
+	{% include "utils/_event_panels.html" %}
 </div>
 {% endblock %}
 

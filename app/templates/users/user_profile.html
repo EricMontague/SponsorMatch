@@ -1,5 +1,5 @@
 {% extends "site_base.html" %}
-{% import "_macros.html" as macros %}
+{% import "utils/_macros.html" as macros %}
 
 {% block title %}SponsorMatch - {{ user.company }} {% endblock %}
 
@@ -66,7 +66,7 @@
 		{% endif %}
 	</ul>
 	<div class="event-thumbnails">
-		{% include "_events.html" %}
+		{% include "utils/_events.html" %}
 	</div>
 </div>
 

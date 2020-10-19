@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 {% import "bootstrap/form.html" as wtf %}
-{% import "_macros.html" as macros %}
+{% import "utils/_macros.html" as macros %}
 
 {% block title %}{{ event.title }}{% endblock %}
 
@@ -99,7 +99,7 @@
 			</nav>
 		</div>
 		<div class="event-page-content">
-			{% include "_event_page_content.html" %}
+			{% include "utils/_event_page_content.html" %}
 		</div>
 	</div>
 

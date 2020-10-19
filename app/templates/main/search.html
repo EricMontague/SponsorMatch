@@ -6,7 +6,7 @@
 <div class="container panel-container">
 	<h1 class="page-header">Search Results</h1>
 	{% if events %}
-	{% include "_event_panels.html" %}
+	{% include "utils/_event_panels.html" %}
 	<nav aria-label="...">
 		<ul class="pager">
 			<li{% if not prev_url %} class="disabled" {% endif %}><a

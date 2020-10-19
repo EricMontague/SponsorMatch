@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 {% import "bootstrap/form.html" as wtf %}
-{% import "_macros.html" as macros %}
+{% import "utils/_macros.html" as macros %}
 
 {% block title %}Admin Panel{% endblock %}
 
@@ -12,7 +12,7 @@
 			{{ wtf.render_form(dropdown_form) }}
 		</div>
 	</div>
-	{% include "_users.html" %}
+	{% include "utils/_users.html" %}
 </div>
 {% endblock %}
 

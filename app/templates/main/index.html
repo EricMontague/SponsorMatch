@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 {% import "bootstrap/form.html" as wtf %}
-{% import "_macros.html" as macros %}
+{% import "utils/_macros.html" as macros %}
 
 {% block title %}SponsorMatch{% endblock %}
 
@@ -52,7 +52,7 @@
 		<li class="active" role="presentation"><a href="#">All</a></li>
 		<li role="presentation"><a href="#">Near You (Coming soon)</a></li>
 	</ul>
-	{% include "_events.html" %}
+	{% include "utils/_events.html" %}
 
 	{% if pagination %}
 	<div class="pagination">

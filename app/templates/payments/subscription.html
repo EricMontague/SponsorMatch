@@ -31,7 +31,7 @@
     // Create a new Checkout Session on click
     checkoutButton.addEventListener("click", function () {
 
-        fetch("/payments/create-checkout-session", {
+        fetch("/payments/create-subscription-session", {
             method: "POST"
         })
             .then(function (response) {
