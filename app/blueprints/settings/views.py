@@ -8,41 +8,13 @@ from app.models import User, Permission
 from app.helpers import send_email
 from app.extensions import db
 from app.blueprints.settings import settings
-from app.blueprints.settings.forms import ChangePasswordForm, ChangeEmailForm, CloseAccountForm
+from app.blueprints.settings.forms import (
+    ChangePasswordForm,
+    ChangeEmailForm,
+    CloseAccountForm,
+)
 from app.blueprints.users.forms import EditProfileForm
 from app.helpers import permission_required
-
-
-@settings.route("/account-information", methods=["GET", "POST"])
-@login_required
-def account_information():
-    """Return a page that let's the user edit their account information."""
-    title = "Account Information"
-    heading = title
-    button_classes = "btn btn-primary"
-    form = EditProfileForm(current_user)
-    del form.about
-    if form.validate_on_submit():
-        current_user.first_name = form.first_name.data
-        current_user.last_name = form.last_name.data
-        current_user.company = form.company.data
-        current_user.job_title = form.job_title.data
-        current_user.website = form.website.data
-        db.session.commit()
-        flash("Your account information has been successfully updated.")
-        return redirect(url_for("settings.account_information"))
-    form.first_name.data = current_user.first_name
-    form.last_name.data = current_user.last_name
-    form.company.data = current_user.company
-    form.job_title.data = current_user.job_title
-    form.website.data = current_user.website
-    return render_template(
-        "settings/settings.html",
-        form=form,
-        title=title,
-        heading=heading,
-        button_classes=button_classes,
-    )
 
 
 @settings.route("/change-password", methods=["GET", "POST"])
@@ -53,23 +25,21 @@ def change_password():
     """
     title = "Change Your Password"
     heading = title
-    button_classes = "btn btn-primary"
     form = ChangePasswordForm()
     if form.validate_on_submit():
         if current_user.verify_password(form.old_password.data):
             current_user.password = form.new_password.data
             db.session.add(current_user)
             db.session.commit()
-            flash("Your password has been successfully changed.")
+            flash("Your password has been successfully changed.", "success")
             return redirect(url_for("settings.change_password"))
         else:
-            flash("You entered an invalid password.")
+            flash("You entered an invalid password.", "danger")
     return render_template(
         "settings/settings.html",
         form=form,
         title=title,
-        heading=heading,
-        button_classes=button_classes,
+        heading=heading
     )
 
 
@@ -81,7 +51,6 @@ def change_email():
     """
     title = "Change Your Email"
     heading = title
-    button_classes = "btn btn-primary"
     form = ChangeEmailForm()
     if form.validate_on_submit():
         if current_user.verify_password(form.password.data):
@@ -95,18 +64,18 @@ def change_email():
                 token=token,
             )
             flash(
-                "An email with instructions on how to change your email has been sent to you."
+                "An email with instructions on how to change your email has been sent to you.",
+                "info",
             )
             session["email_change_request"] = True
             return redirect(url_for("main.index"))
         else:
-            flash("You entered an invalid password.")
+            flash("You entered an invalid password.", "danger")
     return render_template(
         "settings/settings.html",
         form=form,
         title=title,
-        heading=heading,
-        button_classes=button_classes,
+        heading=heading
     )
 
 
@@ -120,9 +89,9 @@ def confirm_email_change(token):
         if current_user.change_email(token):
             db.session.commit()
             session["email_change_request"] = False
-            flash("Your email address has been successfully updated!")
+            flash("Your email address has been successfully updated!", "success")
         else:
-            flash("Your email address change was unsuccessful.")
+            flash("Your email address change was unsuccessful.", "danger")
     return redirect(url_for("main.index"))
 
 
@@ -134,20 +103,18 @@ def close_account():
     """
     title = "Close Your Account"
     heading = title
-    button_classes = "btn btn-danger"
     message = 'Please enter "CLOSE" in the field below to confirm the closing of your account.'
     form = CloseAccountForm()
     if form.validate_on_submit():
         # user = current_user._get_current_object()
         db.session.delete(current_user)
         db.session.commit()
-        flash("Your account has been closed.")
+        flash("Your account has been closed.", "info")
         return redirect(url_for("main.index"))
     return render_template(
         "settings/settings.html",
         form=form,
         title=title,
         heading=heading,
-        button_classes=button_classes,
         message=message,
     )
