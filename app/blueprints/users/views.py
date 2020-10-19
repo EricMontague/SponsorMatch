@@ -92,7 +92,7 @@ def user_events(id, status):
         events = [event for event in user.events if event.has_ended()]
     else:
         abort(404)
-    return render_template("_events.html", events=events)
+    return render_template("utils/_events.html", events=events)
 
 
 @users.route("/<int:id>/sponsorships/<status>")
@@ -113,7 +113,7 @@ def user_sponsorships(id, status):
         ]
     else:
         abort(404)
-    return render_template("_events.html", events=events)
+    return render_template("utils/_events.html", events=events)
 
 
 @users.route("/edit-profile/add-photo", methods=["POST"])

@@ -513,7 +513,7 @@ def event_tab(id, tab):
     other_media["misc_image_paths"] = event.misc_images
     if tab == "info":
         return render_template(
-            "_event_page_content.html",
+            "utils/_event_page_content.html",
             event=event,
             image_path=image_path,
             other_media=other_media,
@@ -523,7 +523,7 @@ def event_tab(id, tab):
         for sponsorship in event.sponsorships:
             if not sponsorship.is_pending():
                 users.add(sponsorship.sponsor)
-        return render_template("_users.html", event=event, users=users)
+        return render_template("utils/_users.html", event=event, users=users)
     else:
         abort(404)
 
