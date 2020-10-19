@@ -1,30 +1,50 @@
-{% extends "site_base.html" %} {% import "bootstrap/form.html" as wtf %} {% import
-"_macros.html" as macros %} {% block title %}SponsorMatch - {{ title }}{%
-endblock %} {% block page_content %}
-<button id="sidebar-toggle" type="button" class="navbar-toggle">
+{% extends "site_base.html" %}
+
+{% import "utils/_macros.html" as macros %}
+
+{% block title %}SponsorMatch - {{ title }} {% endblock %}
+
+{% block page_content %}
+<!-- <button id="sidebar-toggle" type="button" class="navbar-toggle">
   <span class="sr-only">Toggle navigation</span>
   <span class="icon-bar"></span>
   <span class="icon-bar"></span>
   <span class="icon-bar"></span>
-</button>
-<div class="settings">
-  <div class="sidebar-wrapper">
-    {{ macros.render_sidebar("settings", "Settings") }}
-  </div>
-  <div class="content-wrapper">
-    <div class="settings-content">
-      <h1>{{ heading }}</h1>
+</button> -->
+
+<div class="row">
+  <nav class="col-md-3 bg-white sidebar">
+    <div class="sidebar-sticky pt-5 px-5">
+      <h4>Settings</h4>
+      <ul class="list-unstyled navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('settings.change_password') }}">Change Password</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('settings.change_email') }}">Change Email</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('settings.close_account') }}">Close Account</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main role="main" class="col-md-6 px-5 py-5">
+    <div class="pt-5">
+      <h1 class="pb-2 mb-4">{{ heading }}</h1>
       {% if message %}
       <p>{{ message }}</p>
       {% endif %}
-      <div>
-        {{ wtf.render_form(form, button_map={"submit": button_classes }) }}
-      </div>
+
+      {% if heading.lower() == "close your account" %}
+      {{ wtf.render_form(form, button_map={"submit": "danger" }) }}
+      {% else %}
+      {{ wtf.render_form(form, button_map={"submit": "primary-override" }) }}
+      {% endif %}
     </div>
-  </div>
+  </main>
 </div>
 
-{% endblock %} {% block scripts %} {{ super() }}
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
 <script type="text/javascript">
   $("#sidebar-toggle").on("click", function (event) {
     $(".sidebar-wrapper").toggleClass("slide-in-sidebar");
