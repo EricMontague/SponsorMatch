@@ -13,7 +13,7 @@
 
 
 {% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
+<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
 	<div class="container">
 		<a class="navbar-brand" href="{{ url_for('main.index') }}">
 			<span class="text-primary-override">Sponsormatch</span>
@@ -69,7 +69,7 @@
 						<a class="dropdown-item" href="{{ url_for('events.saved_events') }}">Saved Events</a>
 						{% endif %}
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="{{ url_for('settings.account_information') }}">Settings</a>
+						<a class="dropdown-item" href="{{ url_for('settings.change_password') }}">Settings</a>
 						<a class="dropdown-item" href="{{ url_for('auth.logout') }}">Log Out</a>
 					</div>
 				</li>
