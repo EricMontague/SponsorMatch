@@ -5,13 +5,13 @@
 	--primary-color-override: #2fb7ec;
 	--primary-color-hover: rgb(0, 152, 211);
 	--dark-color-override: hsl(199, 33%, 15%);
-	--main-bg-color: #f0f5f7;
+	--site-bg-color: #f0f5f7;
 	--light-color-override:#e5e9ef;
 	--medium-color-override: #7e9aa6;
 }
 
 body {
-	background: var(--main-bg-color);
+	background: var(--site-bg-color);
 	color: var(--dark-color-override);
 	font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";;
 }
@@ -29,13 +29,12 @@ body {
 
 /* Navbars */
 .sidebar {
-	position: relative;
-	top: 0;
-	bottom: 0;
-	left: 0;
+	position: absolute;
 	z-index: 200;
 	padding-top: 2.5rem;
 	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+	transform: translateX(-100%);
+	transition: 0.3s transform ease-in-out;
 }
 
 .sidebar-sticky {
@@ -72,6 +71,9 @@ body {
 	padding-right: 2rem !important;
 }
 
+.mt-5-plus {
+	margin-top: 3.5rem !important;
+}
 
 .extra-mb {
 	margin-bottom: 18rem;
@@ -171,7 +173,11 @@ background-color: var(--main-bg-color);;
 
 /* Background */
 .bg-white {
-	background: #fff;
+	background: #fff !important;
+}
+
+.bg-site {
+	background: var(--site-bg-color) !important;
 }
 
 /* Text */
@@ -202,15 +208,13 @@ background-color: var(--main-bg-color);;
 
 /* Media Queries */
 
-/* @media (max-width: 576px) {
-	.navbar-collapse .form-inline {
-		order: 2;
-	}
 
-	.navbar-collapse ul.navbar-nav {
-		order: 1;
+@media (min-width: 768px) {
+	.sidebar {
+		position: relative;
+		transform: translateX(0);
 	}
-} */
+}
 
 .page-header {
 	border-bottom: 1px solid #ddd;
@@ -229,6 +233,13 @@ background-color: var(--main-bg-color);;
 	line-height: 1.7;
 	font-size: 1.1rem;
 }
+
+/*Settings Blueprint Specific Styles */
+.settings-card-header {
+	font-size: 1.4rem;
+}
+
+
 
 /*CSS for user blueprint*/
 .container.user-container .page-header {
@@ -1177,12 +1188,7 @@ table {
   		overflow: hidden;
 		text-overflow: ellipsis;
     }
-    .settings-content h1 {
-    	font-size: 32px;
-    }
-    .settings-content form {
-    	min-width: 75%;
-    }
+   
     .remove-profile-image-form .btn,
     #editProfilePhoto {
     	width: 40%;
@@ -1234,94 +1240,7 @@ table {
 
 
 
-/*CSS for Settings blueprint*/
-.nav.settings-nav {
-	background-color: #f8f7fa;
-	/*background-color: #F0F0F0;*/
-	min-height: 100vh;
-	padding-top: 15px;
-}
 
-.nav.settings-nav h3 {
-	color: #222;
-	padding: 15px 25px 15px;
-	word-break: break-word;
-}
-
-.nav.settings-nav a {
-	text-decoration: none;
-}
-
-.nav.settings-nav ul {
-	margin-left: 25px;
-}
-
-.nav.settings-nav ul li a {
-	color: #222;
-	padding: 8px;
-	font-size: 16px;
-	display: block;
-	text-decoration: none;
-	word-break: break-word;
-}
-
-.nav.settings-nav ul li a:hover {
-	background-color: #fff;
-	transition: background-color 0.3s;
-}
-
-#sidebar-toggle {
-	display: none;
-	position: absolute;
-	top: 50px;
-	right: 15px;
-	border: 1px solid #333;
-}
-
-#sidebar-toggle .icon-bar {
-	background: #333;
-}
-
-
-.settings .sidebar-wrapper {
-	width: 25%;
-	float: left;
-	transition: transform 0.3s ease-in-out;
-}
-
-.slide-in-sidebar {
-	transform: translateX(0) !important;
-}
-
-.settings .content-wrapper {
-	width: 75%;
-	float: right;
-	min-height: 100vh;
-}
-
-.settings-content {
-	margin-top: 40px;
-}
-
-.settings-content h1 {
-	padding-bottom: 18px;
-  	margin: 40px 50px 20px;
-  	border-bottom: 1px solid #ddd;
-}
-
-.settings-content form {
-	padding-left: 50px;
-	width: 50%;
-}
-
-.settings-content p {
-	margin: 25px 50px;
-}
-
-.payment {
-	text-align: right;
-	float: right;
-}
 
 
 
