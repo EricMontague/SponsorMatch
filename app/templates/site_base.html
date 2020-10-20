@@ -94,7 +94,7 @@
 {% endblock %}
 
 {% block content %}
-<div>
+<main class="mt-5-plus">
 	<!-- Messages pushed via AJAX -->
 	<div id="hiddenMessage" class="alert alert-danger hidden flash-message">
 		<button type="button" class="close">&times;</button>
@@ -112,7 +112,7 @@
 	{% endif %}
 	{% endwith %}
 	{% block page_content %}{% endblock %}
-</div>
+</main>
 {% endblock %}
 
 {% block scripts %}
