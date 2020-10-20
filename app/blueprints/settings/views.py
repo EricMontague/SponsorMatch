@@ -39,7 +39,8 @@ def change_password():
         "settings/settings.html",
         form=form,
         title=title,
-        heading=heading
+        heading=heading,
+        endpoint="settings.change_password"
     )
 
 
@@ -75,7 +76,8 @@ def change_email():
         "settings/settings.html",
         form=form,
         title=title,
-        heading=heading
+        heading=heading,
+        endpoint="settings.change_email"
     )
 
 
@@ -117,4 +119,5 @@ def close_account():
         title=title,
         heading=heading,
         message=message,
+        endpoint="settings.close_account"
     )
