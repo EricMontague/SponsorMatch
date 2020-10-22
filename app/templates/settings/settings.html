@@ -5,53 +5,73 @@
 {% block title %}SponsorMatch - {{ title }} {% endblock %}
 
 {% block page_content %}
-<!-- <button id="sidebar-toggle" type="button" class="navbar-toggle">
-  <span class="sr-only">Toggle navigation</span>
-  <span class="icon-bar"></span>
-  <span class="icon-bar"></span>
-  <span class="icon-bar"></span>
-</button> -->
 
-<div class="row vh-100">
+<div class="row vh-100 pb-4">
   <nav class="col-md-4 col-lg-3 bg-site sidebar">
-    <div class="sidebar-sticky pt-5 px-5">
-      <h4>Settings</h4>
+    <div class="sidebar-sticky px-5">
+      <div class="d-flex align-items-center mb-4">
+        {{ utils.render_icon("gear") }}
+        <h4 class="pl-3 mb-0 d-inline">Settings</h4>
+      </div>
       <ul class="list-unstyled navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('settings.change_password') }}">Change Password</a>
+        <li class="nav-item d-flex align-items-center">
+
+          {{ utils.render_icon("key-fill") }}
+          <a class="nav-link pl-3" href="{{ url_for('settings.change_password') }}">Change Password</a>
         </li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('settings.change_email') }}">Change Email</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('settings.close_account') }}">Close Account</a></li>
+        <li class="nav-item d-flex align-items-center">
+          {{ utils.render_icon("envelope-fill") }}
+          <a class="nav-link pl-3" href="{{ url_for('settings.change_email') }}">Change Email</a>
+        </li>
+        <li class="nav-item d-flex align-items-center">
+          {{ utils.render_icon("x-square-fill") }}
+          <a class="nav-link pl-3" href="{{ url_for('settings.close_account') }}">Close Account</a>
+        </li>
       </ul>
     </div>
   </nav>
-  <main role="main" class="col-md-8 col-lg-9 px-5 py-5 bg-white">
-    <div class="pt-5">
-      <div class="card">
-        <div class="card-header settings-card-header bg-white">
-          {{ heading }}
-        </div>
-        <div class="card-body bg-site">
-          {% if message %}
-          <p>{{ message }}</p>
+  <main role="main" class="col-md-8 col-lg-9 px-5 pb-5 bg-white">
+    <div class="sidebar-toggler-wrapper">
+      <button id="sidebarToggleBtn" class="sidebar-toggler" type="button" aria-label="Toggle sidebar">
+        <span class="sidebar-toggler-bar"></span>
+        <span class="sidebar-toggler-bar"></span>
+        <span class="sidebar-toggler-bar"></span>
+      </button>
+    </div>
+    <div class="card mt-5">
+      <div class="card-header settings-card-header bg-white">
+        {{ heading }}
+      </div>
+      <div class="card-body bg-site">
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
+        <form id="settingsForm" action="{{ url_for(endpoint) }}" method="POST">
+          {{form.hidden_tag()}}
+
+          {% for field in form %}
+          {% if field.type != "SubmitField" and field.type != "HiddenField"  and field.type != "CSRFTokenField" %}
+          <div class="form-group row">
+
+            {{ field.label(for=field.id, class="col-form-label text-right-lg flex-grow-lg-30 align-self-start pl-4") }}
+            <div class="pl-4 col-lg-4">
+              {{ field(class_="form-control") }}
+            </div>
+
+          </div>
           {% endif %}
-          <form id="settingsForm" action="{{ url_for(endpoint) }}" method="POST">
-            {{form.hidden_tag()}}
-            {% for field in form %}
-            {% if field.type != "SubmitField" and field.type != "HiddenField"  and field.type != "CSRFTokenField" %}
-            {{ wtf.render_field(field) }}
-            {% endif %}
-            {% endfor %}
-          </form>
-        </div>
-        <div class="card-footer bg-white d-flex justify-content-end">
-          {% if heading.lower() == "close your account" %}
-          <button type="submit" class="btn btn-danger" form="settingsForm">Submit</button>
-          {% else %}
-          <button type="submit" class="btn btn-primary-override" form="settingsForm">Submit</button>
-          {% endif %}
-        </div>
+          {% endfor %}
+        </form>
+      </div>
+      <div class="card-footer bg-white d-flex justify-content-end">
+        {% if heading.lower() == "close your account" %}
+        <button type="submit" class="btn btn-danger" form="settingsForm">Submit</button>
+        {% else %}
+        <button type="submit" class="btn btn-primary-override" form="settingsForm">Submit</button>
+        {% endif %}
       </div>
     </div>
+
   </main>
 </div>
 
@@ -61,8 +81,9 @@
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript">
-  $("#sidebar-toggle").on("click", function (event) {
-    $(".sidebar-wrapper").toggleClass("slide-in-sidebar");
+  $("#sidebarToggleBtn").on("click", function (event) {
+    $(".sidebar").toggleClass("show-sidebar");
+    document.body.classList.add("bg-overlay-dark");
   });
 
 
