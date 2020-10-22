@@ -30,11 +30,12 @@ body {
 /* Navbars */
 .sidebar {
 	position: absolute;
+	width: auto;
 	z-index: 200;
 	padding-top: 2.5rem;
 	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 	transform: translateX(-100%);
-	transition: 0.3s transform ease-in-out;
+	transition: 0.3s transform ease;
 }
 
 .sidebar-sticky {
@@ -54,6 +55,59 @@ body {
 	color: rgba(0, 0, 0, 0.9);
 }
 
+.sidebar-toggler-wrapper {
+	display: flex;
+	margin-top: 1rem;
+	margin-right: 1rem;
+}
+
+.sidebar-toggler {
+	position: relative;
+	padding: 0.25rem 0.75rem;
+	margin-left: auto;
+	height: 2.5rem;
+	width: 2.5rem;
+	background: var(--primary-color-override);
+	color: #fff;
+	border-radius: 0.25rem;
+	border: transparent;
+	line-height: 1;
+	
+	transition: background 0.3s ease-in-out;
+}
+
+.sidebar-toggler:focus {
+	outline: none;
+	border: none;
+}
+
+.sidebar-toggler-bar {
+	position: absolute;
+	background: #fff;
+	left: 0.5rem;
+	right: 0.5rem;
+	height: 3px;
+}
+
+.sidebar-toggler .sidebar-toggler-bar:first-child {
+	top: 25%;
+}
+
+.sidebar-toggler .sidebar-toggler-bar:nth-child(2) {
+	top: 50%;
+}
+
+.sidebar-toggler .sidebar-toggler-bar:last-child {
+	top: 75%;
+}
+
+.sidebar-toggler:hover {
+	background-color: var(--primary-color-hover);
+}
+
+.show-sidebar {
+	transform: translateX(0);
+}
 
 .navbar.navbar-light {
 	border-bottom: 1px solid #e5e9ef;
@@ -158,6 +212,8 @@ background-color: var(--main-bg-color);;
     color: rgba(0, 0, 0, 0.8);
 }
 
+/* Flex */
+
 /* Bootstrap Form Style Overrides */
 
 .was-validated .form-control:invalid:focus, .form-control.is-invalid:focus {
@@ -179,6 +235,19 @@ background-color: var(--main-bg-color);;
 .bg-site {
 	background: var(--site-bg-color) !important;
 }
+
+.bg-overlay-dark {
+	position: absolute;
+	content: '';
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #333;
+	opacity: 0.8;
+}
+
+
 
 /* Text */
 .text-primary-override {
@@ -208,24 +277,30 @@ background-color: var(--main-bg-color);;
 
 /* Media Queries */
 
+@media (min-width: 1024px) {
+	.flex-grow-lg-30 {
+		flex: 30% 0 0;
+	}
+	
+	.text-right-lg {
+		text-align: right !important;
+	}
+}
+
+
 
 @media (min-width: 768px) {
 	.sidebar {
 		position: relative;
 		transform: translateX(0);
 	}
+	.sidebar-toggler-wrapper {
+		display: none;
+	}
+	
+
 }
 
-.page-header {
-	border-bottom: 1px solid #ddd;
-}
-
-
-
-
-.font-weight-bold {
-	font-weight: bold;
-}
 
 
 /* Auth Blueprint Specific Styles */
@@ -238,6 +313,8 @@ background-color: var(--main-bg-color);;
 .settings-card-header {
 	font-size: 1.4rem;
 }
+
+
 
 
 
