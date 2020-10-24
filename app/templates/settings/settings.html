@@ -41,11 +41,11 @@
         <span class="sidebar-toggler-bar"></span>
       </button>
     </div>
-    <div class="card mt-5">
-      <div class="card-header settings-card-header bg-white">
+    <div class="card border-none card-shadow mt-5">
+      <div class="card-header border-none shadow-light-bottom-inset settings-card-header bg-white">
         {{ heading }}
       </div>
-      <div class="card-body bg-site">
+      <div class="card-body shadow-light-bottom-inset bg-site">
         {% if message %}
         <p class="text-center">{{ message }}</p>
         {% endif %}
@@ -66,7 +66,7 @@
           {% endfor %}
         </form>
       </div>
-      <div class="card-footer bg-white d-flex justify-content-end">
+      <div class="card-footer border-none bg-white d-flex justify-content-end">
         {% if heading.lower() == "close your account" %}
         <button type="submit" class="btn btn-danger" form="settingsForm">Close</button>
         {% else %}
