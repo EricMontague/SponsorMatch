@@ -1,18 +1,28 @@
-{% extends "site_base.html" %} {% import "bootstrap/form.html" as wtf %} {% import
-"_macros.html" as macros %} {% block title %}{% if event %}Basic Info{% else
-%}Create Event{% endif %}{% endblock %} {% block page_content %}
-<div class="{% if event %}edit-event-container{% else %}create-event-container{% endif %}">
-  {% if event %} {{ macros.render_sidebar("event", event.title, event) }} {%
-  endif %} {% if event %} {% include "sidebar_toggle.html" %} {% endif %}
-  <div class="{% if event %}edit-event-content{% endif %}">
-    <div class="event-form-group">
-      <form class="create-event-form" method="POST"
+{% extends "site_base.html" %}
+
+{% import "bootstrap/form.html" as wtf %}
+{% import "utils/_macros.html" as macros %}
+
+{% block title %}
+{% if event %}
+Basic Info
+{% else %}
+Create Event
+{% endif %}
+{% endblock %}
+
+{% block page_content %}
+<main class="my-5 px-5">
+  <div class="row d-flex justify-content-center align-items-center">
+    <div class="col-sm-8 col-md-6">
+      <form method="POST"
         action="{% if event %}{{ url_for('events.edit_basic_info', id=event.id) }}{% else %}{{ url_for('events.create_event') }}{% endif %}"
         role="form">
         {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
-        <div class="basic-info">
-          <div class="row">
-            <h2 class="col-md-12 form-header">Basic Info</h2>
+        <section class="mb-5">
+          <div class="d-flex align-items-center mb-4">
+            {{ utils.render_icon("text-paragraph", size="1.8rem", color="2fb7ec") }}
+            <h2 class="pl-4 mb-0">Basic Info</h2>
           </div>
           <div class="row">
             <div class="col-md-12">
@@ -27,11 +37,12 @@
               {{ wtf.render_field(form.category) }}
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="location">
-          <div class="row">
-            <h2 class="col-md-12 form-header">Location</h2>
+        <section class="mb-5">
+          <div class="d-flex align-items-center mb-4">
+            {{ utils.render_icon("geo-alt-fill", size="1.7rem", color="2fb7ec")}}
+            <h2 class="pl-4 mb-0">Location</h2>
           </div>
           <div class="row">
             <div class="col-md-12">
@@ -54,11 +65,12 @@
               {{ wtf.render_field(form.zip_code) }}
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="datetime">
-          <div class="row">
-            <h2 class="col-md-12 form-header">Date and Time</h2>
+        <section class="mb-3">
+          <div class="d-flex align-items-center mb-4">
+            {{ utils.render_icon("calendar-date-fill", size="1.7rem", color="2fb7ec") }}
+            <h2 class="pl-3 mb-0">Date and Time</h2>
           </div>
           <div class="row">
             <div class="col-md-6">
@@ -76,15 +88,13 @@
               {{ wtf.render_field(form.end_time) }}
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-            {{ wtf.render_field(form.submit, button_map={"submit": "btn
-            btn-primary"}) }}
-          </div>
-        </div>
+        </section>
+
+        {{ wtf.render_field(form.submit, button_map={"submit": "primary-override"}) }}
+
+
       </form>
     </div>
   </div>
-</div>
+</main>
 {% endblock %}
