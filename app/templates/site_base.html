@@ -14,7 +14,7 @@
 {% block body %}
 <div class="bg-overlay-dark"></div>
 {% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
+<nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white">
 	<div class="container">
 		<a class="navbar-brand" href="{{ url_for('main.index') }}">
 			<span class="text-primary-override">Sponsormatch</span>
@@ -43,7 +43,7 @@
 						role="button" aria-haspopup="true" aria-expanded="false">
 						Account<strong class="caret"></strong>
 					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 						{% if current_user.is_administrator() %}
 						<a class="dropdown-item"
 							href="{{ url_for('users.user_profile', company=current_user.company) }}">Admin
@@ -82,7 +82,7 @@
 			<!--Search Bar-->
 			<form class="form-inline my-1 order-lg-1" method="GET" action="{{ url_for('main.search') }}">
 
-				<div class="form-group has-search d-flex flex-no-wrap">
+				<div class="form-group has-search d-flex align-items-center flex-no-wrap">
 					{{ utils.render_icon("search") }}
 					<input class="form-control mr-2" type="search" placeholder="Find events" aria-label="Search">
 					<button class="btn btn-primary-override" type="submit">Search</button>
@@ -95,7 +95,7 @@
 {% endblock %}
 
 {% block content %}
-<main class="mt-5-plus">
+<main>
 	<!-- Messages pushed via AJAX -->
 	<div id="hiddenMessage" class="alert alert-danger hidden flash-message">
 		<button type="button" class="close">&times;</button>
