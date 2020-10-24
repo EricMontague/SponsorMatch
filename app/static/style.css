@@ -192,11 +192,13 @@ body {
 
 /* Dropdowns */
 .dropdown-item:hover, .dropdown-item:focus {
-background-color: var(--main-bg-color);;
+	background-color: rgba(222, 241, 248, 0.8);
+	
 }
 
 .dropdown-item.active, .dropdown-item:active {
-background-color: var(--main-bg-color);;
+	color: var(--dark-color-override);
+    background-color: rgba(222, 241, 248, 0.8);
 }
 
 
