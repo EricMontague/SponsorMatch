@@ -14,7 +14,7 @@
 {% block body %}
 <div class="bg-overlay-dark"></div>
 {% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white">
+<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white">
 	<div class="container">
 		<a class="navbar-brand" href="{{ url_for('main.index') }}">
 			<span class="text-primary-override">Sponsormatch</span>
@@ -95,7 +95,8 @@
 {% endblock %}
 
 {% block content %}
-<main>
+<main class="mt-5-plus">
+	<div></div>
 	<!-- Messages pushed via AJAX -->
 	<div id="hiddenMessage" class="alert alert-danger hidden flash-message">
 		<button type="button" class="close">&times;</button>
