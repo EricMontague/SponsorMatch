@@ -1,19 +1,11 @@
 {% extends "site_base.html" %}
 
-{% import "bootstrap/form.html" as wtf %}
-{% import "utils/_macros.html" as macros %}
 
-{% block title %}
-{% if event %}
-Basic Info
-{% else %}
-Create Event
-{% endif %}
-{% endblock %}
+{% block title %}Create Event{% endblock %}
 
 {% block page_content %}
-<main class="my-5 px-5">
-  <div class="row d-flex justify-content-center align-items-center">
+<main class="px-5">
+  <div class="row d-flex justify-content-center align-items-center py-5">
     <div class="col-sm-8 col-md-6">
       <form method="POST"
         action="{% if event %}{{ url_for('events.edit_basic_info', id=event.id) }}{% else %}{{ url_for('events.create_event') }}{% endif %}"
