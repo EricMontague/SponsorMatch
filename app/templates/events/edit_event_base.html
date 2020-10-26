@@ -12,7 +12,7 @@ Create Event
 {% block page_content %}
 
 <div class="row">
-    <nav class="col-md-4 col-lg-3 bg-white sidebar">
+    <nav class="col-lg-4 bg-white sidebar">
         <div class="close-sidebar">
             {{ utils.render_icon("arrow-left", size="1.5rem")}}
         </div>
@@ -58,14 +58,14 @@ Create Event
             </ul>
         </div>
     </nav>
-    <main class="edit-event-content col-md-10 col-lg-9 px-5 py-5">
-        <div class="sidebar-toggler-wrapper">
-            <button id="sidebarToggleBtn" class="sidebar-toggler" type="button" aria-label="Toggle sidebar">
-                <span class="sidebar-toggler-bar"></span>
-                <span class="sidebar-toggler-bar"></span>
-                <span class="sidebar-toggler-bar"></span>
-            </button>
-        </div>
+    <nav class="navbar bg-primary mobile-sidebar-nav">
+        <button id="sidebarToggleBtn" class="sidebar-toggler" type="button" aria-label="Toggle sidebar">
+            <span class="sidebar-toggler-bar"></span>
+            <span class="sidebar-toggler-bar"></span>
+            <span class="sidebar-toggler-bar"></span>
+        </button>
+    </nav>
+    <main role="main" class="edit-event-content col-lg-8 px-5 pb-5">
         <div class="d-flex align-items-center flex-column">
             <form method="POST"
                 action="{% if event %}{{ url_for('events.edit_basic_info', id=event.id) }}{% else %}{{ url_for('events.create_event') }}{% endif %}"
@@ -147,4 +147,43 @@ Create Event
     </main>
 </div>
 
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+
+    const openSidebar = function () {
+        $("#sidebarToggleBtn").on("click", function (event) {
+            $(".sidebar").addClass("show-sidebar");
+            $(".bg-overlay-dark").addClass("show");
+
+            onClickOutside();
+
+        });
+    };
+
+
+    const closeSidebar = function () {
+        $(".close-sidebar").on("click", function (event) {
+            $(".sidebar").removeClass("show-sidebar");
+            $(".bg-overlay-dark").removeClass("show");
+        });
+    };
+
+    const onClickOutside = function () {
+        // Register event listener so user can click outside of sidebar to close it
+        window.addEventListener("click", function (event) {
+            if (event.target.classList.contains("bg-overlay-dark")) {
+                $(".close-sidebar").trigger("click");
+            }
+        });
+    };
+
+    openSidebar();
+    closeSidebar();
+
+
+</script>
 {% endblock %}
