@@ -115,13 +115,11 @@ class EventDetailsForm(FlaskForm):
 
     description = TextAreaField(
         "Event Description",
-        validators=[DataRequired()],
-        render_kw={"class": "form-control", "rows": 6},
+        validators=[DataRequired()]
     )
     pitch = TextAreaField(
         "Your sponsorship pitch",
-        validators=[DataRequired()],
-        render_kw={"class": "form-control", "rows": 6},
+        validators=[DataRequired()]
     )
     submit = SubmitField("Save & Continue")
 
@@ -135,7 +133,7 @@ class EventPackagesForm(FormMixin, FlaskForm):
     description = TextAreaField(
         "Description",
         validators=[DataRequired()],
-        render_kw={"class": "form-control", "rows": 5},
+        render_kw={"rows": 5},
     )
     available_packages = IntegerField(
         "Number of available packages", validators=[NumberRange(min=1, max=2147483647)]
@@ -250,6 +248,6 @@ class ContactForm(FlaskForm):
     message = TextAreaField(
         "Message",
         validators=[DataRequired()],
-        render_kw={"class": "form-control", "rows": 6},
+        render_kw={"rows": 6},
     )
     submit = SubmitField("Send")
