@@ -110,7 +110,7 @@ def edit_basic_info(id):
         event.start_datetime = datetime.combine(form.start_date.data, start_time)
         event.end_datetime = datetime.combine(form.end_date.data, end_time)
         db.session.commit()
-        flash("Your changes were saved.")
+        flash("Your changes were saved.", "success")
         return redirect(url_for("events.edit_basic_info", id=id))
     venue = event.venue
     form.title.data = event.title
@@ -125,7 +125,7 @@ def edit_basic_info(id):
     form.end_date.data = event.end_date()
     form.start_time.data = CreateEventForm.choice_id(event.start_time(), "TIMES")
     form.end_time.data = CreateEventForm.choice_id(event.end_time(), "TIMES")
-    return render_template("events/create_event.html", form=form, event=event)
+    return render_template("events/basic_info.html", form=form, event=event)
 
 
 @events.route("/<int:id>/event-details", methods=["GET", "POST"])
@@ -149,7 +149,7 @@ def event_details(id):
         event.description = details_form.description.data
         event.pitch = details_form.pitch.data
         db.session.commit()
-        flash("Update successful.")
+        flash("Update successful.", "success")
         return redirect(url_for("events.event_details", id=event.id))
     # pre-fill fields
     details_form.description.data = event.description
@@ -179,7 +179,7 @@ def add_event_image(id):
         image = Image(path=images.path(filename), image_type=image_type, event=event)
         db.session.add(image)
         db.session.commit()
-        flash("Your image was successfully uploaded.")
+        flash("Your image was successfully uploaded.", "success")
         return redirect(url_for("events.event_details", id=id))
     return redirect(url_for("events.event_details", id=event.id))
 
@@ -196,7 +196,7 @@ def delete_image(filename):
         return redirect(url_for("main.index"))
     db.session.delete(image)
     db.session.commit()
-    flash("Your event image was successfully deleted.")
+    flash("Your event image was successfully deleted.", "success")
     return redirect(referrer)
 
 
@@ -213,7 +213,7 @@ def demographics(id):
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
         if form.males.data + form.females.data != 100:
-            flash("Sum of males and females must equal 100.")
+            flash("Sum of males and females must equal 100.", "danger")
         else:
             event.attendees = DemographicsForm.choice_value(
                 form.attendees.data, "PEOPLE_RANGES"
@@ -221,7 +221,7 @@ def demographics(id):
             distribution = str(form.males.data) + "-" + str(form.females.data)
             event.male_to_female = distribution
             db.session.commit()
-            flash("Your information has been successfilly uploaded.")
+            flash("Your information has been successfilly uploaded.", "success")
             return redirect(url_for("events.demographics", id=id))
     if event.attendees:
         form.attendees.data = DemographicsForm.choice_id(
@@ -311,7 +311,7 @@ def edit_package(event_id, package_id):
             form.package_type.data, "PACKAGE_TYPES"
         )
         db.session.commit()
-        flash("Package details were successfully updated.")
+        flash("Package details were successfully updated.", "success")
         return redirect(url_for("events.packages", id=event_id))
     packages = event.packages.all()
     form.name.data = package.name
@@ -358,7 +358,7 @@ def add_video(id):
         )
         db.session.add(video)
         db.session.commit()
-        flash("Your upload was successful.")
+        flash("Your upload was successful.", "success")
         return redirect(url_for("events.media", id=id))
     else:
         session["upload_video_form_errors"] = upload_video_form.video_url.errors
@@ -384,7 +384,7 @@ def add_misc_images(id):
             )
             db.session.add(image)
         db.session.commit()
-        flash("Your upload was successful.")
+        flash("Your upload was successful.", "success")
         return redirect(url_for("events.media", id=id))
     else:
         session["image_form_errors"] = image_form.images.errors
@@ -432,7 +432,7 @@ def delete_video(event_id, video_id):
     video = Video.query.get_or_404(video_id)
     db.session.delete(video)
     db.session.commit()
-    flash("Your video has been deleted.")
+    flash("Your video has been deleted.", "success")
     return redirect(url_for("events.media", id=event_id))
 
 
@@ -449,14 +449,14 @@ def publish(id):
     ) or event.has_ended():
         return redirect(url_for("main.index"))
     if event.description is None or event.pitch is None:
-        flash("You cannot publish an event without adding a description or pitch.")
+        flash("You cannot publish an event without adding a description or pitch.", "danger")
         return redirect(url_for("events.event_details", id=event.id))
     if event.packages.count() == 0:
-        flash("You cannot publish an event without adding any packages.")
+        flash("You cannot publish an event without adding any packages.", "danger")
         return redirect(url_for("events.packages", id=event.id))
     event.published = True
     db.session.commit()
-    flash("Your event has been published.")
+    flash("Your event has been published.", "success")
     return redirect(url_for("main.index"))
 
 
@@ -485,7 +485,7 @@ def event(id):
         #     form=form,
         #     event=event,
         # )
-        flash("Your email was sent to the event organizer.")
+        flash("Your email was sent to the event organizer.", "success")
         return redirect(url_for("events.event", id=id))
     return render_template(
         "events/event.html",
@@ -642,7 +642,7 @@ def charge(id, amount):
                 < 0
             ):  # out of stock
                 db.session.rollback()
-                flash("The package you attempted to purchase is sold out.")
+                flash("The package you attempted to purchase is sold out.", "danger")
                 return redirect(url_for("events.event", id=event.id))
         db.session.commit()
         send_email(
@@ -653,45 +653,49 @@ def charge(id, amount):
             sponsorships=sponsorships,
             amount=amount,
         )
-        flash("Your purchase was successful. A confirmation email was sent to you.")
+        flash("Your purchase was successful. A confirmation email was sent to you.", "success")
         return redirect(url_for("manage.manage_sponsorships", status="all"))
     # refactor needed. Maybe I can make a decorator to handle stripe errors?
     except current_app.stripe.error.CardError as err:
         # Since it's a decline, stripe.error.CardError will be caught
         db.session.rollback()
-        flash("There was an error with your card, please try again.")
+        flash("There was an error with your card, please try again.", "danger")
         return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.RateLimitError as err:
         # Too many requests made to the API too quickly
         db.session.rollback()
         flash(
-            "Sorry, we are experiencing high traffic volumes. Please wait 30 seconds before retrying your purchase."
+            "Sorry, we are experiencing high traffic volumes. Please wait 30 seconds before retrying your purchase.",
+            "danger"
         )
         return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.InvalidRequestError as err:
         # Invalid parameters were supplied to Stripe's API
         db.session.rollback()
-        flash("Invalid parameters were supplied, please try again.")
+        flash("Invalid parameters were supplied, please try again.", "danger")
         return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.AuthenticationError as err:
         # Authentication with Stripe's API failed
         db.session.rollback()
         flash(
-            "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later."
+            "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later.",
+            "danger"
         )
         return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.APIConnectionError as err:
         # Network communication with Stripe failed
         db.session.rollback()
         flash(
-            "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later."
+            "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later.",
+            "danger"
         )
         return redirect(url_for("events.event", id=event.id))
     except current_app.stripe.error.StripeError as err:
         # Generic Stripe error
         db.session.rollback()
         flash(
-            "We are having issues accessing the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later."
+            "We are having issues accessing the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later.",
+            "danger"
         )
         return redirect(url_for("events.event", id=event.id))
     except Exception as err:
@@ -727,7 +731,8 @@ def purchase(id):
     if sponsorships == []:  # user has no pending deals for this event
         return redirect(url_for("main.index"))
     flash(
-        "Please note: Navigating away from or refreshing this page will cancel your purchase."
+        "Please note: Navigating away from or refreshing this page will cancel your purchase.",
+        "info"
     )
     return render_template(
         "events/purchase.html",
