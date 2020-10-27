@@ -1,40 +1,32 @@
-{% extends "site_base.html" %}
-{% import "bootstrap/form.html" as wtf %}
-{% import "utils/_macros.html" as macros %}
+{% extends "events/edit_event_base.html" %}
 
 {% block title %}Event Demographics{% endblock %}
 
-{% block page_content %}
-<div class="edit-event-container">
-	{{ macros.render_sidebar("event", event.title, event) }}
+{% block edit_event_content %}
+<main role="main" class="edit-event-content demographics col-lg-8 px-5 pb-5">
+	<div
+		class="pt-5 d-flex align-items-center align-items-xl-start justify-content-center justify-content-lg-start flex-column">
 
-	<div class="edit-event-content">
-		<div class="event-form-group">
-			<form class="demographics-form" method="POST" action="{{ url_for('events.demographics', id=event.id) }}"
-				role="form">
-				{{ form.hidden_tag() }}
-				{{ wtf.form_errors(form, hiddens="only") }}
-				<div class="demographics">
-					<div class="row">
-						<h2 class="col-md-12 form-header">Event Demographics</h2>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							{{ wtf.render_field(form.attendees) }}
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							{{ wtf.render_field(form.males) }}
-						</div>
-						<div class="col-md-12">
-							{{ wtf.render_field(form.females) }}
-						</div>
-					</div>
+		<form method="POST" action="{{ url_for('events.demographics', id=event.id) }}" role="form">
+			{{ form.hidden_tag() }}
+			{{ wtf.form_errors(form, hiddens="only") }}
+			<div class="d-flex align-items-center mb-4">
+				{{ utils.render_icon("people", size="1.8rem", color="2fb7ec")}}
+				<h2 class="pl-4">Event Demographics</h2>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					{{ wtf.render_field(form.attendees) }}
 				</div>
-				{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
-			</form>
-		</div>
+				<div class="col-12">
+					{{ wtf.render_field(form.males) }}
+				</div>
+				<div class="col-12">
+					{{ wtf.render_field(form.females) }}
+				</div>
+			</div>
+			{{ wtf.render_field(form.submit, button_map={"submit": "primary-override"}) }}
+		</form>
 	</div>
-</div>
+</main>
 {% endblock %}

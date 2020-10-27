@@ -1,85 +1,64 @@
-{% extends "site_base.html" %}
-{% import "bootstrap/form.html" as wtf %}
-{% import "utils/_macros.html" as macros %}
+{% extends "events/edit_event_base.html" %}
 
 {% block title %}Event Details{% endblock %}
 
-{% block page_content %}
-<div class="edit-event-container">
-	{{ macros.render_sidebar("event", event.title, event) }}
-	<div class="edit-event-content">
-		<div class="event-form-group">
+{% block edit_event_content %}
+
+<main role="main" class="edit-event-content col-lg-8 pb-5">
+	<div class="row justify-content-center justify-content-xl-start">
+		<section class="mb-5-plus col-12 col-md-11 col-lg-10 px-5">
+			<div class="d-flex align-items-center mb-4">
+				{{ utils.render_icon("card-image", size="1.8rem", color="2fb7ec")}}
+				<h2 class="pl-4">Main Event Image</h2>
+			</div>
+
 			{% if main_image_path %}
 			<!-- Remove Image Form -->
-			<form method="POST" class="remove-image-form"
+
+			<img class="d-inline-block mb-4 img-fluid" src="{{ url_for('static', filename=main_image_path) }}"
+				alt="Main Event Image">
+			<form class="no-labels" method="POST"
 				action="{{ url_for('events.delete_image', filename=main_image_path.split('/')[-1]) }}" role="form"
 				enctype="multipart/form-data">
 				{{ remove_image_form.hidden_tag() }}
 				{{ wtf.form_errors(remove_image_form, hiddens="only") }}
-				<div class="main-event-image">
-					<div class="row">
-						<h2 class="col-md-12 form-header">Main Event Image</h2>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<img class="media" src="{{ url_for('static', filename=main_image_path) }}"
-								alt="Main Event Image">
-						</div>
-					</div>
-					{{ wtf.render_field(remove_image_form.submit, button_map={"submit": "btn btn-danger delete-media"}) }}
-				</div>
+				{{ wtf.render_field(remove_image_form.submit, button_map={"submit": "danger"}) }}
 			</form>
 			{% else %}
+
 			<!-- Upload Image Form -->
-			<form method="POST" class="upload-image-form" action="{{ url_for('events.add_event_image', id=event.id) }}"
+			<img class="d-inline-block mb-4 img-fluid"
+				src="{{ url_for('static', filename='images/default_event_image.png') }}" alt="Main Event Image Default">
+			<form class="no-labels" method="POST" action="{{ url_for('events.add_event_image', id=event.id) }}"
 				enctype="multipart/form-data">
 				{{ upload_image_form.hidden_tag() }}
 				{{ wtf.form_errors(upload_image_form, hiddens="only") }}
-				<div class="main-event-image">
-					<div class="row">
-						<h2 class="col-md-12 form-header">Main Event Image</h2>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<img src="{{ url_for('static', filename='images/default_event_image.png') }}"
-								alt="Main Event Image Default">
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12 upload-image">
-							{{ wtf.render_field(upload_image_form.image) }}
-						</div>
-					</div>
-					{{ wtf.render_field(upload_image_form.upload, button_map={"upload": "btn btn-primary"}) }}
-				</div>
+				{{ wtf.render_field(upload_image_form.image) }}
+				{{ wtf.render_field(upload_image_form.upload, button_map={"upload": "primary-override"}) }}
+
 			</form>
 			{% endif %}
+		</section>
 
-			<!-- Event Description and Pitch -->
-			<form method="POST" class="details-form" action="{{ url_for('events.event_details', id=event.id) }}"
-				role="form">
+		<!-- Event Description and Pitch -->
+		<section class="mb-4 col-12 col-md-11 col-lg-10 px-5">
+			<div class="d-flex align-items-center mb-4">
+				{{ utils.render_icon("text-left", size="1.8rem", color="2fb7ec") }}
+				<h2 class="pl-4">Description & Pitch</h2>
+			</div>
+			<form method="POST" action="{{ url_for('events.event_details', id=event.id) }}" role="form">
 				{{ details_form.hidden_tag() }}
 				{{ wtf.form_errors(details_form, hiddens="only") }}
-				<div class="description-and-pitch">
-					<div class="row">
-						<h2 class="col-md-12 form-header">Description & Pitch</h2>
-					</div>
-
-					<div class="row">
-						<div class="col-md-12 description">
-							{{ wtf.render_field(details_form.description) }}
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-md-12 pitch">
-							{{ wtf.render_field(details_form.pitch) }}
-						</div>
-					</div>
-					{{ wtf.render_field(details_form.submit, button_map={"submit": "btn btn-primary"}) }}
+				<div class="mb-4-plus">
+					{{ wtf.render_field(details_form.description) }}
 				</div>
+				{{ wtf.render_field(details_form.pitch) }}
+				{{ wtf.render_field(details_form.submit, button_map={"submit": "primary-override"}) }}
+
 			</form>
-		</div>
+		</section>
 	</div>
-</div>
+
+</main>
+
 {% endblock %}
