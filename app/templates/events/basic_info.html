@@ -1,0 +1,89 @@
+{% extends "events/edit_event_base.html" %}
+
+{% block title %}Basic Info{% endblock %}
+
+
+{% block edit_event_content %}
+
+<main role="main" class="edit-event-content col-lg-8 px-5 pb-5">
+    <div class="d-flex align-items-center align-items-xl-start flex-column">
+        <form method="POST"
+            action="{% if event %}{{ url_for('events.edit_basic_info', id=event.id) }}{% else %}{{ url_for('events.create_event') }}{% endif %}"
+            role="form">
+            {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
+            <section class="mb-5">
+                <div class="d-flex align-items-center mb-4">
+                    {{ utils.render_icon("text-paragraph", size="1.8rem", color="2fb7ec") }}
+                    <h2 class="pl-4 mb-0">Basic Info</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ wtf.render_field(form.title) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.event_type) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.category) }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <div class="d-flex align-items-center mb-4">
+                    {{ utils.render_icon("geo-alt-fill", size="1.7rem", color="2fb7ec")}}
+                    <h2 class="pl-4 mb-0">Location</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ wtf.render_field(form.venue_name) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.address) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.city) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.state) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.zip_code) }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-3">
+                <div class="d-flex align-items-center mb-4">
+                    {{ utils.render_icon("calendar-date-fill", size="1.7rem", color="2fb7ec") }}
+                    <h2 class="pl-3 mb-0">Date and Time</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.start_date) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.start_time) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.end_date) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ wtf.render_field(form.end_time) }}
+                    </div>
+                </div>
+            </section>
+            {{ wtf.render_field(form.submit, button_map={"submit": "primary-override"}) }}
+        </form>
+    </div>
+</main>
+
+{% endblock %}
