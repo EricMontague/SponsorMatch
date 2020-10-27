@@ -17,6 +17,7 @@
 	src: url('./Source_Sans_Pro/SourceSansPro-Italic.ttf');
 }
 
+
 :root {
 	--primary-color-override: #2fb7ec;
 	--primary-color-hover: rgb(0, 152, 211);
@@ -178,6 +179,14 @@ body {
 	padding-right: 2rem !important;
 }
 
+.mb-4-plus {
+	margin-bottom: 2rem !important;
+}
+
+.mb-5-plus {
+	margin-bottom: 4rem !important;
+}
+
 .mt-5-plus {
 	margin-top: 4rem !important;
 }
@@ -187,6 +196,8 @@ body {
 }
 
 /* Sizes */
+
+
 .vh-70 {
 	height: 70vh !important;
 }
@@ -279,7 +290,9 @@ body {
 	box-shadow: 0 0 0 0.13rem rgba(0, 123, 255, 0.25);
   }
 
-
+.no-labels label{
+	display: none;
+}
 
 /* Background */
 .bg-white {
@@ -404,6 +417,9 @@ a.text-dark-override:hover {
 	.edit-event-content, .settings-content {
 		padding-top: 3rem !important;	
 	}
+	.edit-event-content.demographics > * {
+		padding-top: 0 !important;
+	}
 }
 
 
@@ -429,7 +445,7 @@ a.text-dark-override:hover {
 	height: 100vh;
 }
 
-/* Event Blue Specific Styles */
+/* Event Blueprint Specific Styles */
 .edit-event-content {
 	position: absolute;
 	right: 0;
@@ -902,48 +918,6 @@ ul.live-events {
 
 
 
-
-.main-event-image, .description-and-pitch, .video-form, .multi-image-form {
-	margin-bottom: 35px;
-}
-
-.media {
-	width: 100%;
-}
-
-.main-event-image .delete-media,
-#remove.delete-media,
-.misc-images .delete-media {
-	display: inline-block;
-	width: 100%;
-	margin-top: 5px;
-}
-
-.misc-images .delete-media {
-	margin-bottom: 50px;
-}
-
-.upload-image {
-	margin-top: 20px;
-	margin-bottom: 10px;
-}
-
-.upload-image-form .main-event-image img {
-	width: 100%;
-}
-
-
-.description, .pitch {
-	margin-bottom: 15px;
-}
-
-.description-and-pitch .btn {
-	margin-top: -10px;
-}
-
-.misc-images {
-	padding: 0;
-}
 
 .packages {
   padding-right: 50px;
