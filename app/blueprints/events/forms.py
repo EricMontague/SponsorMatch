@@ -115,11 +115,13 @@ class EventDetailsForm(FlaskForm):
 
     description = TextAreaField(
         "Event Description",
-        validators=[DataRequired()]
+        validators=[DataRequired()],
+        render_kw={"rows": 6}
     )
     pitch = TextAreaField(
         "Your sponsorship pitch",
-        validators=[DataRequired()]
+        validators=[DataRequired()],
+        render_kw={"rows": 6}
     )
     submit = SubmitField("Save & Continue")
 
