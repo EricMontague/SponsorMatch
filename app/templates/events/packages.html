@@ -1,136 +1,134 @@
-{% extends "site_base.html" %}
-{% import "bootstrap/form.html" as wtf %}
-{% import "utils/_macros.html" as macros %}
+{% extends "events/edit_event_base.html" %}
 
 {% block title %}Event Packages{% endblock %}
 
-{% block page_content %}
-<div id="{{ event.id }}" class="edit-event-container">
-	{{ macros.render_sidebar("event", event.title, event) }}
-	<div class="edit-event-content">
-		<div class="packages">
-			<h2 class="page-header">Packages</h2>
-			{% if packages %}
-			<div class="display-packages">
+{% block edit_event_content %}
 
-				{% if not event.has_ended() %}
-				<div class="publish-event">
-					<form class="publish-event" method="POST" action="{{ url_for('events.publish', id=event.id) }}">
-						<input class="btn btn-success" type="submit" value="Publish Event"></input>
-					</form>
-				</div>
-				{% endif %}
+<main role="main" id="{{ event.id }}" class="edit-event-content col-lg-8 px-5 pb-5">
+	<div class="d-flex flex-wrap align-items-center justify-content-between mb-4 packages-page-header">
+		<div class="d-flex align-items-center">
+			{{ utils.render_icon("box-seam", size="1.8rem", color="2fb7ec")}}
+			<h2 class="pl-4">Packages</h2>
+		</div>
+		<div class="d-flex align-items-center justify-content-between">
+			<button id="openModalBtn" type="button" class="btn btn-primary-override" data-toggle="modal"
+				data-target="#addPackageModal">
+				Add Package
+			</button>
+			{% if not event.has_ended() %}
 
-				<button id="openModalBtn" type="button" class="btn btn-primary" data-toggle="modal"
-					data-target="#addPackageModal">
-					Add Package
-				</button>
-				<ul class="package-list">
-					{% for package in packages %}
-					<li id="{{ package.id }}" class="package">
-						<div class="dropdown">
-							<span class="vertical-ellipsis dropdown-toggle" data-toggle="dropdown">
-								&vellip;
-							</span>
-							<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
-								<li><a class="dropdown-item no-link-styling"
-										href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">Edit</a>
-								</li>
-								<li class="delete-package"><a class="dropdown-item">Delete</a></li>
-							</ul>
-						</div>
-						<a class="no-link-styling"
-							href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
-							<div class="package-content">
-								<div class="package-details row">
-									<div class="col-md-6">
-										<h4 class="package-name">{{ package.name }}</h4>
-										<div class="package-type">
-											{{ package.package_type }}
-										</div>
-									</div>
-									<div class="package-price col-md-3">
-										${{ package.price }}
-									</div>
-									<div class="packages-purchased col-md-3">
-										{{ package.num_purchased }} / {{ package.available_packages }}
-									</div>
-								</div>
-							</div>
-						</a>
-					</li>
-					{% endfor %}
-				</ul>
-			</div>
-
-
-			{% else %}
-			<div class="add-packages">
-				<h3>Add your first package</h3>
-				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPackageModal">Add
-					Package</button>
-			</div>
-
-
+			<form class="ml-3" method="POST" action="{{ url_for('events.publish', id=event.id) }}">
+				<input class="btn btn-success" type="submit" value="Publish Event"></input>
+			</form>
 
 			{% endif %}
+		</div>
+	</div>
+	<div class="row justify-content-center justify-content-xl-start">
 
-			<!-- Modal -->
-			<div class="modal fade" id="addPackageModal" tabindex="-1" role="dialog"
-				aria-labelledby="addPackageCenterTitle" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h3 class="modal-title" id="addPackageTitle">Add Package</h3>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
+		{% if packages %}
+
+		<ul class="col-12 list-unstyled">
+			{% for package in packages %}
+			<li id="{{ package.id }}" class="card horizontal-card bg-white mb-3 py-3 px-4">
+				<a class="no-link-styling"
+					href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
+
+					<div class="row">
+						<div class="col-12">
+							<h4>{{ package.name }}</h4>
 						</div>
-						<div class="modal-body">
-							<div>
+						<div class="col-12">
+							Price: ${{ package.price }}
+						</div>
+						<div class="col-md-3">
+							Sold: {{ package.num_purchased }} / {{ package.available_packages }}
+						</div>
+					</div>
 
+					<div class="d-flex flex-wrap align-items-center justify-content-between">
+						<div>{{ package.package_type }}</div>
+						<div class="d-flex align-items-center">
+							<a href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
+								{{ utils.render_icon("pencil-square", size="1.2rem", color="2fb7ec")}}
+							</a>
+							<a class="delete-package d-inline-block ml-3" href="#">
+								{{ utils.render_icon("trash", size="1.2rem", color="dc3545")}}
+							</a>
+						</div>
+					</div>
+				</a>
+			</li>
+			{% endfor %}
+		</ul>
+
+
+
+		{% else %}
+		<div class="align-self-center">
+			<h3 class="mb-3">Add your first package</h3>
+			<button type="button" class="btn btn-primary-override" data-toggle="modal" data-target="#addPackageModal">
+				Add Package
+			</button>
+		</div>
+
+
+
+		{% endif %}
+
+		<!-- Modal -->
+		<div class="modal fade" id="addPackageModal" tabindex="-1" role="dialog" aria-labelledby="addPackageCenterTitle"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 class="modal-title" id="addPackageTitle">Add Package</h3>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="addPackageForm" method="POST" action="{{ url_for('events.packages', id=event.id) }}"
+							role="form">
+							{{ form.hidden_tag() }}
+							{{ wtf.form_errors(form, hiddens="only") }}
+							<div class="row">
+								<div class="col-md-12">
+									{{ wtf.render_field(form.name) }}
+								</div>
 							</div>
-							<form id="addPackageForm" method="POST"
-								action="{{ url_for('events.packages', id=event.id) }}" role="form">
-								{{ form.hidden_tag() }}
-								{{ wtf.form_errors(form, hiddens="only") }}
-								<div class="row">
-									<div class="col-md-12">
-										{{ wtf.render_field(form.name) }}
-									</div>
+							<div class="row">
+								<div class="col-md-6">
+									{{ wtf.render_field(form.price) }}
 								</div>
-								<div class="row">
-									<div class="col-md-6">
-										{{ wtf.render_field(form.price) }}
-									</div>
-									<div class="col-md-6">
-										{{ wtf.render_field(form.available_packages) }}
-									</div>
+								<div class="col-md-6">
+									{{ wtf.render_field(form.available_packages) }}
 								</div>
-								<div class="row">
-									<div class="col-md-6">
-										{{ wtf.render_field(form.audience) }}
-									</div>
-									<div class="col-md-6">
-										{{ wtf.render_field(form.package_type) }}
-									</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									{{ wtf.render_field(form.audience) }}
 								</div>
-								<div class="row">
-									<div class="col-md-12">
-										{{ wtf.render_field(form.description) }}
-									</div>
+								<div class="col-md-6">
+									{{ wtf.render_field(form.package_type) }}
 								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
-						</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									{{ wtf.render_field(form.description) }}
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+
+</main>
 {% endblock %}
 
 
@@ -142,47 +140,75 @@
 	//Needed to prevent two POST requests from being sent
 	//when a user submits the form after submitting invalid
 	//data the first time
+
+
+
 	let formErrors = {{ form.errors | safe }};
 	if ($.isEmptyObject(formErrors) === false) {
 		$("#addPackageModal").modal("show");
 	}
 
-	//determine if user is trying to edit a package. If so, show the modal
-	let fullPath = window.location;
-	let path = fullPath.pathname.split("/");
-	if (path[path.length - 1] === "edit") {
-		$("#addPackageModal").modal("show");
-		$("#addPackageModal").on("hidden.bs.modal", function (e) {
-			window.location.href = "{{ url_for('events.packages', id=event.id) }}";
-		});
-		$(".modal-footer input").click(function () {
-			$("#addPackageForm").attr("action", fullPath.href);
-			$("#addPackageForm").submit();
-		});
+
+	const isEdittingPackage = function () {
+		let fullPath = window.location;
+		let path = fullPath.pathname.split("/");
+		return path[path.length - 1] === "edit";
 
 	};
 
-
-	// used for when a user is adding a package
-	$(".modal-footer input").click(function () {
-		$("#addPackageForm").submit();
-	});
-
-
-	$(".delete-package").click(function () {
-		let eventId = $(".edit-event-container").attr("id");
-		let packageId = $(this).parent().closest("li").attr("id");
-		$.ajax({
-			type: "POST",
-			url: `${window.origin}/events/${eventId}/packages/${packageId}/delete`,
-			success: function (response) {
-				window.location.href = response.url;
-			},
-			error: function (jqXHR, exception) {
-				ajaxErrorHandler(jqXHR, exception);
-			}
+	const redirectUserAfterPackageEdit = function () {
+		$("#addPackageModal").on("hidden.bs.modal", function (e) {
+			window.location.href = "{{ url_for('events.packages', id=event.id) }}";
 		});
-		return false;
-	});	
+	};
+
+
+	const updatePackage = function (formAction) {
+		$(".modal-footer input").click(function () {
+			$("#addPackageForm").attr("action", formAction);
+			$("#addPackageForm").submit();
+		});
+	};
+
+	const onEditView = function () {
+		let fullPath = window.location;
+		let path = fullPath.pathname.split("/");
+		if (isEdittingPackage()) {
+			$("#addPackageModal").modal("show");
+			redirectUserAfterPackageEdit();
+			updatePackage(fullPath.href);
+		};
+	};
+
+
+
+	const addPackage = function () {
+		$(".modal-footer input").click(function () {
+			$("#addPackageForm").submit();
+		});
+	};
+
+	const deletePackage = function () {
+		$(".delete-package").click(function () {
+			let eventId = $(".edit-event-container").attr("id");
+			let packageId = $(this).parent().closest("li").attr("id");
+			$.ajax({
+				type: "POST",
+				url: `${window.origin}/events/${eventId}/packages/${packageId}/delete`,
+				success: function (response) {
+					window.location.href = response.url;
+				},
+				error: function (jqXHR, exception) {
+					ajaxErrorHandler(jqXHR, exception);
+				}
+			});
+			return false;
+		});
+	};
+
+
+	addPackage();
+	deletePackage();
+	onEditView();
 </script>
 {% endblock %}
