@@ -41,6 +41,25 @@ body {
 
 
 
+/* Flexbox */
+
+.flex-1 {
+	flex: 1 !important;
+}
+
+.flex-2 {
+	flex: 2 !important;
+}
+
+.flex-3 {
+	flex: 3 !important;
+}
+
+.flex-4 {
+	flex: 4 !important;
+}
+
+
 /* Borders and shadows */
 .border-bottom {
 	border-bottom: 1px solid #dee2e6 !important;
@@ -103,6 +122,8 @@ body {
 .mobile-sidebar-nav{
 	position: absolute;
 	display: flex;
+	justify-content: start;
+	align-items: center;
 	background: var(--primary-color-override);
 	top: 3.5rem;
 	left: 0;
@@ -359,6 +380,18 @@ a.text-dark-override:hover {
 	text-decoration: underline;
 }
 
+.no-link-styling,
+.no-link-styling:hover,
+.no-link-styling:active,
+.no-link-styling:focus,
+.no-link-styling:visited
+ {
+	color: var(--dark-color-override);
+	text-decoration: none;
+
+}
+
+
 .text-overflow-ellipsis {
 	text-overflow: ellipsis !important;
 }
@@ -420,9 +453,15 @@ a.text-dark-override:hover {
 	.edit-event-content.demographics > * {
 		padding-top: 0 !important;
 	}
+	
 }
 
 
+@media (min-width: 768px) {
+	.img-fluid.video {
+		height: 17.5rem !important;
+	}
+}
 
 /* Auth Blueprint Specific Styles */
 .subscription-message {
@@ -450,6 +489,25 @@ a.text-dark-override:hover {
 	position: absolute;
 	right: 0;
 	padding-top: 5rem;
+}
+
+.edit-event-content .packages-page-header {
+	margin-bottom: 1rem !important;
+}
+
+.edit-event-content .packages-page-header > * {
+	padding-bottom: 1rem;
+}
+
+.horizontal-card {
+	transition: 0.18s ease all;
+}
+
+.horizontal-card:hover {
+	box-shadow: 0px 1px 3px rgba(0,0,0,.1), 
+	0px 2px 3px rgba(0,0,0,.12), 
+	0px 1px 3px rgba(0,0,0,.14);
+    transform: translateY(-1px);
 }
 
 
@@ -869,24 +927,7 @@ ul.live-events {
 	pointer-events: none;
 }
 
-.event-media .event-video {
-	width: 67%;
-}
 
-.event-media .event-video iframe {
-	width: 100%;
-	margin-bottom: 15px;
-}
-
-.event-media .misc-images  {
-	width: 67.3%;
-}
-
-.event-media .misc-images img {
-	width: 100%;
-	height: auto;
-	margin-bottom: 15px;
-}
 
 .container.panel-container {
 	margin-left: auto;
@@ -919,63 +960,7 @@ ul.live-events {
 
 
 
-.packages {
-  padding-right: 50px;
-  padding-left: 50px;
-  margin-right: auto;
-  margin-left: auto;
-}
 
-.packages .page-header {
-	margin-top: 20px;
-	margin-bottom: 40px;
-	padding-bottom: 18px;
-}
-
-.add-packages {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	min-height: 40vh;
-}
-
-.add-packages h3 {
-	margin-bottom: 20px;
-}
-
-.display-packages button {
-	float: right;
-	margin-right: 20px;
-
-}
-
-.publish-event {
-	float: right;
-	
-}
-
-.no-link-styling,
-.no-link-styling:hover,
-.no-link-styling:active,
-.no-link-styling:focus,
-.no-link-styling:visited
- {
-	color: #222;
-	text-decoration: none;
-
-}
-
-ul.package-list {
-  list-style-type: none;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding-left: 0;
-  width: 100%;
-  display: inline-block;
-}
-
-ul.package-list li.package,
 ul.event-list li.event,
 ul.sponsorship-list li.sponsorship,
 ul.event-panels li.event-panel {
@@ -985,7 +970,6 @@ ul.event-panels li.event-panel {
 	min-height: 100%;
 }
 
-ul.package-list li.package:hover,
 ul.event-list li.event:hover,
 ul.sponsorship-list li.sponsorship:hover,
 ul.event-panels li.event-panel:hover {
@@ -999,7 +983,6 @@ ul.event-panels {
 	margin-top: 45px;
 }
 
-li.package div.dropdown,
 li.event div.dropdown,
 li.sponsorship div.dropdown,
 li.event-panel div.dropdown {
@@ -1042,7 +1025,6 @@ div.dropdown ul.ellipsis-menu {
   top: auto;
 }
 
-.package-content,
 .event-content,
 .event-panel-content,
 .sponsorship-content {
@@ -1064,39 +1046,20 @@ div.dropdown ul.ellipsis-menu {
 
 
 
-.package-details, 
 .event-details,
 .sponsorship-details {
 	margin-right: 50%;
 	word-wrap: break-word;
 }
 
-.packages-purchased,
-.package-price,
-.package-type,
+
 .sponsorship-amount {
 	/*color: #6f7287;*/
 	font-size: 15px;
 }
 
 
-.packages-purchased {
-	float: right;
-	position: absolute;
-	top: 60%;
-	left: 55%;
-	margin-top: -22px;
-	margin-left: -40px;
-}
 
-.package-price {
-	float: right;
-	position: absolute;
-	top: 60%;
-	left: 75%;
-	margin-top: -22px;
-	margin-left: -40px;
-}
 
 ul.event-list,
 ul.sponsorship-list {
@@ -1286,6 +1249,7 @@ table {
 	.event-page-sidebar-top {
 		display: none;
 	}
+	
 	
 }
 
