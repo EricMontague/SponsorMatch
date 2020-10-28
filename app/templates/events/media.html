@@ -1,16 +1,19 @@
-{% extends "site_base.html" %}
-{% import "bootstrap/form.html" as wtf %}
-{% import "utils/_macros.html" as macros %}
+{% extends "events/edit_event_base.html" %}
 
 {% block title %}Event Media{% endblock %}
 
-{% block page_content %}
-<div class="edit-event-container">
-	{{ macros.render_sidebar("event", event.title, event) }}
-	<div class="edit-event-content">
-		<div class="event-form-group">
-			<!-- Video Form -->
-			<form class="video-form" method="POST" role="form"
+{% block edit_event_content %}
+<main role="main" class="edit-event-content col-lg-8 pb-5">
+	<div class="row justify-content-center justify-content-xl-start px-5">
+
+		<!-- Video Form -->
+		<section class="mb-5-plus col-12 col-md-10">
+			<div class="d-flex align-items-center mb-4">
+				{{ utils.render_icon("camera-video-fill", size="1.8rem", color="2fb7ec")}}
+				<h2 class="pl-4">Video</h2>
+			</div>
+
+			<form method="POST" role="form"
 				action="{% if video %}{{ url_for('events.delete_video', event_id=event.id, video_id=video.id) }}{% else %}{{ url_for('events.add_video', id=event.id) }}{% endif %}">
 				{% if video %}
 				{{ remove_video_form.hidden_tag() }}
@@ -19,57 +22,57 @@
 				{{ upload_video_form.hidden_tag() }}
 				{{ wtf.form_errors(upload_video_form, hiddens="only") }}
 				{% endif %}
-				<div class="video">
-					<div class="row">
-						<h2 class="col-md-12 form-header">Video</h2>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							{% if video %}
-							<iframe class="media" src="{{ video.url }}" width="510" height="280" frameborder="0"
-								allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-								allowfullscreen></iframe>
-							{{ wtf.render_field(remove_video_form.remove, button_map={"remove": "btn btn-danger delete-media"}) }}
-							{% else %}
-							{{ wtf.render_field(upload_video_form.video_url)}}
-							{{ wtf.render_field(upload_video_form.add, button_map={"add": "btn btn-primary"}) }}
-							{% endif %}
-						</div>
+				<div class="row">
+					<div class="col-12">
+						{% if video %}
+						<iframe class="d-inline-block mb-3 video" src="{{ video.url }}" width="510" height="280"
+							frameborder="0"
+							allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen></iframe>
+						{% else %}
+						{{ wtf.render_field(upload_video_form.video_url)}}
+						{% endif %}
 					</div>
 				</div>
+				{% if video %}
+				{{ wtf.render_field(remove_video_form.remove, button_map={"remove": "danger"}) }}
+				{% else %}
+				{{ wtf.render_field(upload_video_form.add, button_map={"add": "primary-override"}) }}
+				{% endif %}
 			</form>
+		</section>
 
-			<!-- Multiple Image Form -->
-			<form class="multi-image-form" method="POST" action="{{ url_for('events.add_misc_images', id=event.id) }}"
-				role="form" enctype="multipart/form-data">
+		<!-- Multiple Image Form -->
+		<section class="mb-5-plus col-12 col-md-10">
+			<div class="d-flex align-items-center mb-4">
+				{{ utils.render_icon("camera-fill", size="1.8rem", color="2fb7ec")}}
+				<h2 class="pl-4">Upload Images</h2>
+			</div>
+			<form method="POST" action="{{ url_for('events.add_misc_images', id=event.id) }}" role="form"
+				enctype="multipart/form-data">
 				{{ image_form.hidden_tag() }}
 				{{ wtf.form_errors(image_form, hiddens="only") }}
-				<div class="multi-image">
-					<div class="row">
-						<h2 class="col-md-12 form-header">Upload Images</h2>
+				<div class="row">
+					<div class="col-12">
+						{{ wtf.render_field(image_form.images) }}
 					</div>
-					<div class="row">
-						<div class="col-md-12">
-							{{ wtf.render_field(image_form.images) }}
-						</div>
-					</div>
-					{{ wtf.render_field(image_form.upload, button_map={"upload": "btn btn-primary"}) }}
 				</div>
-			</form>
+				{{ wtf.render_field(image_form.upload, button_map={"upload": "primary-override"}) }}
 
-			<!-- Image list -->
+			</form>
+		</section>
+
+		<!-- Image list -->
+		<section class="mb-4 col-12 col-md-10">
 			<div class="row">
-				<ul class="misc-images">
-					{% for path in misc_image_paths %}
-					<div class="col-md-12">
-						<li class="list-unstyled misc-image"><img class="media"
-								src="{{ url_for('static', filename=path) }}"></li>
-						{{ wtf.render_form(remove_image_form, action=url_for('events.delete_image', filename=path.split("/")[-1]), button_map={"submit": "btn btn-danger delete-media"} )}}
-					</div>
-					{% endfor %}
-				</ul>
+				{% for path in misc_image_paths %}
+				<div class="col-12 mb-5">
+					<img class="d-inline-block mb-3 img-fluid" src="{{ url_for('static', filename=path) }}">
+					{{ wtf.render_form(remove_image_form, action=url_for('events.delete_image', filename=path.split("/")[-1]), button_map={"submit": "btn btn-danger delete-media"} )}}
+				</div>
+				{% endfor %}
 			</div>
-		</div>
+		</section>
 	</div>
-</div>
+</main>
 {% endblock %}
