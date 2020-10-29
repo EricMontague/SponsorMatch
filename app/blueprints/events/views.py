@@ -259,7 +259,7 @@ def view_package(id):
 @permission_required(Permission.CREATE_EVENT)
 def packages(id):
     """Render a page that allows the user to select the sponsorship
-    packages that will go along with thier event.
+    packages that will go along with theri event.
     """
     form = EventPackagesForm()
     event = Event.query.get_or_404(id)
@@ -280,6 +280,7 @@ def packages(id):
             ),
             event=event,
         )
+        db.session.add(package)
         db.session.commit()
         return redirect(url_for("events.packages", id=id))
     return render_template(
@@ -337,9 +338,14 @@ def delete_package(event_id, package_id):
     event = Event.query.get_or_404(event_id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
+    
     package = event.packages.filter(Package.id == package_id).first_or_404()
-    db.session.delete(package)
-    db.session.commit()
+    if package.was_purchased():
+        flash("A package that was purchased cannot be deleted", "danger")
+    else:
+        db.session.delete(package)
+        db.session.commit()
+        flash(f"Package named {package.name} was successfully deleted", "success")        
     return jsonify({"url": url_for("events.packages", id=event.id)})
 
 
