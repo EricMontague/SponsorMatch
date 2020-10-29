@@ -10,15 +10,16 @@
 			{{ utils.render_icon("box-seam", size="1.8rem", color="2fb7ec")}}
 			<h2 class="pl-4">Packages</h2>
 		</div>
-		<div class="d-flex align-items-center justify-content-between">
+		<div class="btn-group">
 			<button id="openModalBtn" type="button" class="btn btn-primary-override" data-toggle="modal"
 				data-target="#addPackageModal">
 				Add Package
 			</button>
 			{% if not event.has_ended() %}
 
-			<form class="ml-3" method="POST" action="{{ url_for('events.publish', id=event.id) }}">
-				<input class="btn btn-success" type="submit" value="Publish Event"></input>
+			<form method="POST" action="{{ url_for('events.publish', id=event.id) }}">
+				<input class="btn btn-success" type="submit" value="Publish Event"
+					{%if event.published %}disabled{% endif %}></input>
 			</form>
 
 			{% endif %}
@@ -38,21 +39,22 @@
 						<div class="col-12">
 							<h4>{{ package.name }}</h4>
 						</div>
-						<div class="col-12">
+						<div class="col-12 text-dark-medium">
 							Price: ${{ package.price }}
 						</div>
-						<div class="col-md-3">
+						<div class="col-12">
 							Sold: {{ package.num_purchased }} / {{ package.available_packages }}
 						</div>
 					</div>
 
 					<div class="d-flex flex-wrap align-items-center justify-content-between">
-						<div>{{ package.package_type }}</div>
+						<div class="custom-font-semibold">{{ package.package_type }}</div>
 						<div class="d-flex align-items-center">
-							<a href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
+							<a class="icon-link"
+								href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
 								{{ utils.render_icon("pencil-square", size="1.2rem", color="2fb7ec")}}
 							</a>
-							<a class="delete-package d-inline-block ml-3" href="#">
+							<a class="delete-package d-inline-block ml-3 icon-links" href="#">
 								{{ utils.render_icon("trash", size="1.2rem", color="dc3545")}}
 							</a>
 						</div>
@@ -140,9 +142,6 @@
 	//Needed to prevent two POST requests from being sent
 	//when a user submits the form after submitting invalid
 	//data the first time
-
-
-
 	let formErrors = {{ form.errors | safe }};
 	if ($.isEmptyObject(formErrors) === false) {
 		$("#addPackageModal").modal("show");
@@ -190,7 +189,7 @@
 
 	const deletePackage = function () {
 		$(".delete-package").click(function () {
-			let eventId = $(".edit-event-container").attr("id");
+			let eventId = $(".edit-event-content").attr("id");
 			let packageId = $(this).parent().closest("li").attr("id");
 			$.ajax({
 				type: "POST",
