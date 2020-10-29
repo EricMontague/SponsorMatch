@@ -27,6 +27,10 @@ class Package(db.Model):
         """Return the number of available packages."""
         return self.available_packages - self.num_purchased
 
+    def was_purchased(self):
+        """Return True if the package was purchased by at least one sponsor."""
+        return len(self.sponsorships) > 0
+
     def __repr__(self):
         """Return the string representation of a Package.
         Used for debugging purposes.
