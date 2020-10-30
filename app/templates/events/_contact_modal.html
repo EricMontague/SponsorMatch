@@ -1,0 +1,37 @@
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="contactTitle">Contact Organizer</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="contact-form" method="POST" action="{{ url_for('events.event', id=event.id) }}"
+                    role="form">
+                    {{ form.hidden_tag() }}
+                    {{ wtf.form_errors(form, hiddens="only") }}
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ wtf.render_field(form.name) }}
+                        </div>
+                        <div class="col-md-12">
+                            {{ wtf.render_field(form.email) }}
+                        </div>
+                        <div class="col-md-12">
+                            {{ wtf.render_field(form.subject) }}
+                        </div>
+                        <div class="col-md-12">
+                            {{ wtf.render_field(form.message) }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        {{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
