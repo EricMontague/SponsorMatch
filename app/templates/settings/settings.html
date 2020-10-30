@@ -6,7 +6,7 @@
 
 {% block page_content %}
 
-<div class="row settings-page bg-white">
+<div class="row settings-page bg-white mx-0">
   <nav class="col-lg-4 bg-site sidebar">
     <div class="close-sidebar">
       {{ utils.render_icon("arrow-left", size="1.5rem")}}
@@ -112,31 +112,12 @@
     });
   };
 
-  // https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
-  const mobileViewportFix = function (vh) {
-    document.querySelector(".settings-page").style.setProperty("--vh", `${vh * 1.1}px`)
-  }
 
-  const onResize = function () {
-    window.addEventListener("resize", function (event) {
-      let vh;
-      if (isLandscapeMode()) {
-        vh = window.innerWidth * 0.01;
-      } else {
-        vh = window.innerHeight * 0.01;
-      }
-      mobileViewportFix(vh);
-    });
-  }
 
-  const isLandscapeMode = function () {
-    return window.innerHeight < window.innerWidth;
-  }
 
   openSidebar();
   closeSidebar();
-  // mobileViewportFix(window.innerHeight * 0.01);
-  // onResize();
+  setSiteBackgroundColor("#fff");
 
 
 </script>
