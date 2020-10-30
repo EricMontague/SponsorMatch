@@ -41,6 +41,27 @@ body {
 }
 
 
+/* Badges */
+.badge {
+	font-size: 85%;
+	border-radius: 0.3rem;
+}
+
+.badge-primary-override {
+	color: #fff;
+	background-color: var(--primary-color-override);
+  }
+  ∂
+a.badge-primary-override:hover, a.badge-primary-override:focus {
+	color: #fff;
+	background-color: var(--primary-color-hover)
+}
+
+a.badge-primary-override:focus, a.badge-primary-override.focus {
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+  
 
 /* Flexbox */
 
@@ -66,6 +87,16 @@ body {
 	border-bottom: 1px solid #dee2e6 !important;
 }
 
+
+.border-x {
+	border-left: 1px solid #dee2e6 !important;
+	border-right: 1px solid #dee2e6 !important;
+}
+
+.border-left {
+	border-left: 1px solid #dee2e6 !important;
+}
+
 .border-none {
 	border: none !important;
 }
@@ -82,6 +113,10 @@ body {
 /* Navbars */
 .navbar.navbar-light {
 	box-shadow: 0 1px #e3e8ee;
+}
+
+.nav-tabs .nav-link {
+	cursor: pointer;
 }
 
 .sidebar {
@@ -201,6 +236,10 @@ body {
 	padding-right: 2rem !important;
 }
 
+.px-5-plus {
+	padding: 4rem !important;
+}
+
 .mb-4-plus {
 	margin-bottom: 2rem !important;
 }
@@ -219,10 +258,15 @@ body {
 
 /* Sizes */
 
+.vh-40 {
+	height: 40vh !important;
+}
 
 .vh-70 {
 	height: 70vh !important;
 }
+
+
 
 
 /* Alerts */
@@ -742,123 +786,9 @@ ul.live-events {
 
 
 /*CSS for event blueprint*/
-.event-page-header {
-	width: 100%;
-	min-height: 300px;
-	border: 1px solid transparent;
-}
-
-
-.event-page-header .main-event-image img{
-	width: 70%;
-	height: 300px;
-	float: left;
-	display: inline-block;
-}
 
 
 
-.event-page-sidebar-top {
-	width: 30%;
-	max-height: 300px;
-	position: relative;
-	float: right;
-	display: inline-block;
-}
-
-.event-page-sidebar-top .event-title {
-	font-size: 20px;
-	margin-top: 10px;
-}
-
-.event-page-sidebar-top .event-datetime {
-	font-size: 16px;
-}
-
-.event-page-sidebar-top .nav {
-	min-height: 300px;
-	padding: 20px 20px 0 20px;
-	background-color: #eee;
-}
-
-.event-page-sidebar-top .price-range {
-	font-size: 16px;
-}
-
-.event-page-sidebar-top .price-range {
-	font-size: 16px;
-}
-
-.event-page-sidebar-top .event-organizer {
-	margin-bottom: 25px;
-}
-
-.event-page-sidebar-top .save {
-	display: inline-block;
-}
-
-.event-page-sidebar-top #editEvent {
-	display: block;
-	margin-top: 10px;
-}
-
-.event-page-sidebar-top #editEvent a {
-	padding-right: 15.5px;
-	padding-left: 15.5px;
-}
-
-.event-page-sidebar-bottom {
-	width: 30%;
-	padding-left: 20px;
-	padding-right: 20px;
-	position: relative;
-	float: right;
-	display: inline-block;
-}
-
-.event-page-sidebar-bottom h4 {
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-.event-page-sidebar-bottom .event-datetime {
-	margin-bottom: 25px;
-}
-
-
-.event-page-sidebar-bottom p {
-	margin-bottom: 0; 
-}
-
-.event-page-sidebar-bottom .nav {
-	height: 100vh;
-}
-
-.event-tabs .nav {
-	width: 70%;
-	margin-top: 8px;
-	float: left;
-	display: inline-block;
-}
-
-.event-tabs #btnSidebar {
-	width: 30%;
-	height: 50px;
-	float: right;
-	position: relative;
-	display: flex;
-	border-bottom: 1px solid #ddd;
-}
-
-.event-tabs #packageBtn {
-	width: 88%;
-	margin: auto;
-}
-
-
-.event-page-body {
-	margin-top: 30px;
-}
 
 .event-page-content {
 	width: 70%;
@@ -1079,10 +1009,6 @@ div.dropdown ul.ellipsis-menu {
 	word-wrap: break-word;
 }
 
-.event-title {
-	margin-top: 15px;
-}
-
 
 
 .sponsorship-details h4.event-title:hover {
@@ -1244,67 +1170,6 @@ table {
 #contactOrganizer {
 	display: block;
 	width: 80%;
-}
-
-
-
-@media (max-width: 768px) {
-	.container {
-		padding-right: 30px;
-		padding-left: 30px;
-	}
-	.container.purchase {
-		padding-left: 30px;
-		padding-right: 30px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-	.container.user-container .page-header img {
-		position: relative;
-		width: 50%;
-	}
-	.container.user-container .profile-header {
-		margin-left: auto;
-		margin-right: auto;
-		width: 100%;
-	}
-	.profile-tabs li {
-		float: left;
-    	width: 50%;
-	}
-	.profile-tabs li a {
-		padding-left: 7px;
-		padding-right: 7px;
-	}
-	.advanced-search {
-		display: none;
-	}
-   
-    .remove-profile-image-form .btn,
-    #editProfilePhoto {
-    	width: 40%;
-    }
-    .event-media .event-video {
-		display: none;
-	}
-	.event-page-header .main-event-image img{
-		width: 100%;
-		height: auto;
-	}
-	.event-page-sidebar-top {
-		display: none;
-	}
-	
-	
-}
-
-
-
-@media (max-width: 500px) {
-	.profile-tabs #pastSponsorship a {
-		padding-left: 17px;
-	}
-
 }
 
 

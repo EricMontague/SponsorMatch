@@ -4,13 +4,13 @@
 
 {% block edit_event_content %}
 
-<main role="main" id="{{ event.id }}" class="edit-event-content col-lg-8 px-5 pb-5">
+<main role="main" id="{{ event.id }}" class="edit-event-content col-lg-9 px-5 pb-5">
 	<div class="d-flex flex-wrap align-items-center justify-content-between mb-4 packages-page-header">
 		<div class="d-flex align-items-center">
 			{{ utils.render_icon("box-seam", size="1.8rem", color="2fb7ec")}}
 			<h2 class="pl-4">Packages</h2>
 		</div>
-		<div class="btn-group">
+		<div class="btn-group {% if not packages %} d-none {% endif %}">
 			<button id="openModalBtn" type="button" class="btn btn-primary-override" data-toggle="modal"
 				data-target="#addPackageModal">
 				Add Package
@@ -25,10 +25,10 @@
 			{% endif %}
 		</div>
 	</div>
+
+
+	{% if packages %}
 	<div class="row justify-content-center justify-content-xl-start">
-
-		{% if packages %}
-
 		<ul class="col-12 list-unstyled">
 			{% for package in packages %}
 			<li id="{{ package.id }}" class="card horizontal-card bg-white mb-3 py-3 px-4">
@@ -64,70 +64,70 @@
 			{% endfor %}
 		</ul>
 
+	</div>
+
+	{% else %}
+	<div class="d-flex flex-column justify-content-center align-items-center pb-3 vh-40">
+		<h4 class="mb-3 text-center">Add your first package</h4>
+		<button type="button" class="btn btn-primary-override" data-toggle="modal" data-target="#addPackageModal">
+			Add Package
+		</button>
+	</div>
 
 
-		{% else %}
-		<div class="align-self-center">
-			<h3 class="mb-3">Add your first package</h3>
-			<button type="button" class="btn btn-primary-override" data-toggle="modal" data-target="#addPackageModal">
-				Add Package
-			</button>
-		</div>
 
+	{% endif %}
 
-
-		{% endif %}
-
-		<!-- Modal -->
-		<div class="modal fade" id="addPackageModal" tabindex="-1" role="dialog" aria-labelledby="addPackageCenterTitle"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h3 class="modal-title" id="addPackageTitle">Add Package</h3>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<form id="addPackageForm" method="POST" action="{{ url_for('events.packages', id=event.id) }}"
-							role="form">
-							{{ form.hidden_tag() }}
-							{{ wtf.form_errors(form, hiddens="only") }}
-							<div class="row">
-								<div class="col-md-12">
-									{{ wtf.render_field(form.name) }}
-								</div>
+	<!-- Modal -->
+	<div class="modal fade" id="addPackageModal" tabindex="-1" role="dialog" aria-labelledby="addPackageCenterTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="addPackageTitle">Add Package</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="addPackageForm" method="POST" action="{{ url_for('events.packages', id=event.id) }}"
+						role="form">
+						{{ form.hidden_tag() }}
+						{{ wtf.form_errors(form, hiddens="only") }}
+						<div class="row">
+							<div class="col-md-12">
+								{{ wtf.render_field(form.name) }}
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									{{ wtf.render_field(form.price) }}
-								</div>
-								<div class="col-md-6">
-									{{ wtf.render_field(form.available_packages) }}
-								</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								{{ wtf.render_field(form.price) }}
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									{{ wtf.render_field(form.audience) }}
-								</div>
-								<div class="col-md-6">
-									{{ wtf.render_field(form.package_type) }}
-								</div>
+							<div class="col-md-6">
+								{{ wtf.render_field(form.available_packages) }}
 							</div>
-							<div class="row">
-								<div class="col-md-12">
-									{{ wtf.render_field(form.description) }}
-								</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								{{ wtf.render_field(form.audience) }}
 							</div>
-						</form>
-					</div>
-					<div class="modal-footer">
-						{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
-					</div>
+							<div class="col-md-6">
+								{{ wtf.render_field(form.package_type) }}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								{{ wtf.render_field(form.description) }}
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					{{ wtf.render_field(form.submit, button_map={"submit": "primary-override"}) }}
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 
 </main>
