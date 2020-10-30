@@ -149,7 +149,12 @@
 		};
 	};
 
-	let displayAlert = function (message) {
+	const setSiteBackgroundColor = function (color) {
+		document.body.style.backgroundColor = color;
+	};
+
+
+	const displayAlert = function (message) {
 		let hidden = $("#hiddenMessage").hasClass("hidden");
 		$("#message").text(message);
 		if (hidden === true) {
@@ -159,7 +164,7 @@
 		}
 	};
 
-	let ajaxErrorHandler = function (jqXHR, exception, showAlert = false) {
+	const ajaxErrorHandler = function (jqXHR, exception, showAlert = false) {
 		let message = ""
 		if (jqXHR.status === 0) {
 			message = "Not connect.\n Verify Network.";
