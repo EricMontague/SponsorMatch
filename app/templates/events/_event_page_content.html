@@ -1,0 +1,46 @@
+<main class="col-12 col-md-8 py-5 px-5-plus">
+	<section class="mb-5">
+		<h4 class="mb-3">Description</h4>
+		<p>{{ event.description }}</p>
+	</section>
+
+	<section class="mb-5">
+		<h4 class="mb-3">Pitch</h4>
+		<p>{{ event.pitch }}</p>
+	</section>
+	<section class="mb-5">
+		{% if event.attendess or event.male_to_female %}
+		<h4 class="mb-3">Audience</h4>
+		{% if event.attendees %}
+		<p>{{ event.attendees }} people are expect to attend this event.</p>
+		{% endif %}
+
+		{% if event.male_to_female %}
+		<p>The ratio of males to females will be {{ event.male_to_female }}</p>
+		{% endif %}
+		{% endif %}
+	</section>
+	<section class="mb-5">
+		{% if other_media.get("video") or other_media.get("misc_images") %}
+		<h4 class="mb-3">Media</h4>
+		<div>
+			{% if other_media.get("video") %}
+			<iframe class="img-fluid video d-inline-block mb-5" src="{{ other_media.get('video').url }}" width="510"
+				height="280" frameborder="0"
+				allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+				allowfullscreen></iframe>
+			{% endif %}
+		</div>
+		<div>
+			{% for image_path in other_media.get("misc_image_paths") %}
+			<img class="img-fluid d-inline-block mb-5" src="{{ url_for('static', filename=image_path) }}"
+				alt="Other Event Image">
+			{% endfor %}
+		</div>
+		{% endif %}
+	</section>
+	<button id="openModalBtn" type="button" class="btn btn-primary-override mb-5" data-toggle="modal"
+		data-target="#contactModal">
+		Contact
+	</button>
+</main>
