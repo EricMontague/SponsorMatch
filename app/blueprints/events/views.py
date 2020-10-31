@@ -519,7 +519,7 @@ def event_tab(id, tab):
     other_media["misc_image_paths"] = event.misc_images
     if tab == "info":
         return render_template(
-            "utils/_event_page_content.html",
+            "events/_event_page_content.html",
             event=event,
             image_path=image_path,
             other_media=other_media,
