@@ -1,16 +1,16 @@
-<main class="col-12 col-md-8 py-5 px-5-plus">
+<main class="col-12 col-md-8 py-5 px-4 event-page-content">
 	<section class="mb-5">
-		<h4 class="mb-3">Description</h4>
+		<h3 class="mb-3">Description</h3>
 		<p>{{ event.description }}</p>
 	</section>
 
 	<section class="mb-5">
-		<h4 class="mb-3">Pitch</h4>
+		<h3 class="mb-3">Pitch</h3>
 		<p>{{ event.pitch }}</p>
 	</section>
 	<section class="mb-5">
 		{% if event.attendess or event.male_to_female %}
-		<h4 class="mb-3">Audience</h4>
+		<h3 class="mb-3">Audience</h3>
 		{% if event.attendees %}
 		<p>{{ event.attendees }} people are expect to attend this event.</p>
 		{% endif %}
@@ -22,7 +22,7 @@
 	</section>
 	<section class="mb-5">
 		{% if other_media.get("video") or other_media.get("misc_images") %}
-		<h4 class="mb-3">Media</h4>
+		<h3 class="mb-3">Media</h3>
 		<div>
 			{% if other_media.get("video") %}
 			<iframe class="img-fluid video d-inline-block mb-5" src="{{ other_media.get('video').url }}" width="510"
@@ -39,7 +39,7 @@
 		</div>
 		{% endif %}
 	</section>
-	<button id="openModalBtn" type="button" class="btn btn-primary-override mb-5" data-toggle="modal"
+	<button id="openContactModalBtn type=" button" class="btn btn-info mb-5 d-none d-md-block" data-toggle="modal"
 		data-target="#contactModal">
 		Contact
 	</button>
