@@ -635,16 +635,28 @@ a.text-dark-override:hover {
 }
 
 
-#eventFooter div {
-	font-size: 18px;
+.card-header-blue,
+.card-header-blue a {
+	color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
 }
 
-#eventFooter .btn {
-	margin-top: 10px;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	width: 40%;
+
+/*CSS for user blueprint*/
+.user-card {
+	transition: 0.2s ease all;
 }
+
+.user-card:hover  {
+	/* box-shadow: 0 16px 64px -16px rgba(46,55,77,.24); */
+	box-shadow: 0px 1px 3px rgba(0,0,0,.1), 
+	0px 2px 3px rgba(0,0,0,.12), 
+	0px 1px 3px rgba(0,0,0,.14);
+	transform: translateY(-1px);
+}
+
+
 
 
 /* Older Styles Below need to be refactored or deleted*/
@@ -653,7 +665,9 @@ a.text-dark-override:hover {
 
 
 
-/*CSS for user blueprint*/
+
+
+
 .container.user-container .page-header {
 	border: none;
 }
@@ -794,7 +808,8 @@ a.text-dark-override:hover {
 
 .advanced-search select {
 	-webkit-appearance: none;
-  	-webkit-border-radius: 0px;
+	  -webkit-border-radius: 0px;
+	  border-radius: 0px;
 }
 
 ul.live-events {
@@ -802,106 +817,17 @@ ul.live-events {
 }
 
 
-.thumbnail {
-	padding: 0;
-	margin-bottom: 35px;
-}
-
-.thumbnail img {
-	width: 100%;
-	height: auto;
-}
-
-.user-card {
-	transition: 0.2s ease all;
-}
-
-.user-card:hover  {
-	/* box-shadow: 0 16px 64px -16px rgba(46,55,77,.24); */
-	box-shadow: 0px 1px 3px rgba(0,0,0,.1), 
-	0px 2px 3px rgba(0,0,0,.12), 
-	0px 1px 3px rgba(0,0,0,.14);
-	transform: translateY(-1px);
-}
-
-
-
-.caption .event-title,
-.caption .event-location,
-.caption .user-company {
-	white-space: nowrap;
-  	overflow: hidden;
-	text-overflow: ellipsis;
-}
 
 
 
 /*CSS for event blueprint*/
 
 
-.panel-group .panel {
-  margin-bottom: 10px;
-}
 
-.panel-title {
-	display: inline-block;
-	width: 100%;
-}
-
-.panel-body span {
-	font-size: 14px;
-	margin-left: 10px;
-}
-
-#packageQuantity, #total{
-	float: left;
-	padding: 6px 12px;
-	display: inline-block;
-	font-size: 16px;
-}
-
-#packageQuantity {
-	margin-right: 100px;
-}
-
-#salesEnded {
-	float: right;
-}
 
 #salesEnded a {
 	pointer-events: none;
 }
-
-
-
-.container.panel-container {
-	margin-left: auto;
-	margin-right: auto;
-	padding-left: 20px;
-	padding-right: 20px;
-	width: 70%;
-}
-
-.no-search-results {
-	margin-top: 45px;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	width: 100%;
-}
-
-.no-search-results img {
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.no-search-results p {
-	margin-left: auto;
-	margin-right: auto;
-	font-size: 18px;
-}
-
-
 
 
 
@@ -1072,26 +998,7 @@ ul.sponsorship-list {
 }
 
 
-.modal.fade:not(.in) .modal-dialog {
-    -webkit-transform: translate3d(-25%, 0, 0);
-    transform: translate3d(25%, 0, 0);
-}
 
-.modal-header h3 {
-	display: inline;
-}
-
-.modal-header button {
-	padding-top: 5px;
-}
-
-.modal-body {
-	margin-bottom: -15px;
-}
-
-.purchase .page-header .event-datetime {
-	font-size: 16px;
-}
 
 td {
   white-space: normal !important; 
@@ -1100,50 +1007,6 @@ td {
 table {
   table-layout: fixed;
 }
-
-.panel-body .company {
-	white-space: nowrap;
-  	overflow: hidden;
-	text-overflow: ellipsis;
-	margin-top: 0;
-}
-
-.panel-body .location p {
-	margin-bottom: 0;
-}
-
-.panel .organizer-details {
-	margin-top: -10px;
-	padding: 0 15px 15px 15px;
-	border-bottom: 1px solid #ddd;
-}
-
-.panel .organizer-details button {
-	display: block;
-	margin-bottom: 15px;
-}
-
-.panel .events {
-	padding: 15px;
-}
-
-.panel .events #upcomingEvents {
-	margin-bottom: 10px;
-}
-
-#upcomingEvents, 
-#pastEvents,
-#viewProfile {
-	display: block;
-}
-
-#contactOrganizer {
-	display: block;
-	width: 80%;
-}
-
-
-
 
 
 
