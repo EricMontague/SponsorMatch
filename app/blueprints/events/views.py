@@ -529,7 +529,7 @@ def event_tab(id, tab):
         for sponsorship in event.sponsorships:
             if not sponsorship.is_pending():
                 users.add(sponsorship.sponsor)
-        return render_template("utils/_users.html", event=event, users=users)
+        return render_template("users/_users.html", event=event, users=users)
     else:
         abort(404)
 
@@ -741,7 +741,7 @@ def purchase(id):
         "info"
     )
     return render_template(
-        "events/purchase.html",
+        "events/checkout.html",
         form=form,
         event=event,
         sponsorships=sponsorships,
