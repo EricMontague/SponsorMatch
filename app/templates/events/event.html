@@ -5,15 +5,16 @@
 {% block page_content %}
 <div id="{{ event.id }}" class="container event-page">
 
-	<header class="w-100 d-flex justify-content-center">
+	<div class="w-100 d-flex justify-content-center">
 		{% if image_path %}
-		<img class="img-fluid" src="{{ url_for('static', filename=image_path) }}">
+		<img class="img-fluid main-event-image" src="{{ url_for('static', filename=image_path) }}">
 		{% else %}
-		<img class="img-fluid" src="{{ url_for('static', filename='images/default_event_image.png') }}">
+		<img class="img-fluid main-event-image"
+			src="{{ url_for('static', filename='images/default_event_image.png') }}">
 		{% endif %}
-	</header>
+	</div>
 
-	<div class="d-flex flex-column align-items-center py-4 mb-4">
+	<div class="d-flex flex-column align-items-center py-4 mb-4 event-info border-x border-bottom mx-auto">
 		{% if event.is_ongoing() %}
 		<p class="custom-font-semibold font-150 text-center text-dark-second">{{ event.title }}</p>
 		{% else %}
@@ -42,8 +43,8 @@
 
 
 	<ul class="d-flex nav nav-tabs">
-		<li id="info" class="nav-item" role="presentation"><a class="nav-link active">Info</a></li>
-		<li id="sponsors" class="nav-item" role="presentation"><a class="nav-link">Sponsors <span
+		<li id="eventInfoTab" class="nav-item" role="presentation"><a class="nav-link active">Info</a></li>
+		<li id="sponsorsTab" class="nav-item" role="presentation"><a class="nav-link">Sponsors <span
 					class="badge badge-primary-override d-inline-block ml-2">{{ event.num_sponsors() }}</span></a>
 		</li>
 		{% if event.has_ended() %}
@@ -106,138 +107,5 @@
 
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript">
-
-	//Show the modal if the user entered invalid data
-	let formErrors = {{ form.errors | safe }};
-	if ($.isEmptyObject(formErrors) === false) {
-		$("#contactModal").modal("show");
-	}
-
-	const resizeFunc = function () {
-		if ($(window).width() <= 768) {
-			$("#eventFooter").removeClass("hidden");
-			$("#onResize").removeClass("hidden");
-			$("#packageBtn").hide();
-		} else {
-			$("#eventFooter").addClass("hidden");
-			$("#onResize").addClass("hidden");
-			$("#packageBtn").show();
-		}
-	};
-
-
-	$(".save-btn").click(function () {
-		let eventId = $(".event-page").attr("id");
-		$.ajax({
-			type: "POST",
-			url: `${window.origin}/events/${eventId}/save`,
-			dataType: "json",
-			success: function (response) {
-				displayAlert(response.message);
-			}
-		});
-		return false;
-	});
-
-	$(".panel-title a").click(function () {
-		let packageId = $(this).attr("data-target").split("_")[1];
-		let element = $(this).find("span");
-		$(`#package_${packageId}`).on('hide.bs.collapse', function () {
-			$(element).removeClass("glyphicon-minus").addClass("glyphicon-plus");
-		});
-		$(`#package_${packageId}`).on('show.bs.collapse', function () {
-			$(element).removeClass("glyphicon-plus").addClass("glyphicon-minus");
-		});
-	});
-
-	$("#info").click(function () {
-		const eventId = $(".event-page").attr("id");
-		$.ajax({
-			type: "GET",
-			url: `${window.origin}/events/${eventId}/info`,
-			dataType: "html",
-			success: function (response) {
-				const anchorTag = $("#sponsors").find("a");
-				const active = anchorTag.hasClass("active");
-				if (active) {
-					anchorTag.removeClass("active");
-					$("#info").find("a").addClass("active");
-				};
-				$(".event-page-content").html(response);
-			}
-		});
-		return false;
-	});
-
-	$("#sponsors").click(function () {
-		const eventId = $(".event-page").attr("id");
-		$.ajax({
-			type: "GET",
-			url: `${window.origin}/events/${eventId}/sponsors`,
-			dataType: "html",
-			success: function (response) {
-				const anchorTag = $("#info").find("a");
-				const active = anchorTag.hasClass("active");
-				if (active) {
-					anchorTag.removeClass("active");
-					$("#sponsors").find("a").addClass("active");
-				};
-				$(".event-page-content").html(response);
-			}
-		});
-		return false;
-	});
-
-	$(".select-package").click(function () {
-		const regexPrice = /\d+\.\d{2}/;
-		const regexQty = /\d+/;
-		const $element = $(this);
-		const quantity = parseInt(regexQty.exec($("#packageQuantity").text()));
-		const total = parseFloat(regexPrice.exec($("#total").text()));
-		const cost = parseFloat(regexPrice.exec($(this).siblings(".price").text()));
-		if ($element.text() === "Add") {
-			$element.text("Remove");
-			if (total === 0.00) {
-				$("#checkout").removeClass("disabled");
-			};
-			$("#packageQuantity").text(`QTY: ${quantity + 1}`);
-			$("#total").text(`USD $${(total + cost).toFixed(2)}`);
-		} else {
-			$element.text("Add");
-			if (parseInt(total - cost) === 0) {
-				$("#checkout").addClass("disabled");
-			};
-			$("#packageQuantity").text(`QTY: ${quantity - 1}`);
-			$("#total").text(`USD $${(total - cost).toFixed(2)}`);
-		};
-		$element.closest(".panel-collapse").toggleClass("selected");
-	});
-
-	$("#checkout").click(function () {
-		const eventId = $(".event-page").attr("id");
-		const packageIds = [];
-		$(".selected").each(function (index) {
-			packageIds.push($(this).attr("id").split("_")[1]);
-		});
-		$.ajax({
-			type: "POST",
-			url: `${window.origin}/events/${eventId}/sponsorships`,
-			contentType: "application/json",
-			data: JSON.stringify({ "ids": packageIds }),
-			dataType: "json",
-			success: function (response) {
-				window.location.href = response.url;
-			},
-			error: function (jqXHR, exception) {
-				$("#packageModal").modal("toggle");
-				ajaxErrorHandler(jqXHR, exception);
-			}
-		});
-		return false;
-	});
-
-
-	setSiteBackgroundColor("#fff");
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/event.js') }}"></script>
 {% endblock %}
