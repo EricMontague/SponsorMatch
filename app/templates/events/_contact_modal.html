@@ -2,8 +2,8 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="contactTitle">Contact Organizer</h3>
+            <div class="modal-header align-items-center">
+                <h5 class="modal-title custom-font-semibold" id="contactTitle">Contact Organizer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -28,8 +28,10 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        {{ wtf.render_field(form.submit, button_map={"submit": "btn btn-primary"}) }}
+                        <div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            {{ wtf.render_field(form.submit, button_map={"submit": "primary-override"}) }}
+                        </div>
                     </div>
                 </form>
             </div>

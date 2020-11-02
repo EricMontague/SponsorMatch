@@ -2,7 +2,7 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header align-items-center">
                 {% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing %}
                 <h3 class="modal-title" id="packageModalTitle">Select Packages</h3>
                 {% else %}
@@ -13,43 +13,43 @@
                 </button>
             </div>
             <div class="modal-body">
-                <ul id="accordion" class="list-unstyled panel-group package-panels" role="tablist"
-                    aria-multiselectable="true">
+                <ul id="accordion" class="list-unstyled packages-accordion" role="tablist" aria-multiselectable="true">
                     {% for package in packages %}
-                    <li class="package-panel">
-                        <div class="panel panel-info">
-                            <div class="panel-heading" role="tab">
-                                <h3 class="panel-title">
-                                    <a href="javascript:void(0);" role="button" data-parent="#accordion"
-                                        data-toggle="collapse" data-target="#package_{{ package.id }}"
-                                        aria-expanded="true" aria-controls="package_{{ package.id }}">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        {{ package.name }}
-                                    </a>
-                                    {% if package.is_sold_out() %}
-                                    <span class="pull-right">Sold Out</span>
-                                    {% endif %}
-                                </h3>
+                    <li class="card mb-3">
+                        <div class="card-header card-header-blue" role="tab">
+                            <h5 class="custom-font-bold">
+                                <a class="d-flex align-items-center" href="javascript:void(0);" role="button"
+                                    data-parent="#accordion" data-toggle="collapse"
+                                    data-target="#package_{{ package.id }}" aria-expanded="true"
+                                    aria-controls="package_{{ package.id }}">
+                                    <span class="plus-icon">{{ utils.render_icon("plus") }}</span>
+                                    <span class="minus-icon d-none">{{ utils.render_icon("dash") }}</span>
+                                    {{ package.name }}
+                                </a>
+                                {% if package.is_sold_out() %}
+                                <span class="float-right">Sold Out</span>
+                                {% endif %}
+                            </h5>
+                        </div>
+                        <div id="package_{{ package.id }}" class="collapse" role="tabpanel">
+                            <div class="card-body">
+                                <p class="price">Price: ${{ package.price }}</p>
+                                <p>Audience Reached: {{ package.audience }}</p>
+                                <p>Description: {{ package.description }}</p>
+                                <p>Available Packages: {{ package.num_for_sale() }}</p>
+                                <p>Package Type: {{ package.package_type }}</p>
+                                {% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing() %}
+                                {% if current_user.has_purchased(package) %}
+                                <a class="btn btn-info select-package disabled" href="javascript:void(0);">Add</a>
+                                <span>Already Purchased</span>
+                                {% elif package.is_sold_out() %}
+                                <a class="btn btn-info select-package disabled" href="javascript:void(0);">Add</a>
+                                {% else %}
+                                <a class="btn btn-info select-package" href="javascript:void(0);">Add</a>
+                                {% endif %}
+                                {% endif %}
                             </div>
-                            <div id="package_{{ package.id }}" class="panel-collapse collapse" role="tabpanel">
-                                <div class="panel-body">
-                                    <p class="price">Price: ${{ package.price }}</p>
-                                    <p>Audience Reached: {{ package.audience }}</p>
-                                    <p>Description: {{ package.description }}</p>
-                                    <p>Available Packages: {{ package.num_for_sale() }}</p>
-                                    <p>Package Type: {{ package.package_type }}</p>
-                                    {% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing() %}
-                                    {% if current_user.has_purchased(package) %}
-                                    <a class="btn btn-primary select-package disabled">Add</a>
-                                    <span>Already Purchased</span>
-                                    {% elif package.is_sold_out() %}
-                                    <a class="btn btn-primary select-package disabled">Add</a>
-                                    {% else %}
-                                    <a class="btn btn-primary select-package">Add</a>
-                                    {% endif %}
-                                    {% endif %}
-                                </div>
-                            </div>
+
                         </div>
                     </li>
                     {% endfor %}
@@ -59,9 +59,9 @@
                 {% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing() %}
                 <div id="packageQuantity">QTY: 0</div>
                 <div id="total">USD $0.00</div>
-                <a id="checkout" class="btn btn-primary disabled" href="#">Checkout</a>
+                <a id="checkout" class="ml-auto btn btn-primary-override disabled" href="#">Checkout</a>
                 {% else %}
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary-override" data-dismiss="modal">Close</button>
                 {% endif %}
             </div>
         </div>
