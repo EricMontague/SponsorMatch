@@ -1,4 +1,4 @@
-{% extends "./actual_base.html" %}
+{% extends "./project_base.html" %}
 {% import "bootstrap/form.html" as wtf %}
 {% import "bootstrap/utils.html" as utils %}
 
@@ -8,7 +8,7 @@
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 {% endblock %}
 
 {% block body %}
