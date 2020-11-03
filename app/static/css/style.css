@@ -4,17 +4,17 @@
 
 @font-face {
 	font-family: 'Source Sans Pro Regular';
-	src: url('./Source_Sans_Pro/SourceSansPro-Regular.ttf');
+	src: url('../fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf');
 }
 
 @font-face {
 	font-family: 'Source Sans Pro Semi Bold';
-	src: url('./Source_Sans_Pro/SourceSansPro-SemiBold.ttf');
+	src: url('../fonts/Source_Sans_Pro/SourceSansPro-SemiBold.ttf');
 }
 
 @font-face {
 	font-family: 'Source Sans Pro Regaular Italic';
-	src: url('./Source_Sans_Pro/SourceSansPro-Italic.ttf');
+	src: url('../fonts/Source_Sans_Pro/SourceSansPro-Italic.ttf');
 }
 
 
@@ -49,7 +49,8 @@ body {
 /* Badges */
 .badge {
 	font-size: 85%;
-	border-radius: 0.3rem;
+	padding :0.2rem 0.4rem;
+	border-radius: 50%;
 }
 
 .badge-primary-override {
@@ -511,9 +512,14 @@ a.text-dark-override:hover {
 }
 
 
-
+.event-card-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.5rem;
+}
 
 /* Media Queries */
+
 
 @media (min-width: 1024px) {
 	.flex-grow-lg-30 {
@@ -541,6 +547,9 @@ a.text-dark-override:hover {
 	.edit-event-content.demographics > * {
 		padding-top: 0 !important;
 	}
+	.event-card-grid {
+		grid-template-columns: 1fr 1fr 1fr !important;
+	}
 	
 }
 
@@ -557,6 +566,10 @@ a.text-dark-override:hover {
 	.event-page-sidebar {
 		border-left: 1px solid #dee2e6 !important;
 	}
+	.event-card-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	
 }
 
 
@@ -577,6 +590,15 @@ a.text-dark-override:hover {
 		width: initial;
 	}
 }
+
+/* This is down here so that the above styles don't override the
+event-card style */
+@media (min-width: 1200px) {
+	.event-card-grid {
+		grid-template-columns: 1fr 1fr 1fr 1fr !important;
+	}
+}
+
 
 /* Auth Blueprint Specific Styles */
 .subscription-message {
@@ -635,6 +657,7 @@ a.text-dark-override:hover {
 }
 
 
+
 .card-header-blue,
 .card-header-blue a {
 	color: #31708f;
@@ -642,8 +665,12 @@ a.text-dark-override:hover {
     border-color: #bce8f1;
 }
 
+#salesEnded a {
+	pointer-events: none;
+}
 
-/*CSS for user blueprint*/
+
+/* User blueprint specific styles */
 .user-card {
 	transition: 0.2s ease all;
 }
@@ -659,13 +686,55 @@ a.text-dark-override:hover {
 
 
 
+/* Payments blueprint specific styles */
+td {
+	white-space: normal !important; 
+	word-wrap: break-word;  
+  }
+
+table {
+table-layout: fixed;
+}
+  
+
+  
+
+
+/* Main blueprint specific styles */
+
+
+ 
+.banner img {
+	position: relative;
+	
+	width: 100%;
+	max-height: 500px;
+}
+
+.homepage-header {
+ color: #fff;
+ position: absolute;
+ /* top: 15%; */
+ left: 10%;
+ padding-bottom: 9px;
+ margin: 40px 0 20px;
+ font-size: 40px;
+}
+
+
+.banner-img {
+ position: relative;
+ margin-bottom: 40px;
+ min-height: 500px;
+ width: 100%;
+ background-image: url("../../static/images/homepage_image.jpg");
+ background-position: center;
+ background-repeat: no-repeat;
+ background-size: cover;
+ 
+}
+
 /* Older Styles Below need to be refactored or deleted*/
-
-
-
-
-
-
 
 
 .container.user-container .page-header {
@@ -734,51 +803,7 @@ a.text-dark-override:hover {
   display: block;
  }
 
- .banner img {
- 	position: relative;
- 	
- 	width: 100%;
- 	max-height: 500px;
- }
 
-.homepage-header {
-  color: #fff;
-  position: absolute;
-  /* top: 15%; */
-  left: 10%;
-  padding-bottom: 9px;
-  margin: 40px 0 20px;
-  font-size: 40px;
-}
-
-
-.banner-img {
-  position: relative;
-  margin-bottom: 40px;
-  min-height: 500px;
-  width: 100%;
-  background-image: url("../../static/images/homepage_image.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  
-}
-
-.container .advanced-search {
-  position: absolute;
-  padding: 5px 40px 20px 40px;
-  right: 8%;
-  top: 5%;
-  background-color: #fff;
-  box-shadow: 0px 16px 64px -8px rgba(46, 55, 77, 0.2);
-}
-
-.advanced-search h3 {
-	padding-left: 0;
-	padding-bottom: 15px;
-	margin-bottom: 10px;
-	color: #222;
-}
 
 .advanced-search .form-control {
 	border: none;
@@ -812,11 +837,6 @@ a.text-dark-override:hover {
 	  border-radius: 0px;
 }
 
-ul.live-events {
-	margin-top: 35px;
-}
-
-
 
 
 
@@ -824,10 +844,6 @@ ul.live-events {
 
 
 
-
-#salesEnded a {
-	pointer-events: none;
-}
 
 
 
@@ -999,14 +1015,6 @@ ul.sponsorship-list {
 
 
 
-
-td {
-  white-space: normal !important; 
-  word-wrap: break-word;  
-}
-table {
-  table-layout: fixed;
-}
 
 
 
