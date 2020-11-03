@@ -3,8 +3,8 @@
 {% block title %}Sponsormatch - {{ event.title }}{% endblock %}
 {% block page_content %}
 <div id="{{ event.id }}" class="container purchase-page px-4-plus">
-	<header class="py-4 border-bottom">
-		<h2 class="mb-3">{{ event.title }} | {{ event.start_date("%b %-dth") }} - {{ event.end_date("%-dth %Y") }} </h2>
+	<header class="py-4 my-4">
+		<h2 class="mb-3">{{ event.title }} , {{ event.start_date("%b %-dth") }} - {{ event.end_date("%-dth %Y") }} </h2>
 		<p>by <a class="link-blue" href="{{ url_for('users.user_profile', company=event.user.company) }}"
 				target="_blank">{{ event.user.company }}</a></p>
 		<p>{{ event.start_date("%A, %b %-d, %Y") }} at {{ event.start_time("%-I:%M %p") }} -
@@ -19,14 +19,14 @@
 				</div>
 				<div class="card-body">
 					<!-- Table -->
-					<table class="table">
+					<table class="table table-responsive table-responsive-sm table-responsive-md table-responsive-lg">
 						<thead>
 							<tr>
-								<th scope="col">Package Name</th>
-								<th scope="col">Price</th>
-								<th scope="col">Fee</th>
-								<th scope="col">Quantity</th>
-								<th scope="col">Subtotal</th>
+								<th class="custom-font-semibold" scope="col">Package Name</th>
+								<th class="custom-font-semibold" scope="col">Price</th>
+								<th class="custom-font-semibold" scope="col">Fee</th>
+								<th class="custom-font-semibold" scope="col">Quantity</th>
+								<th class="custom-font-semibold" scope="col">Subtotal</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -45,14 +45,14 @@
 								<td></td>
 								<td></td>
 								<td></td>
-								<td class="font-weight-bold">Sales Tax:</td>
+								<td class="custom-font-semibold">Sales Tax:</td>
 								<td id="salesTax"></td>
 							</tr>
 							<tr>
 								<td></td>
 								<td></td>
 								<td></td>
-								<td class="font-weight-bold">Order total:</td>
+								<td class="custom-font-semibold">Order total:</td>
 								<td id="orderTotal"></td>
 							</tr>
 						</tbody>
@@ -69,8 +69,8 @@
 				</div>
 				<div class="card-body">
 					<div>
-						<p class="font-weight-bold">{{ event.venue.name }}</p>
-						<p>{{ event.venue.address }}</p>
+						<h5 class="custom-font-semibold font-150">{{ event.venue.name }}</h5>
+						<p class="mb-0">{{ event.venue.address }}</p>
 						<p>{{ event.venue.city }}, {{ event.venue.state }} {{ event.venue.zip_code }}</p>
 					</div>
 					<div>
@@ -84,22 +84,27 @@
 					<h5 class="custom-font-semibold font-120">Organizer</h5>
 				</div>
 				<div class="card-body">
-					<h4>{{ event.user.company }}</h4>
+					<h5 class="custom-font-semibold font-150">{{ event.user.company }}</h5>
+
+
+					<a id="{{ event.user.company }}" class="view-profile d-block mb-3"
+						href="{{ url_for('users.user_profile', company=event.user.company) }}" target="_blank">View
+						Organizer Profile</a>
 
 					<div>
-						<a id="{{ event.user.company }}" class="view-profile"
-							href="{{ url_for('users.user_profile', company=event.user.company) }}" target="_blank">View
-							Organizer Profile</a>
-					</div>
-					<div>
-						<a id="upcomingEvents"><span
-								class="badge badge-primary d-block">{{ event.user.num_events_hosted(EventStatus.LIVE) }}</span>
-							upcoming
-							events</a>
-						<a id="pastEvents"><span
-								class="badge badge-primary d-block">{{ event.user.num_events_hosted(SponsorshipStatus.PAST) }}</span>
-							past
-							events</a>
+						<a class="d-block mb-2" id="upcomingEvents">
+							<span class="badge badge-primary-override mr-2">
+								{{ event.user.num_events_hosted(EventStatus.LIVE) }}
+							</span>
+							<span>Upcoming Events</span>
+						</a>
+						<a class="d-block" id="pastEvents">
+							<span class="badge badge-primary-override mr-2">
+								{{ event.user.num_events_hosted(SponsorshipStatus.PAST) }}
+							</span>
+							<span>Past Events</span>
+
+						</a>
 					</div>
 				</div>
 			</div>
