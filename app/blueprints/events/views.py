@@ -738,7 +738,7 @@ def purchase(id):
         return redirect(url_for("main.index"))
     flash(
         "Please note: Navigating away from or refreshing this page will cancel your purchase.",
-        "info"
+        "danger"
     )
     return render_template(
         "events/checkout.html",
