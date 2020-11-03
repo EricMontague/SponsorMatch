@@ -33,39 +33,3 @@
 	</ul>
 </nav>
 {% endmacro %}
-
-
-{% macro render_sidebar(blueprint, header, model=None) %}
-{% if blueprint=="settings" %}
-<nav class="nav nav-stacked settings-nav">
-	<h3>{{ header }}</h3>
-	<ul class="list-unstyled components">
-		<li><a href="{{ url_for('settings.change_password') }}">Change Password</a></li>
-		<li><a href="{{ url_for('settings.change_email') }}">Change Email</a></li>
-		<li><a href="{{ url_for('settings.close_account') }}">Close Account</a></li>
-	</ul>
-</nav>
-{% elif blueprint=="event" %}
-<nav class="nav nav-stacked edit-event-nav">
-	<div class="sidebar-header">
-		<h3><a href="{{ url_for('events.edit_basic_info', id=model.id) }}">{{ header }}</a></h3>
-	</div>
-	<div class="switch-event">
-		{% if model.published %}
-		<a href="{{ url_for('events.event', id=model.id) }}">View Event</a><span> | </span><a
-			href="{{ url_for('manage.manage_events', status='all') }}">Switch Event</a>
-		{% else %}
-		<a href="{{ url_for('manage.manage_events', status='all') }}">Switch Event</a>
-		{% endif %}
-
-	</div>
-	<ul class="list-unstyled components">
-		<li><a href="{{ url_for('events.edit_basic_info', id=model.id) }}">Basic Info</a></li>
-		<li><a href="{{ url_for('events.event_details', id=model.id) }}">Event Details</a></li>
-		<li><a href="{{ url_for('events.demographics', id=model.id) }}">Demographics</a></li>
-		<li><a href="{{ url_for('events.media', id=model.id) }}">Media</a></li>
-		<li><a href="{{ url_for('events.packages', id=model.id) }}">Packages</a></li>
-	</ul>
-</nav>
-{% endif %}
-{% endmacro %}
