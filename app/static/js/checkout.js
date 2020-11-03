@@ -1,43 +1,73 @@
-let subtotal = 0;
-let userCompany = $(".view-profile").attr("id");
+
+const userCompany = $(".view-profile").attr("id");
 
 
 // Calculate sales tax, order total, set form action attribute and script data-amount attribute
-$(".subtotal").each(function (index) {
-    let price = "";
-    let elementText = $(this).text();
-    for (let index = 0; index < elementText.length; index++) {
-        if (elementText[index] === "." || $.isNumeric(elementText[index])) {
-            price += elementText[index];
+const calculateSubTotal = function () {
+    let subtotal = 0;
+    $(".subtotal").each(function (index) {
+        let price = "";
+        let elementText = $(this).text();
+        for (let index = 0; index < elementText.length; index++) {
+            if (elementText[index] === "." || $.isNumeric(elementText[index])) {
+                price += elementText[index];
+            }
         }
-    }
-    subtotal += parseFloat(price);
-});
-let calculateSalesTax = function () {
+        subtotal += parseFloat(price);
+    });
+    return subtotal;
+};
+
+
+const calculateSalesTax = function () {
+    const subtotal = calculateSubTotal();
     return (subtotal * 0.08).toFixed(2);
 }
-let calculateTotal = function () {
+const calculateTotal = function () {
+    const subtotal = calculateSubTotal();
     return (parseFloat(calculateSalesTax()) + subtotal).toFixed(2);
 }
-$("#salesTax").text(`$${calculateSalesTax()}`);
-$("#orderTotal").text(`$${calculateTotal()}`);
+
+const setSalesTax = function () {
+    $("#salesTax").text(`$${calculateSalesTax()}`);
+};
+
+const setOrderTotal = function () {
+    $("#orderTotal").text(`$${calculateTotal()}`);
+};
+
+
 
 // Delete Sponsorship objects from db if the user navigates away from the page
-$(window).on("unload", function () {
-    let eventId = $(".container.purchase-page").attr("id");
-    let success = navigator.sendBeacon(`${window.origin}/events/${eventId}/sponsorships/cancel-purchase`);
-    window.location.href = window.origin;
-    return false;
-});
+const deleteSponsorshipOnUnload = function () {
+    $(window).on("unload", function () {
+        const eventId = $(".container.purchase-page").attr("id");
+        const success = navigator.sendBeacon(`${window.origin}/events/${eventId}/sponsorships/cancel-purchase`);
+        window.location.href = window.origin;
+        return false;
+    });
+};
 
 
-$("#upcomingEvents").click(function () {
-    window.open(`${window.origin}/users/${userCompany}`);
-});
 
-$("#pastEvents").click(function () {
-    window.open(`${window.origin}/users/${userCompany}?past=1`);
-});
+const handleUpcomingEventsClick = function (company) {
+    $("#upcomingEvents").click(function () {
+        window.open(`${window.origin}/users/${company}`);
+    });
+
+};
+
+const handlePastEventsClick = function (company) {
+    $("#pastEvents").click(function () {
+        window.open(`${window.origin}/users/${company}?past=1`);
+    });
+};
+
+setSalesTax();
+setOrderTotal();
+deleteSponsorshipOnUnload();
+handleUpcomingEventsClick(userCompany);
+handlePastEventsClick(userCompany);
 
 // will be declared in main.js which will be included before this script on the page
 setSiteBackgroundColor("#fff");
