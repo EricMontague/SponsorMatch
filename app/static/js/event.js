@@ -1,13 +1,6 @@
 const BACKGROUND_COLOR = "#fff";
 const CONTACT_MODAL_ID = "#contactModal";
 
-//Show the modal if the user entered invalid data
-const showModalFormErrors = function (modalId) {
-    const errors = $(".invalid-feedback");
-    if (errors.length > 0) {
-        $(modalId).modal("show");
-    }
-};
 
 const adjustEventInfoWidth = function () {
 
