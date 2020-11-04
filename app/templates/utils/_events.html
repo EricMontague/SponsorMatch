@@ -1,12 +1,13 @@
-<ul class="list-unstyled mt-4 event-card-grid px-4">
+<ul class="list-unstyled mt-4 event-card-grid px-4 mb-5">
 	{% for event in events %}
 	<li id="eventListItem{{ event.id }}" class="event-card bg-white">
 		<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">
-			<img class="w-100 h-auto" src="{{ url_for('static', filename='images/default_event_image.png') }}"
+			<img class="w-100 h-auto" src="{{ url_for('static', filename='images/default_event_image2.jpg') }}"
 				alt="Event Image">
 			<div class="d-flex flex-column  pt-4 px-2">
-				<p>{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }}</p>
-				<h4>{{ event.title }}</h4>
+				<p class="event-card-title">{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }}
+				</p>
+				<h5 class="custom-font-semibold font-120">{{ event.title }}</h5>
 				<p>{{ event.venue.city }}, {{ event.venue.state }}</p>
 			</div>
 
