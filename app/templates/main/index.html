@@ -4,53 +4,55 @@
 {% block title %}SponsorMatch{% endblock %}
 
 {% block page_content %}
-<div class="banner">
-	<header class='banner-img'>
-		<h1 class="homepage-header">
-			<span>
-				<p>Welcome,</p>
+<header class="hero d-flex flex-wrap mb-4">
+
+	<div class="col-md-6 col-xl-3">
+		<div class="d-flex align-items-center justify-content-center h-50">
+			<span class="text-white">
+				<h1>Welcome,</h1>
 				{% if current_user.is_authenticated %}
-				<p>{{ current_user.first_name + " " + current_user.last_name }}!</p>
+				<h1>{{ current_user.first_name + " " + current_user.last_name }}!</h1>
 				{% else %}
-				<p>Stranger!</p>
+				<h1>Stranger!</h1>
 				{% endif %}
 			</span>
-		</h1>
-		<div class="container advanced">
-			<form class="col-xs-10 col-sm-5 col-md-4 col-lg-4 advanced-search" method="POST"
-				action="{{ url_for('main.advanced_search') }}" role="form`">
-				{{ form.hidden_tag() }}
-				{{ wtf.form_errors(form, hiddens="only") }}
-				<h3 class="col-md-12">Find Events</h3>
-				<div class="row">
-					<div class="col-md-12">
-						{{ wtf.render_field(form.start_date) }}
-					</div>
-					<div class="col-md-12">
-						{{ wtf.render_field(form.end_date) }}
-					</div>
-					<div class="col-md-12">
-						{{ wtf.render_field(form.city) }}
-					</div>
-					<div class="col-md-12">
-						{{ wtf.render_field(form.state) }}
-					</div>
-					<div class="col-md-12">
-						{{ wtf.render_field(form.category) }}
-					</div>
-					<div class="col-md-12">
-						{{ wtf.render_field(form.submit, button_map={"submit": "btn btn-danger"}) }}
-					</div>
-				</div>
-			</form>
 		</div>
-	</header>
-</div>
+	</div>
+	<div class="col-md-6 col-dxl-3 ml-auto pt-4 pb-5 pr-4 d-none d-md-flex">
+		<form class="advanced-search-form bg-white p-5" method="POST" action="{{ url_for('main.advanced_search') }}"
+			role="form`">
+			{{ form.hidden_tag() }}
+			{{ wtf.form_errors(form, hiddens="only") }}
+			<h3 class="custom-font-semibold font-150 mb-3">Find Events</h3>
+			<div class="row">
+				<div class="col-md-12">
+					{{ wtf.render_field(form.start_date) }}
+				</div>
+				<div class="col-md-12">
+					{{ wtf.render_field(form.end_date) }}
+				</div>
+				<div class="col-md-12">
+					{{ wtf.render_field(form.city) }}
+				</div>
+				<div class="col-md-12">
+					{{ wtf.render_field(form.state) }}
+				</div>
+				<div class="col-md-12">
+					{{ wtf.render_field(form.category) }}
+				</div>
+				<div class="col-md-12">
+					{{ wtf.render_field(form.submit, button_map={"submit": "primary-override"}) }}
+				</div>
+			</div>
+		</form>
+	</div>
+
+</header>
 <main>
 	{% include "utils/_events.html" %}
-
+	,
 	{% if pagination %}
-	<div class="pagination">
+	<div class="pagination mb-3">
 		{{ macros.pagination_widget(pagination, "main.index") }}
 	</div>
 	{% endif %}
