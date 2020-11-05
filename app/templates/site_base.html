@@ -84,7 +84,7 @@
 
 				<div class="form-group has-search d-flex align-items-center flex-no-wrap">
 					{{ utils.render_icon("search") }}
-					<input class="form-control mr-2" type="search" placeholder="Find events" aria-label="Search">
+					{{ g.search_form.query(class="form-control mr-2", placeholder="Find events") }}
 					<button class="btn btn-primary-override" type="submit">Search</button>
 				</div>
 
