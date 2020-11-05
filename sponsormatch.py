@@ -24,9 +24,29 @@ from app.models import (
 )
 from flask_migrate import upgrade
 from app.extensions import db, migrate
+from app.error_handlers import (
+    page_not_found,
+    internal_server_error,
+    bad_request,
+    forbidden
+)
+from werkzeug.exceptions import (
+    NotFound,
+    InternalServerError,
+    BadRequest,
+    Forbidden,
+)
 
 
 app = create_app(os.environ.get("FLASK_CONFIG") or "default")
+
+# Register application wide error handlers
+app.register_error_handler(NotFound, page_not_found)
+app.register_error_handler(InternalServerError, internal_server_error)
+app.register_error_handler(BadRequest, bad_request)
+app.register_error_handler(Forbidden, forbidden)
+
+# Register with Flask-Migrate
 migrate.init_app(app, db)
 
 
