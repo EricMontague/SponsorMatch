@@ -285,7 +285,9 @@ a.badge-primary-override:focus, a.badge-primary-override.focus {
 	height: 70vh !important;
 }
 
-
+.h-85 {
+	height: 85% !important;
+}
 
 
 /* Alerts */
@@ -617,10 +619,10 @@ event-card style */
 }
 
 
-@media (min-width: 1500px) {
+@media (min-width: 1600px) {
 	.col-dxl-3 {
-		flex: 0 0 33%;
-		max-width: 33%;
+		flex: 0 0 25%;
+		max-width: 25%;
 	}
 }
 
@@ -661,16 +663,22 @@ event-card style */
 	padding-bottom: 1rem;
 }
 
+
+
 .horizontal-card {
-	transition: 0.18s ease all;
+	border-radius: 0.5rem;
+	transition: box-shadow, transform 0.3s cubic-bezier(.38, 0, .25, .90);
 }
 
 .horizontal-card:hover {
-	box-shadow: 0px 1px 3px rgba(0,0,0,.1), 
-	0px 2px 3px rgba(0,0,0,.12), 
-	0px 1px 3px rgba(0,0,0,.14);
-    transform: translateY(-1px);
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+    -webkit-transform: translateY(-0.2rem);
+    -ms-transform: translateY(-0.2rem);
+    transform: translateY(-0.2rem);
 }
+
+
 
 .event-page-content {
 	padding-bottom: 0;
@@ -700,19 +708,37 @@ event-card style */
 	gap: 1.5rem;
 }
 
+
+
 .event-card {
+	border-radius: 0.5rem;
 	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
     0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-	transition: box-shadow 0.3 ease;
+	transition: box-shadow, transform 0.3s cubic-bezier(.38, 0, .25, .90);
 }
 
 .event-card-title {
 	color: var(--orange-color);
 }
 
+.event-card img {
+	border-radius: 0.5rem 0.5rem 0 0;
+}
+
 .event-card:hover {
-	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
       0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 3px 5px 4px rgba(0, 0, 0, 0.1);
+    -webkit-transform: translateY(-0.2rem);
+    -ms-transform: translateY(-0.2rem);
+    transform: translateY(-0.2rem);
+}
+
+.event-card a {
+	transition: opacity 0.3s cubic-bezier(.38, 0, .25, .90);
+}
+
+.event-card a:hover {
+	opacity: 0.85;
 }
 
 /* User blueprint specific styles */
@@ -774,33 +800,40 @@ table-layout: fixed;
 	 border-radius: 0.25rem;
  }
 
+ .advanced-search-form-title {
+	color: rgb(25, 42, 50);
+ }
+
  .advanced-search-form .form-control {
 	border: none;
-	-webkit-box-shadow: none;
-  	-moz-box-shadow: none;
-  	box-shadow: none;
-	border-radius: 0;
-	border-bottom: 1px solid var(--primary-color-override);
-	background: transparent;
+	border-radius: 0.25rem;
+	height: 3rem;
+	background: var(--site-bg-color);
 	outline: none;
-	color: var(--dark-color-override);
-
-}
-
-
-.advanced-search .form-control:focus {
-	border-color: transparent;
 	-webkit-box-shadow: none;
   	-moz-box-shadow: none;
   	box-shadow: none;
-  	border-bottom: 1px solid var(--primary-color-hover);
+
 }
 
-.advanced-search label {
-	display: inline-block;
+.advanced-search-form input::placeholder {
+	color: rgb(25, 42, 50);
 }
 
-.advanced-search select {
+
+.advanced-search-form .form-control:focus {
+  color: #495057;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 3px 2px rgba(47, 183, 236, 0.5);
+  	
+}
+
+ .advanced-search-form label {
+	display: none;
+}
+
+.advanced-search-form select {
 	-webkit-appearance: none;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
@@ -868,194 +901,6 @@ table-layout: fixed;
 
 
 /*CSS for homepage*/
-.pagination {
-  display: flex;
-  justify-content: center;
-}
-
-.pagination li {
-  display: block;
- }
-
-
-
-
-
-
-
-
-/*CSS for event blueprint*/
-
-
-
-
-
-
-
-ul.event-list li.event,
-ul.sponsorship-list li.sponsorship,
-ul.event-panels li.event-panel {
-	border-bottom: 1px solid #e0e0e0;
-	position: relative;
-	height: auto;
-	min-height: 100%;
-}
-
-ul.event-list li.event:hover,
-ul.sponsorship-list li.sponsorship:hover,
-ul.event-panels li.event-panel:hover {
-	cursor: pointer;
-	box-shadow: 0 4px 15px 0 rgba(40,44,53,.06), 0 2px 2px 0 rgba(40,44,53,.08);
-	transition: box-shadow 0.3s ease-in;
-
-}
-
-ul.event-panels {
-	margin-top: 45px;
-}
-
-li.event div.dropdown,
-li.sponsorship div.dropdown,
-li.event-panel div.dropdown {
-	float: right;
-	padding-right: 35px;
-	position: absolute;
-	top: 50%;
-	left: 95%;
-	margin-top: -22px;
-	margin-left: -40px;
-	z-index: 200;
-}
-
-span.vertical-ellipsis {
-  font-size: 30px;
-  font-weight: bolder;
-  text-align: center;
-  color: black;
-  float: right;
-  background-color: #fff;
-  height: 42px;
-  width: 42px;
-  border-radius: 50%;
-
-}
-
-span.vertical-ellipsis:hover {
-  background-color: #F0F0F0;
-  transition: background-color 0.3s ease-in;
-}
-
-span.vertical-ellipsis:active {
-  background-color: #E8E8E8;
-  transition: background-color 0.3s ease-in;
-}
-
-div.dropdown ul.ellipsis-menu {
-  position: absolute;
-  left: -135%;
-  top: auto;
-}
-
-.event-content,
-.event-panel-content,
-.sponsorship-content {
-	margin-right: 80px;
-	padding: 18px 0 18px 35px;
-	height: auto;
-	word-wrap: break-word;
-}
-
-
-
-.sponsorship-details h4.event-title:hover {
-	text-decoration: underline;
-}
-
-
-
-.event-details,
-.sponsorship-details {
-	margin-right: 50%;
-	word-wrap: break-word;
-}
-
-
-.sponsorship-amount {
-	/*color: #6f7287;*/
-	font-size: 15px;
-}
-
-
-
-
-ul.event-list,
-ul.sponsorship-list {
-  list-style-type: none;
-  margin-bottom: 30px;
-  padding-left: 0;
-  width: 100%;
-  display: inline-block;
-}
-
-
-.manage-container {
-	margin: 30px auto 30px auto;
-	width: 70%;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-
-.manage-container .page-header {
-	margin-top: 55px;
-	margin-bottom: 30px;
-}
-
-.container.saved-events {
-	width: 70%;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-
-.manage-forms label {
-	display: none;
-}
-
-.event-list-headers,
-.sponsorship-list-headers {
-	position: relative;
-	height: 50px;
-	margin-top: 30px;
-	background-color: #f8f7fa;
-}
-
-.event-list-headers .row div:first-child,
-.sponsorship-list-headers .row div:first-child {
-	position: absolute;
-	top: 25%;
-	left: 2%;
-	font-size: 16px;
-	font-weight: bold;
-}
-
-.event-list-headers .row div:last-child,
-.sponsorship-list-headers .row div:last-child {
-	position: absolute;
-	top: 25%;
-	left: 58%;
-	font-size: 16px;
-	font-weight: bold;
-	margin-left: -40px;
-}
-
-.event-content .packages-purchased,
-.sponsorship-content .sponsorship-amount {
-	float: right;
-	position: absolute;
-	top: 60%;
-	left: 60%;
-	margin-top: -22px;
-	margin-left: -40px;
-}
 
 
 
