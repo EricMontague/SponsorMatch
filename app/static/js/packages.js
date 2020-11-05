@@ -11,8 +11,9 @@ const isEdittingPackage = function () {
 };
 
 const redirectUserAfterPackageEdit = function () {
+    const eventId = $(".edit-event-content").attr("id");
     $("#addPackageModal").on("hidden.bs.modal", function (e) {
-        window.location.href = "{{ url_for('events.packages', id=event.id) }}";
+        window.location.href = `${window.origin}/events/${eventId}/packages`;
     });
 };
 
@@ -25,8 +26,8 @@ const updatePackage = function (formAction) {
 };
 
 const onEditView = function () {
-    let fullPath = window.location;
-    let path = fullPath.pathname.split("/");
+    const fullPath = window.location;
+    const path = fullPath.pathname.split("/");
     if (isEdittingPackage()) {
         $("#addPackageModal").modal("show");
         redirectUserAfterPackageEdit();
@@ -44,8 +45,8 @@ const addPackage = function () {
 
 const deletePackage = function () {
     $(".delete-package").click(function () {
-        let eventId = $(".edit-event-content").attr("id");
-        let packageId = $(this).parent().closest("li").attr("id");
+        const eventId = $(".edit-event-content").attr("id");
+        const packageId = $(this).parent().closest("li").attr("id");
         $.ajax({
             type: "POST",
             url: `${window.origin}/events/${eventId}/packages/${packageId}/delete`,
