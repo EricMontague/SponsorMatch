@@ -1,33 +1,37 @@
-<ul class="event-panels list-unstyled">
-	{% for event in events %}
-		<li id="{{ event.id }}" class="event-panel">
-			<div class="dropdown">
-				<span class="vertical-ellipsis dropdown-toggle" data-toggle="dropdown">
-					&vellip;
-				</span>
-				<ul class="dropdown-menu ellipsis-menu" aria-labelledby="dropdownMenuButton">
-					<li><a href="{{ url_for('events.event', id=event.id) }}">View</a></li>
-					{% if endpoint == "events.saved_events" %}
-						<li class="remove-event"><a>Remove</a></li>
-					{% else %}
-						{% if current_user.can(Permission.SPONSOR_EVENT) %}
-							<li class="save-event"><a>Save</a></li>
-						{% endif %}
-					{% endif %}
-				</ul>
-			</div>
+<div class="row justify-content-center justify-content-xl-start">
+	<ul class="col-12 list-unstyled">
+		{% for event in events %}
+		<li id="{{ event.id }}" class="card horizontal-card bg-white mb-3 py-3 px-4">
 			<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">
-				<div class="event-panel-content">
-					<div class="row">
-						<div class="col-md-6">
-							<p class="event-datetime">{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }}</p>
-							<h3 class="event-title">{{ event.title }}</h3>
-							<p class="event-location">{{ event.venue.name }}, {{ event.venue.city }}, {{ event.venue.state }}</p>
-						</div>
+				<div class="row">
+					<div class="col-md-6">
+						<p>{{ event.start_date("%a, %b %-d") }},
+							{{ event.start_time("%-I:%M %p") }}</p>
+						<h3>{{ event.title }}</h3>
+						<p>{{ event.venue.name }}, {{ event.venue.city }},
+							{{ event.venue.state }}</p>
 					</div>
 				</div>
+				<div class="d-flex flex-wrap align-items-center justify-content-between">
+
+					<div class="d-flex align-items-center">
+						<a class="icon-link" href="{{ url_for('events.event', id=event.id) }}">
+							View
+						</a>
+						{% if endpoint == "events.saved_events" %}
+						<a class="remove-event" href="#">
+							Remove
+						</a>
+						{% else %}
+						{% if current_user.can(Permission.SPONSOR_EVENT) %}
+						<a class="save-event" href="#">Remove</a>
+						{% endif %}
+						{% endif %}
+					</div>
+				</div>
+
 			</a>
 		</li>
-	{% endfor %}
-</ul>
-
+		{% endfor %}
+	</ul>
+</div>
