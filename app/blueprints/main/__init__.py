@@ -4,7 +4,7 @@ from flask import Blueprint
 main = Blueprint("main", __name__)
 
 
-from app.blueprints.main import views, errors
+from app.blueprints.main import views
 from app.models import Permission, EventStatus, SponsorshipStatus
 
 
