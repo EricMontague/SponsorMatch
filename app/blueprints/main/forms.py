@@ -21,8 +21,7 @@ class SearchForm(FlaskForm):
 
     query = StringField(
         "Search",
-        validators=[DataRequired()],
-        render_kw={"placeholder": "Find events"},
+        validators=[DataRequired()]
     )
     search = SubmitField("Search")
 
@@ -43,14 +42,14 @@ class AdvancedSearchForm(FormMixin, FlaskForm):
 
     start_date = DateField("Start Date", default=date.today())
     end_date = DateField("End Date", default=date.today())
-    city = StringField("City", validators=[Optional(), Length(1, 64)])
+    city = StringField("City", validators=[Optional(), Length(1, 64)], render_kw={"placeholder": "City"})
     state = SelectField("State", choices=[(0, "Select State...")] + STATES, coerce=int)
     category = SelectField("Categories", coerce=int)
     submit = SubmitField("Search")
 
     def __init__(self, **kwargs):
         super(AdvancedSearchForm, self).__init__(**kwargs)
-        self.category.choices = [(0, "All")] + [
+        self.category.choices = [(0, "Select Categories...")] + [
             (category.id, category.name)
             for category in EventCategory.query.order_by(EventCategory.name).all()
         ]
