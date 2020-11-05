@@ -9,29 +9,58 @@ from flask import (
     redirect,
     request,
     g,
-    current_app,
-    make_response
+    current_app
 )
 from flask_login import login_required, current_user
 from app.blueprints.main import main
 from app.blueprints.main.forms import AdvancedSearchForm, SearchForm
 from app.extensions import db
 from app.models import Event, Venue
+
+
+
+class FakePagination:
+    """Class that mimics the interface of Flask-SQLAlchemy's
+    Pagination object. This is needed to overcome the fact that you
+    cannot create a proper Pagination object when returning search results
+    from Elasticsearch
+    """
+    def __init__(self, has_prev, has_next, prev_num, next_num, page, total):
+        self.has_prev = has_prev
+        self.has_next = has_next
+        self.prev_num = prev_num
+        self.next_num = next_num
+        self.page = page
+        self.total = total
+
+    def iter_pages(self):
+        current_page = 1
+        total_pages = self.total
+        while total_pages > 0:
+            yield current_page
+            current_page += 1
+            total_pages -= current_app.config["EVENTS_PER_PAGE"]
+
+
    
+def create_fake_pagination(prev_url, next_url, total, current_page):
+    has_prev = prev_url is not None
+    has_next = next_url is not None
+    prev_num = 1 
+    if has_prev:
+        prev_num = current_page - 1
+    next_num = 1
+    if has_next:
+        next_num = current_page + 1
+    return FakePagination(has_prev, has_next, prev_num, next_num, current_page, total)
  
+
 @main.route("/")
 def index():
     """Return the home page of the application."""
     form = AdvancedSearchForm()
-    near_you = False
-    if current_user.is_authenticated:
-        near_you = bool(request.cookies.get("near_you", ""))
-    if near_you:
-        query = current_user.nearby_events
-    else:
-        query = Event.query
     page = request.args.get("page", 1, type=int)
-    pagination = query.filter(Event.is_ongoing() == True).paginate(
+    pagination = Event.query.filter(Event.is_ongoing() == True).paginate(
         page, per_page=current_app.config["EVENTS_PER_PAGE"], error_out=False
     )
     events = pagination.items
@@ -39,25 +68,6 @@ def index():
         "main/index.html", events=events, form=form, pagination=pagination
     )
 
-
-# need to add cookie functionality for homepage later
-@main.route("/all")
-@login_required
-def show_all():
-    """Remove near_you cookie from user's browser to an empty string"""
-    response = make_response(redirect(url_for(".index")))
-    response.set_cookie("near_you", "", max_age=30 * 24 * 60 * 60)  # 30 days
-    return response
-
-
-# need to add cookie functionality for homepage later
-@main.route("/near-you")
-@login_required
-def near_you():
-    """Set a near_you cookie in the user's browser"""
-    response = make_response(redirect(url_for(".index")))
-    response.set_cookie("near_you", "1", max_age=30 * 24 * 60 * 60)  # 30 days
-    return response
 
 
 @main.route("/", methods=["POST"])
@@ -129,13 +139,12 @@ def advanced_search():
 def search():
     """Return search results."""
     if not g.search_form.validate():
-        return redirect("main.index")
+        return redirect(url_for("main.index"))
     endpoint = "main.search"
     page = request.args.get("page", 1, type=int)
     events, total = Event.search(
         g.search_form.query.data, page, current_app.config["EVENTS_PER_PAGE"]
     )
-    live_events = None
     if events:
         events = [event for event in events if event.is_ongoing()]
     prev_url = None
@@ -144,10 +153,12 @@ def search():
     next_url = None
     if total > page * current_app.config["EVENTS_PER_PAGE"]:
         next_url = url_for("main.search", query=g.search_form.query.data, page=page + 1)
+    fake_pagination = create_fake_pagination(prev_url, next_url, total, page)
     return render_template(
         "main/search.html",
         events=events,
         endpoint=endpoint,
+        pagination=fake_pagination,
         prev_url=prev_url,
         next_url=next_url,
     )
