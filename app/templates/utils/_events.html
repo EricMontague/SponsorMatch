@@ -4,7 +4,7 @@
 		<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">
 			<img class="w-100 h-auto" src="{{ url_for('static', filename='images/default_event_image2.jpg') }}"
 				alt="Event Image">
-			<div class="d-flex flex-column  pt-4 px-2">
+			<div class="d-flex flex-column  pt-4 px-3">
 				<p class="event-card-title">{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }}
 				</p>
 				<h5 class="custom-font-semibold font-120">{{ event.title }}</h5>
