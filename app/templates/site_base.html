@@ -35,7 +35,8 @@
 				{% endif %}
 				{% if current_user.is_administrator() %}
 				<li class="nav-item">
-					<a class="nav-link" href="{{ url_for('manage.admin_panel', role_name='all') }}">Admin Panel</a>
+					<a class="nav-link" href="{{ url_for('dashboard.admin_dashboard', role_name='all') }}">Admin
+						Panel</a>
 				</li>
 				{% endif %}
 				<li id="account" class="nav-item dropdown">
@@ -60,12 +61,14 @@
 						<div class="dropdown-divider"></div>
 						{% if current_user.can(Permission.CREATE_EVENT) %}
 						<a class="dropdown-item" href="{{ url_for('events.create_event') }}">Create Event</a>
-						<a class="dropdown-item" href="{{ url_for('manage.manage_events', status='all') }}">Manage
-							Events</a>
+						<a class="dropdown-item" href="{{ url_for('dashboard.events_dashboard', status='all') }}">
+							Events Dashboard
+						</a>
 						{% endif %}
 						{% if current_user.can(Permission.SPONSOR_EVENT) %}
-						<a class="dropdown-item" href="{{ url_for('manage.manage_sponsorships', status='all') }}">Manage
-							Sponsorships</a>
+						<a class="dropdown-item" href="{{ url_for('dashboard.sponsorships_dashboard', status='all') }}">
+							Sponsorships Dashboard
+						</a>
 
 						<a class="dropdown-item" href="{{ url_for('events.saved_events') }}">Saved Events</a>
 						{% endif %}
@@ -98,7 +101,7 @@
 <main class="mt-5-plus">
 	<div></div>
 	<!-- Messages pushed via AJAX -->
-	<div id="hiddenMessage" class="alert alert-danger hidden flash-message">
+	<div id="hiddenMessage" class="alert hidden flash-message">
 		<button type="button" class="close">&times;</button>
 		<div id="message"></div>
 	</div>

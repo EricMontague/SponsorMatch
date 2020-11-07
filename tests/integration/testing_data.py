@@ -381,7 +381,7 @@ class ViewFunctionTestData:
     # numbers here are arbitrary
     SPONSOR_ROUTES = [
         "/saved_events",
-        "/manage_sponsorships/all",
+        "/sponsorships/all",
         "/events/1/sponsorships/purchase",
     ]
     # numbers here are arbitrary
@@ -393,7 +393,7 @@ class ViewFunctionTestData:
         "/events/1/packages",
         "/events/1/packages/1/edit",
         "/events/1/media",
-        "/manage_events/all",
+        "/events/all",
     ]
 
 

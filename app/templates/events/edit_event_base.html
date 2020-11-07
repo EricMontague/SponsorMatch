@@ -17,10 +17,11 @@
             <div class="mb-3">
                 {% if event.published %}
                 <a class="link-blue" href="{{ url_for('events.event', id=event.id) }}">View Event</a>
-                <span> | </span><a class="link-blue" href="{{ url_for('manage.manage_events', status='all') }}">Switch
+                <span> | </span><a class="link-blue"
+                    href="{{ url_for('dashboard.events_dashboard', status='all') }}">Switch
                     Event</a>
                 {% else %}
-                <a class="link-blue" href="{{ url_for('manage.manage_events', status='all') }}">Switch Event</a>
+                <a class="link-blue" href="{{ url_for('dashboard.events_dashboard', status='all') }}">Switch Event</a>
                 {% endif %}
 
             </div>
