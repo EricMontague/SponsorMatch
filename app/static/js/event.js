@@ -29,7 +29,7 @@ const handleSaveButtonClick = function () {
             url: `${window.origin}/events/${eventId}/save`,
             dataType: "json",
             success: function (response) {
-                displayAlert(response.message);
+                displayAlert(response.message, "info");
             }
         });
         return false;
@@ -76,13 +76,15 @@ const handleInfoTabButtonClick = function () {
 
 const handleSponsorsTabClick = function () {
     $("#sponsorsTab").click(function () {
+
         const eventId = $(".event-page").attr("id");
         $.ajax({
             type: "GET",
             url: `${window.origin}/events/${eventId}/sponsors`,
             dataType: "html",
             success: function (response) {
-                const anchorTag = $("#eventInfo").find("a");
+
+                const anchorTag = $("#eventInfoTab").find("a");
                 const active = anchorTag.hasClass("active");
                 if (active) {
                     anchorTag.removeClass("active");
@@ -152,7 +154,7 @@ const handleCheckoutButtonClick = function () {
 
 
 
-setSiteBackgroundColor(BACKGROUND_COLOR);
+
 adjustEventInfoWidth();
 handleSaveButtonClick();
 handlePackageAccordionClick();
