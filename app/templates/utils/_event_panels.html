@@ -1,34 +1,30 @@
 <div class="row justify-content-center justify-content-xl-start">
 	<ul class="col-12 list-unstyled">
 		{% for event in events %}
-		<li id="{{ event.id }}" class="card horizontal-card bg-white mb-3 py-3 px-4">
-			<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">
-				<div class="row">
-					<div class="col-md-6">
-						<p>{{ event.start_date("%a, %b %-d") }},
-							{{ event.start_time("%-I:%M %p") }}</p>
-						<h3>{{ event.title }}</h3>
-						<p>{{ event.venue.name }}, {{ event.venue.city }},
-							{{ event.venue.state }}</p>
-					</div>
+		<li id="{{ event.id }}" class="horizontal-card bg-white mb-3 p-3">
+			<a class="no-link-styling flex-column flex-md-row d-flex" href="{{ url_for('events.event', id=event.id) }}">
+				<div class="horizontal-card-image-wrapper">
+					<img src="{{ url_for('static', filename='images/default_event_image.png') }}"
+						alt="Main Event Image">
 				</div>
-				<div class="d-flex flex-wrap align-items-center justify-content-between">
+
+				<div class="horizontal-card-body">
+					<p class="mb-2 text-orange">{{ event.start_date("%a, %b %-d") }},
+						{{ event.start_time("%-I:%M %p") }}</p>
+					<h5 class="custom-font-semibold">{{ event.title }}</h5>
+					<p>{{ event.venue.name }}, {{ event.venue.city }},
+						{{ event.venue.state }}</p>
+				</div>
+				{% if endpoint == "events.saved_events" and current_user.can(Permission.SPONSOR_EVENT) %}
+				<div class="horizontal-card-icons">
 
 					<div class="d-flex align-items-center">
-						<a class="icon-link" href="{{ url_for('events.event', id=event.id) }}">
-							View
+						<a class="remove-event icon-link" href="#">
+							{{ utils.render_icon("trash", size="1.5rem", color="#dc3545")}}
 						</a>
-						{% if endpoint == "events.saved_events" %}
-						<a class="remove-event" href="#">
-							Remove
-						</a>
-						{% else %}
-						{% if current_user.can(Permission.SPONSOR_EVENT) %}
-						<a class="save-event" href="#">Remove</a>
-						{% endif %}
-						{% endif %}
 					</div>
 				</div>
+				{% endif %}
 
 			</a>
 		</li>
