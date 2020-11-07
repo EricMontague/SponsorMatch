@@ -1,0 +1,64 @@
+{% extends "site_base.html" %}
+
+{% block title %}SponsorMatch | Manage Events{% endblock %}
+
+{% block page_content %}
+<div class="container">
+	<h2 class="text-center">Events Dashboard</h2>
+
+
+	<div class="row mb-4">
+		<div class="col-md-6 labels-bold">
+			{{ wtf.render_form(dropdown_form) }}
+		</div>
+	</div>
+	<div class="row justify-content-center justify-content-xl-start">
+		<ul class="col-12 list-unstyled">
+			{% for event in events %}
+			<li class="horizontal-card flex-nowrap bg-white mb-3 py-3 px-4" id="{{ event.id }}">
+				<a class="no-link-styling" href="{{ url_for('events.edit_basic_info', id=event.id) }}">
+					<div class="row">
+						<div class="col-md-6">
+							<h5 class="custom-font-semibold font-120">{{ event.title }}</h5>
+							<p class="text-orange">
+								{{ event.start_date("%B %-d, %-Y") }} at {{ event.start_time("%-I:%M %p")}}
+							</p>
+							<div>{{ event.venue.name }}</div>
+							<div><span class="custom-font-semibold">Total sales</span>: ${{ event.total_sales() }}</div>
+							<div>
+								{% if event.is_ongoing() %}
+								<p><span class="custom-font-semibold">Status</span>: Live Event</p>
+								{% elif event.has_ended() %}
+								<p><span class="custom-font-semibold">Status</span>: Past Event</p>
+								{% elif event.is_draft() %}
+								<p><span class="custom-font-semibold">Status</span>: Draft</p>
+								{% endif %}
+							</div>
+							{{ event.num_packages_sold() }} / {{ event.num_packages_available() }} Tickets Sold
+						</div>
+
+					</div>
+					<div class="d-flex flex-wrap align-items-center justify-content-between">
+						<div class="d-flex align-items-center">
+							<a href="{{ url_for('events.edit_basic_info', id=event.id) }}" class="icon-link">
+								{{ utils.render_icon("pencil-square", size="1.2rem", color="2fb7ec")}}
+							</a>
+							<a class="icon-link ml-2" href="#">
+								{{ utils.render_icon("trash", size="1.2rem", color="#dc3545")}}
+							</a>
+						</div>
+					</div>
+				</a>
+			</li>
+			{% endfor %}
+		</ul>
+
+
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/events_dashboard.js') }}"></script>
+{% endblock %}

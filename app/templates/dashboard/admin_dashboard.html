@@ -1,0 +1,21 @@
+{% extends "site_base.html" %}
+
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block page_content %}
+<div class="container">
+	<h2 class="text-center py-5">Admin Panel</h2>
+	<div class="row mb-4">
+		<div class="col-md-6 labels-bold">
+			{{ wtf.render_form(dropdown_form) }}
+		</div>
+	</div>
+	{% include "users/_users.html" %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+{% endblock %}
