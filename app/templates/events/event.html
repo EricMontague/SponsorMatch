@@ -3,7 +3,7 @@
 {% block title %}{{ event.title }}{% endblock %}
 
 {% block page_content %}
-<div id="{{ event.id }}" class="container event-page">
+<div id="{{ event.id }}" class="container event-page pt-4">
 
 	<div class="w-100 d-flex justify-content-center">
 		{% if image_path %}
@@ -14,7 +14,7 @@
 		{% endif %}
 	</div>
 
-	<div class="d-flex flex-column align-items-center py-4 mb-4 event-info border-x border-bottom mx-auto">
+	<div class="d-flex flex-column align-items-center py-4 mb-4 event-info border-x border-bottom mx-auto bg-white">
 		{% if event.is_ongoing() %}
 		<p class="custom-font-semibold font-150 text-center text-dark-second">{{ event.title }}</p>
 		{% else %}

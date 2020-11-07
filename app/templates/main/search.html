@@ -5,7 +5,7 @@
 {% block page_content %}
 <div class="container">
 	{% if events %}
-	<h1 class="text-center mb-4">Search Results</h1>
+	<h2 class="text-center mb-4 pt-5">Search Results</h2>
 	{% include "utils/_event_panels.html" %}
 	<div class="d-flex justify-content-center mb-3">
 		{{ macros.pagination_widget(pagination, endpoint) }}

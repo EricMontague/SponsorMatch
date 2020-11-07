@@ -5,20 +5,18 @@
 
 {% block page_content %}
 <header class="hero d-flex flex-wrap mb-4">
-
 	<div class="col-md-6 col-xl-3">
 		<div class="d-flex align-items-center justify-content-center h-50">
-			<span class="text-white">
-				<h1>Welcome,</h1>
-				{% if current_user.is_authenticated %}
-				<h1>{{ current_user.first_name + " " + current_user.last_name }}!</h1>
+
+			{% if current_user.is_authenticated %}
+			<h2 class="text-white">Welcome, {{ current_user.first_name + " " + current_user.last_name }}!</h1>
 				{% else %}
-				<h1>Stranger!</h1>
-				{% endif %}
-			</span>
+				<h2 class="text-white">Welcome, Stranger!</h1>
+					{% endif %}
+
 		</div>
 	</div>
-	<div class="col-md-6 col-lg-5 col-dxl-3 ml-auto pt-4 pb-5 pr-4 d-none d-md-flex h-85">
+	<div class="col-md-6 col-lg-5 col-dxl-3 ml-auto pt-4 pb-5 pr-4 d-md-flex h-85">
 		<form class="advanced-search-form bg-white py-5 px-4-plus" method="POST"
 			action="{{ url_for('main.advanced_search') }}" role="form`">
 			{{ form.hidden_tag() }}

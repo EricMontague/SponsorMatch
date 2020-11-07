@@ -31,7 +31,7 @@
 	<div class="row justify-content-center justify-content-xl-start">
 		<ul class="col-12 list-unstyled">
 			{% for package in packages %}
-			<li id="{{ package.id }}" class="card horizontal-card bg-white mb-3 py-3 px-4">
+			<li id="{{ package.id }}" class="horizontal-card bg-white mb-3 py-3 px-4">
 				<a class="no-link-styling"
 					href="{{ url_for('events.edit_package', event_id=event.id, package_id=package.id) }}">
 
