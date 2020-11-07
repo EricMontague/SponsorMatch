@@ -20,7 +20,7 @@ def register_blueprints(app):
     from app.blueprints import auth as auth_blueprint
     from app.blueprints import settings as settings_blueprint
     from app.blueprints import users as users_blueprint
-    from app.blueprints import manage as manage_blueprint
+    from app.blueprints import dashboard as dashboard_blueprint
     from app.blueprints import events as events_blueprint
     from app.blueprints import payments as payments_blueprint
 
@@ -28,7 +28,7 @@ def register_blueprints(app):
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
     app.register_blueprint(settings_blueprint, url_prefix="/settings")
     app.register_blueprint(users_blueprint, url_prefix="/users")
-    app.register_blueprint(manage_blueprint, url_prefix="/manage")
+    app.register_blueprint(dashboard_blueprint, url_prefix="/dashboard")
     app.register_blueprint(events_blueprint, url_prefix="/events")
     app.register_blueprint(payments_blueprint, url_prefix="/payments")
 
