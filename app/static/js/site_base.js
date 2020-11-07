@@ -51,13 +51,14 @@ const setSiteBackgroundColor = function (color) {
 };
 
 
-const displayAlert = function (message) {
-    const hidden = $("#hiddenMessage").hasClass("hidden");
+const displayAlert = function (message, alertType) {
+    const hiddenMessage = $("#hiddenMessage");
     $("#message").text(message);
-    if (hidden === true) {
-        $("#hiddenMessage").removeClass("hidden").show();
+    if (hiddenMessage.hasClass("hidden")) {
+        hiddenMessage.removeClass("hidden").show();
+        hiddenMessage.addClass("alert-" + alertType);
     } else {
-        $("#hiddenMessage").show();
+        hiddenMessage.show();
     }
 };
 
