@@ -1,6 +1,7 @@
 {% extends "./project_base.html" %}
 {% import "bootstrap/form.html" as wtf %}
 {% import "bootstrap/utils.html" as utils %}
+{% import "utils/_macros.html" as macros %}
 
 {% block title %}SponsorMatch{% endblock %}
 
@@ -46,17 +47,23 @@
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 						{% if current_user.is_administrator() %}
-						<a class="dropdown-item"
-							href="{{ url_for('users.user_profile', company=current_user.company) }}">Admin
-							Profile</a>
+						<a class="dropdown-item d-flex align-items-center"
+							href="{{ url_for('users.user_profile', company=current_user.company) }}">
+							{{ utils.render_icon("person-circle", size="1.2rem") }}
+							<span class="ml-2">{{ current_user.full_name }}</span>
+						</a>
 						{% elif current_user.can(Permission.CREATE_EVENT) %}
-						<a class="dropdown-item"
-							href="{{ url_for('users.user_profile', company=current_user.company) }}">Organizer
-							Profile</a>
+						<a class="dropdown-item d-flex align-items-center"
+							href="{{ url_for('users.user_profile', company=current_user.company) }}">
+							{{ utils.render_icon("person-circle", size="1.2rem") }}
+							<span class="ml-2">{{ current_user.full_name }}</span>
+						</a>
 						{% else %}
-						<a class="dropdown-item"
-							href="{{ url_for('users.user_profile', company=current_user.company) }}">Sponsor
-							Profile</a>
+						<a class="dropdown-item d-flex align-items-center"
+							href="{{ url_for('users.user_profile', company=current_user.company) }}">
+							{{ utils.render_icon("person-circle", size="1.2rem") }}
+							<span class="ml-2">{{ current_user.full_name }}</span>
+						</a>
 						{% endif %}
 						<div class="dropdown-divider"></div>
 						{% if current_user.can(Permission.CREATE_EVENT) %}
