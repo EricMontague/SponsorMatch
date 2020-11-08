@@ -92,7 +92,7 @@ def user_events(id, status):
         events = [event for event in user.events if event.has_ended()]
     else:
         abort(404)
-    return render_template("utils/_events.html", events=events)
+    return render_template("events/_events.html", events=events)
 
 
 @users.route("/<int:id>/sponsorships/<status>")
@@ -113,7 +113,7 @@ def user_sponsorships(id, status):
         ]
     else:
         abort(404)
-    return render_template("utils/_events.html", events=events)
+    return render_template("events/_events.html", events=events)
 
 
 @users.route("/edit-profile/add-photo", methods=["POST"])
@@ -128,11 +128,11 @@ def add_profile_photo():
                 # remove current image in the image folder
                 os.remove(current_user.profile_photo_path)
             except OSError:
-                flash("Upload was unsuccessful, please try again.")
+                flash("Upload was unsuccessful, please try again.", "danger")
                 return redirect(url_for("users.edit_profile"))
         current_user.profile_photo_path = images.path(filename)
         db.session.commit()
-        flash("Your profile photo was successfully uploaded.")
+        flash("Your profile photo was successfully uploaded.", "success")
     else:
         session["image_form_errors"] = form.image.errors
     return redirect(url_for("users.edit_profile"))
@@ -159,7 +159,7 @@ def edit_profile():
         current_user.website = profile_form.website.data
         db.session.add(current_user)
         db.session.commit()
-        flash("Your profile information has been successfully updated.")
+        flash("Your profile information has been successfully updated.", "success")
         return redirect(url_for("users.edit_profile"))
     # prefill form with the user's current information
     profile_form.first_name.data = current_user.first_name
@@ -192,11 +192,11 @@ def add_profile_photo_admin(id):
             if os.path.exists(user.profile_photo_path):
                 os.remove(user.profile_photo_path)
             else:
-                flash("Upload was unsuccessful, please try again.")
+                flash("Upload was unsuccessful, please try again.", "danger")
                 return redirect(url_for("users.edit_profile_admin", id=id))
         user.profile_photo_path = images.path(filename)
         db.session.commit()
-        flash("Photo was successfully uploaded.")
+        flash("Photo was successfully uploaded.", "success")
     else:
         session["image_form_errors"] = form.image.errors
     return redirect(url_for("users.edit_profile_admin", id=id))
@@ -216,7 +216,7 @@ def delete_image(filename):
         os.remove(path)
         user.profile_photo_path = None
         db.session.commit()
-        flash("Your profile photo was successfully deleted.")
+        flash("Your profile photo was successfully deleted.", "success")
     else:
         abort(404)
     return redirect(referrer)
@@ -246,7 +246,7 @@ def edit_profile_admin(id):
         user.role = Role.query.get(profile_form.role.data)
         db.session.add(user)
         db.session.commit()
-        flash("The user's profile information has been successfully updated.")
+        flash("The user's profile information has been successfully updated.", "success")
         return redirect(url_for("users.edit_profile_admin", id=user.id))
     profile_form.first_name.data = user.first_name
     profile_form.last_name.data = user.last_name
