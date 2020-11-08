@@ -4,85 +4,80 @@
 {% block title %}SponsorMatch - Edit Profile{% endblock %}
 
 {% block page_content %}
-<div class="container edit-profile">
-	<div class="page-header">
-		{% if admin_route %}
-		<h1>Edit Profile Admin</h1>
+<div class="container pt-5 px-4">
+
+	<div class="mb-5">
+		<h2 class="mb-4">Profile Picture</h2>
+		{% if user.profile_photo_path %}
+		<img class="user-avatar mb-3" src="{{ url_for('static', filename=user.profile_photo) }}">
+		<form method="POST" action="{{ url_for('users.delete_image', filename=profile_photo.split('/')[-1]) }}"
+			enctype="multipart/form-data" role="form">
+			{{ remove_image_form.hidden_tag() }}
+			{{ wtf.form_errors(remove_image_form, hiddens="only") }}
+			{{ wtf.render_field(remove_image_form.submit, button_map={"submit": "btn btn-danger delete-media"}) }}
+		</form>
 		{% else %}
-		<h1>Edit Profile</h1>
+		<img class="user-avatar mb-3" src="{{ url_for('static', filename='images/default_profile_photo.jpg') }}">
+		<form class="no-labels" method="POST"
+			{% if admin_route %}action="{{ url_for('users.add_profile_photo_admin', id=user.id) }}"
+			{% else %}action="{{ url_for('users.add_profile_photo') }}" {% endif %} enctype="multipart/form-data"
+			role="form">
+			{{ upload_image_form.hidden_tag() }}
+			{{ wtf.form_errors(upload_image_form, hiddens="only") }}
+			<div class="row">
+				<div class="col-md-12">
+					{{ wtf.render_field(upload_image_form.image) }}
+				</div>
+			</div>
+			{{ wtf.render_field(upload_image_form.upload, button_map={"upload": "primary-override"}) }}
+		</form>
 		{% endif %}
 	</div>
-	<h2>Profile Picture</h2>
-	{% if user.profile_photo_path %}
-	<img id="editProfilePhoto" class="img-rounded" src="{{ url_for('static', filename=user.profile_photo) }}">
-	<form class="remove-profile-image-form" method="POST"
-		action="{{ url_for('users.delete_image', filename=profile_photo.split('/')[-1]) }}"
-		enctype="multipart/form-data" role="form">
-		{{ remove_image_form.hidden_tag() }}
-		{{ wtf.form_errors(remove_image_form, hiddens="only") }}
-		{{ wtf.render_field(remove_image_form.submit, button_map={"submit": "btn btn-danger delete-media"}) }}
-	</form>
-	{% else %}
-	<img src="{{ url_for('static', filename='images/default_profile_photo.jpg') }}">
-	<form class="upload-image-form" method="POST"
-		{% if admin_route %}action="{{ url_for('users.add_profile_photo_admin', id=user.id) }}"
-		{% else %}action="{{ url_for('users.add_profile_photo') }}" {% endif %} enctype="multipart/form-data"
-		role="form">
-		{{ upload_image_form.hidden_tag() }}
-		{{ wtf.form_errors(upload_image_form, hiddens="only") }}
-		<div class="row">
-			<div class="col-md-12 upload-image">
-				{{ wtf.render_field(upload_image_form.image) }}
-			</div>
-		</div>
-		{{ wtf.render_field(upload_image_form.upload, button_map={"upload": "btn btn-primary"}) }}
-	</form>
-	{% endif %}
 
-	<h2>Profile Information</h2>
-	<form class="profile-form" method="POST"
-		{% if admin_route %}action="{{ url_for('users.edit_profile_admin', id=user.id) }}"
-		{% else %}action="{{ url_for('users.edit_profile') }}" {% endif %} role="form">
-		{{ profile_form.hidden_tag() }}
-		{{ wtf.form_errors(profile_form, hiddens="only") }}
-		<div class="row">
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.first_name) }}
+	<div class="mb-5">
+		<h2>Profile Information</h2>
+		<form method="POST" {% if admin_route %}action="{{ url_for('users.edit_profile_admin', id=user.id) }}"
+			{% else %}action="{{ url_for('users.edit_profile') }}" {% endif %} role="form">
+			{{ profile_form.hidden_tag() }}
+			{{ wtf.form_errors(profile_form, hiddens="only") }}
+			<div class="row">
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.first_name) }}
+				</div>
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.last_name) }}
+				</div>
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.company) }}
+				</div>
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.job_title) }}
+				</div>
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.website) }}
+				</div>
+				{% if admin_route %}
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.email) }}
+				</div>
+				<div class="col-md-6">
+					{{ wtf.render_field(profile_form.role) }}
+				</div>
+				{% endif %}
+				<div class="col-md-12">
+					{{ wtf.render_field(profile_form.about) }}
+				</div>
+				{% if admin_route %}
+				<div class="col-md-12">
+					{{ wtf.render_field(profile_form.has_paid) }}
+				</div>
+				{% endif %}
+				<div class="col-md-12">
+					{{ wtf.render_field(profile_form.submit, button_map={"submit": "primary-override"}) }}
+					<a class="btn btn-info" href="{{ url_for('users.user_profile', company=user.company) }}">Back</a>
+				</div>
 			</div>
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.last_name) }}
-			</div>
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.company) }}
-			</div>
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.job_title) }}
-			</div>
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.website) }}
-			</div>
-			{% if admin_route %}
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.email) }}
-			</div>
-			<div class="col-md-6">
-				{{ wtf.render_field(profile_form.role) }}
-			</div>
-			{% endif %}
-			<div class="col-md-12">
-				{{ wtf.render_field(profile_form.about) }}
-			</div>
-			{% if admin_route %}
-			<div class="col-md-12">
-				{{ wtf.render_field(profile_form.has_paid) }}
-			</div>
-			{% endif %}
-			<div class="col-md-12">
-				{{ wtf.render_field(profile_form.submit, button_map={"submit": "btn btn-primary"}) }}
-				<a class="btn btn-default" href="{{ url_for('users.user_profile', company=user.company) }}">Back</a>
-			</div>
-		</div>
-	</form>
-
+		</form>
+	</div>
 </div>
 {% endblock %}
