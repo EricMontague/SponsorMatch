@@ -1,0 +1,28 @@
+<!-- Modal -->
+<div class="modal fade" id="packageModal" tabindex="-1" role="dialog" aria-labelledby="packageCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex align-items-center">
+                    {{ utils.render_icon("box-seam", size="1.8rem", color="#2fb7ec")}}
+                    <h5 class="modal-title custom-font-semibold ml-2" id="PackageTitle">Package Details</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="packageDetails">
+                    <p class="price"></p>
+                    <p class="audience-reached"></p>
+                    <p class="description"></p>
+                    <p class="type"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary-override" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
