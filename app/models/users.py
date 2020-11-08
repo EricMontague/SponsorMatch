@@ -51,6 +51,11 @@ class User(UserMixin, db.Model):
         """Set the password hash attribute."""
         self.password_hash = generate_password_hash(password)
 
+    @property
+    def full_name(self):
+        """Return the user's full name."""
+        return self.first_name + " " + self.last_name
+        
     def verify_password(self, password):
         """Return True if the correct password is provided by the user."""
         return check_password_hash(self.password_hash, password)
