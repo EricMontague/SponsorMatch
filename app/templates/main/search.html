@@ -1,12 +1,11 @@
 {% extends "site_base.html" %}
-{% import "utils/_macros.html" as macros %}
 {% block title %}Search Results{% endblock %}
 
 {% block page_content %}
 <div class="container">
 	{% if events %}
 	<h2 class="text-center mb-4 pt-5">Search Results</h2>
-	{% include "utils/_event_panels.html" %}
+	{% include "events/_event_panels.html" %}
 	<div class="d-flex justify-content-center mb-3">
 		{{ macros.pagination_widget(pagination, endpoint) }}
 	</div>
@@ -18,10 +17,4 @@
 	</div>
 	{% endif %}
 </div>
-{% endblock %}
-
-
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>
 {% endblock %}

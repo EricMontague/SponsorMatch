@@ -1,5 +1,4 @@
 {% extends "site_base.html" %}
-{% import "utils/_macros.html" as macros %}
 
 {% block title %}SponsorMatch{% endblock %}
 
@@ -9,10 +8,10 @@
 		<div class="d-flex align-items-center justify-content-center h-50">
 
 			{% if current_user.is_authenticated %}
-			<h2 class="text-white">Welcome, {{ current_user.first_name + " " + current_user.last_name }}!</h1>
-				{% else %}
-				<h2 class="text-white">Welcome, Stranger!</h1>
-					{% endif %}
+			<h2 class="text-white">Welcome, {{ current_user.first_name + " " + current_user.last_name }}!</h2>
+			{% else %}
+			<h2 class="text-white">Welcome, Stranger!</h2>
+			{% endif %}
 
 		</div>
 	</div>
@@ -50,7 +49,7 @@
 
 </header>
 <main>
-	{% include "utils/_events.html" %}
+	{% include "events/_events.html" %}
 
 	{% if pagination %}
 	<div class="d-flex justify-content-center mb-3">
