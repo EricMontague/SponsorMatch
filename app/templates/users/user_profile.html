@@ -1,47 +1,55 @@
 {% extends "site_base.html" %}
-{% import "utils/_macros.html" as macros %}
 
 {% block title %}SponsorMatch - {{ user.company }} {% endblock %}
 
 {% block page_content %}
-<div id="{{ user.id }}" class="container user-container">
-	<div class="page-header">
-		{% if user.profile_photo_path %}
-		<img id="profilePhoto" class="img-rounded profile-thumbnail"
-			src="{{ url_for('static', filename=user.profile_photo) }}">
-		{% else %}
-		<img id="profilePhoto" class="img-rounded profile-thumbnail"
-			src="{{ url_for('static', filename='images/default_profile_photo.jpg') }}">
-		{% endif %}
-		<div class="profile-header">
-			<h1>{{ user.company }}</h1>
-			<p><strong>Contact</strong>: {{ user.first_name + " " + user.last_name }}</p>
-			<p><strong>Member Since</strong>: {{ user.member_since.date().strftime("%-m/%-d/%Y") }}</p>
+<div id="{{ user.id }}" class="container user-profile pt-5">
+	<div class="d-flex flex-wrap px-4-plus mb-5">
+		<div>
+			{% if user.profile_photo_path %}
+			<img id="profilePhoto" class="user-avatar profile-thumbnail mb-4"
+				src="{{ url_for('static', filename=user.profile_photo) }}">
+			{% else %}
+			<img id="profilePhoto" class="user-avatar profile-thumbnail mb-4"
+				src="{{ url_for('static', filename='images/default_profile_photo.jpg') }}">
+			{% endif %}
+		</div>
+		<div class="user-info">
+			<h4 class="custom-font-semibold font-150 mb-3">{{ user.company }}</h4>
+			<p><span class="custom-font-semibold">Contact</span>: {{ user.first_name + " " + user.last_name }}</p>
+			<p><span class="custom-font-semibold">Member Since</span>:
+				{{ user.member_since.date().strftime("%-m/%-d/%Y") }}</p>
 
 			{% if user.job_title %}
-			<p><strong>Job Title</strong>: {{ user.job_title }}</p>
+			<p><span class="custom-font-semibold">Job Title</span>: {{ user.job_title }}</p>
 			{% endif %}
 
 			{% if user.about %}
 			{% if user.is_administrator() %}
-			<p><strong>About The Admin</strong>:</p>
+			<p><span class="custom-font-semibold">About the Admin</span>:</p>
 			{% elif user.can(Permission.CREATE_EVENT) %}
-			<p><strong>About The Organizer</strong>:</p>
+			<p><span class="custom-font-semibold">About the Organizer</span>:</p>
 			{% elif user.can(Permission.SPONSOR_EVENT) %}
-			<p><strong>About The Sponsor</strong>:</p>
+			<p><span class="custom-font-semibold">About the Sponsor</span>:</p>
 			{% endif %}
 			<p>{{ user.about }}</p>
 			{% endif %}
 
 			{% if user.website %}
-			<p><strong>Visit our website:</strong></p>
-			<p>To learn more about our organization, <a href="{{ user.website }}" target="_blank">Click Here</a>.</p>
+			<p><span class="custom-font-semibold">Visit our website</span>:</p>
+			<p>To learn more about our organization, <a class="link-blue" href="{{ user.website }}"
+					target="_blank">Click Here</a>.</p>
 			{% endif %}
 
-			<p><strong>Email</strong>:<a href="mailto:{{ user.email }}"> {{ user.email }}</a></p>
+			<p>
+				<span class="custom-font-semibold">
+					Email
+				</span>:
+				<a class="link-blue" href="mailto:{{ user.email }}"> {{ user.email }}</a>
+			</p>
 
 			{% if current_user == user %}
-			<a class="btn btn-primary" href="{{ url_for('users.edit_profile') }}">Edit Profile</a>
+			<a class="btn btn-primary-override" href="{{ url_for('users.edit_profile') }}">Edit Profile</a>
 			{% endif %}
 			{% if current_user.is_administrator() %}
 			<a class="btn btn-danger" href="{{ url_for('users.edit_profile_admin', id=user.id) }}">Edit Profile
@@ -49,109 +57,56 @@
 			{% endif %}
 		</div>
 	</div>
-	<ul class="nav nav-tabs profile-tabs">
+	<ul class="nav nav-tabs">
 		{% if user.can(Permission.CREATE_EVENT) %}
-		<li id="live" class="{% if tab == 'live_event' %}active{% endif %}" role="presentation"><a href="#">Live Events
-				<span class="badge">{{ user.num_events_hosted(EventStatus.LIVE) }}</span></a></li>
-		<li id="pastEvent" class="{% if tab == 'past_event' %}active{% endif %}" role="presentation"><a href="#">Past
-				Events <span class="badge">{{ user.num_events_hosted(EventStatus.PAST) }}</span></a></li>
+		<li id="live" class="nav-item" role="presentation">
+			<a href="#" class="nav-link {% if tab == 'live_event' %}active{% endif %}">
+				Live Events
+				<span
+					class="badge badge-primary-override d-inline-block ml-2">{{ user.num_events_hosted(EventStatus.LIVE) }}</span>
+			</a>
+		</li>
+		<li id="pastEvent" class="nav-item" role="presentation">
+			<a href="#" class="nav-link {% if tab == 'past_event' %}active{% endif %}">
+				Past Events
+				<span
+					class="badge badge-primary-override d-inline-block ml-2">{{ user.num_events_hosted(EventStatus.PAST) }}</span>
+			</a>
+		</li>
 		{% endif %}
 		{% if user.can(Permission.SPONSOR_EVENT) %}
-		<li id="current" class="{% if tab == 'current_sponsorship' %}active{% endif %}" role="presentation"><a
-				href="#">Current Sponsorships <span
-					class="badge">{{ user.num_events_sponsored(SponsorshipStatus.CURRENT) }}</span></a></li>
-		<li id="pastSponsorship" class="{% if tab == 'past_sponsorship' %}active{% endif %}" role="presentation"><a
-				href="#">Past Sponsorships <span
-					class="badge">{{ user.num_events_sponsored(SponsorshipStatus.PAST) }}</span></a></li>
+		<li id="current" class="nav-item" role="presentation">
+			<a class="nav-link {% if tab == 'current_sponsorship' %}active{% endif %}" href="#">
+				Current Sponsorships
+				<span
+					class="badge badge-primary-override d-inline-block ml-2">{{ user.num_events_sponsored(SponsorshipStatus.CURRENT) }}</span>
+			</a>
+		</li>
+		<li id="pastSponsorship" class="nav-item" role="presentation">
+			<a class="nav-link {% if tab == 'past_sponsorship' %}active{% endif %}" href="#">
+				Past Sponsorships
+				<span
+					class="badge badge-primary-override d-inline-block ml-2">{{ user.num_events_sponsored(SponsorshipStatus.PAST) }}</span>
+			</a>
+		</li>
 		{% endif %}
 	</ul>
-	<div class="event-thumbnails">
-		{% include "utils/_events.html" %}
+	<div id="eventThumbnails" class="mb-4">
+		{% include "events/_events.html" %}
 	</div>
+	{% if pagination %}
+
+	<div class="d-flex justify-content-center mb-3">
+		{{ macros.pagination_widget(pagination, 'users.user_profile', company=user.company) }}
+	</div>
+	{% endif %}
+	{% endblock %}
 </div>
 
 
-{% if pagination %}
-<div class="pagination">
-	{{ macros.pagination_widget(pagination, 'users.user_profile', company=user.company) }}
-</div>
-{% endif %}
-{% endblock %}
+
 
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript">
-	// function to change the appropriate tab to active
-	let toggleTab = function (tab) {
-		$(".nav-tabs li").each(function (index) {
-			if ($(this).hasClass("active") && $(this) !== tab) {
-				$(this).removeClass("active");
-			};
-
-		});
-		$(tab).addClass("active");
-	};
-
-	$("#live").click(function () {
-		let userId = $(".user-container").attr("id");
-		let status = $(this).attr("id");
-		$.ajax({
-			type: "GET",
-			url: `${window.origin}/users/${userId}/events/${status}`,
-			dataType: "html",
-			success: function (response) {
-				toggleTab("#live");
-				$(".event-thumbnails").html(response);
-			}
-		});
-		return false;
-	});
-
-	$("#pastEvent").click(function () {
-		let userId = $(".user-container").attr("id");
-		$.ajax({
-			type: "GET",
-			url: `${window.origin}/users/${userId}/events/past`,
-			dataType: "html",
-			success: function (response) {
-				toggleTab("#pastEvent");
-				$(".event-thumbnails").html(response);
-			}
-		});
-		return false;
-	});
-
-	$("#current").click(function () {
-		let userId = $(".user-container").attr("id");
-		let status = $(this).attr("id");
-		$.ajax({
-			type: "GET",
-			url: `${window.origin}/users/${userId}/sponsorships/${status}`,
-			dataType: "html",
-			success: function (response) {
-				toggleTab("#current");
-				$(".event-thumbnails").html(response);
-			}
-		});
-		return false;
-	});
-
-	$("#pastSponsorship").click(function () {
-		let userId = $(".user-container").attr("id");
-		let status = $(this).attr("id");
-		$.ajax({
-			type: "GET",
-			url: `${window.origin}/users/${userId}/sponsorships/past`,
-			dataType: "html",
-			success: function (response) {
-				toggleTab("#pastSponsorship");
-				$(".event-thumbnails").html(response);
-			},
-			error: function (jqXHR, exception) {
-				ajaxErrorHandler(jqXHR, exception);
-			}
-		});
-		return false;
-	});
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/user_profile.js') }}"></script>
 {% endblock %}
