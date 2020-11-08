@@ -305,11 +305,14 @@ a.badge-primary-override:focus, a.badge-primary-override.focus {
 /* Dropdowns */
 .dropdown-item:hover, .dropdown-item:focus {
 	background-color: rgba(222, 241, 248, 0.8);
+	color: rgb(0, 115, 255);
+	
 	
 }
 
 .dropdown-item.active, .dropdown-item:active {
-	color: var(--dark-color-override);
+	color: rgb(0, 115, 255);
+	
     background-color: rgba(222, 241, 248, 0.8);
 }
 
@@ -543,6 +546,9 @@ a.text-dark-override:hover {
 	pointer-events: none !important;
 }
 
+.cursor-pointer {
+	cursor: pointer !important;
+}
 
 
 
@@ -578,7 +584,9 @@ a.text-dark-override:hover {
 	.event-card-grid {
 		grid-template-columns: 1fr 1fr 1fr !important;
 	}
-	
+	.user-info {
+		padding-left: 3rem !important;
+	}
 }
 
 
@@ -855,7 +863,15 @@ event-card style */
 	opacity: 0.8;
 }
 
+.user-avatar {
+	display: block;
+	max-height: 200px;
+	max-width: 200px;
+}
 
+.user-info {
+	padding-left: 0;
+}
 
 
 /* Payments blueprint specific styles */
@@ -875,18 +891,18 @@ table-layout: fixed;
 /* Main blueprint specific styles */
 
 
- .hero {
-	 position: relative;
-	 width: 100%;
-	 min-height: 30rem;
-	 background-image: url("../images/default_event_image13.jpeg");
-	 background-position: center;
-	 background-repeat: no-repeat;
-	 background-size: cover;
-	 z-index: 300;
- }
+.hero {
+	position: relative;
+	width: 100%;
+	min-height: 30rem;
+	background-image: url("../images/default_event_image13.jpeg");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	z-index: 300;
+}
 
- .hero::before {
+.hero::before {
 	position: absolute;
 	content: "";
 	top: 0;
@@ -897,18 +913,17 @@ table-layout: fixed;
 	z-index: -1;
  }
 
- .advanced-search-form {
-	 border-radius: 0.25rem;
-	 /* box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1); */
-	 box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14),
-    0 2px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+.advanced-search-form {
+	border-radius: 0.25rem;
+	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14),
+	0 2px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 4px 0 rgba(0, 0, 0, 0.2);
  }
 
- .advanced-search-form-title {
-	color: rgb(25, 42, 50);
- }
+.advanced-search-form-title {
+    color: rgb(25, 42, 50);
+}
 
- .advanced-search-form .form-control {
+.advanced-search-form .form-control {
 	border: none;
 	border-radius: 0.25rem;
 	height: 3rem;
@@ -933,7 +948,7 @@ table-layout: fixed;
   	
 }
 
- .advanced-search-form label {
+.advanced-search-form label {
 	display: none;
 }
 
@@ -942,73 +957,5 @@ table-layout: fixed;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
 }
-
-
-
-/* Older Styles Below need to be refactored or deleted*/
-
-
-.container.user-container .page-header {
-	border: none;
-}
-
-.container.edit-profile {
-	width: 70%;
-	margin-bottom: 80px;
-}
-
-.container.edit-profile h2 {
-	margin-top: 35px;
-	margin-bottom: 25px;
-}
-
-.container.edit-profile .remove-profile-image-form, 
-.container.edit-profile .upload-image-form {
-	padding-bottom: 40px;
-	border-bottom: 1px solid #ddd;
-}
-
-.profile-thumbnail {
-	position: absolute;
-}
-
-.profile-header {
-    min-height: 260px;
-    margin-left: 250px;
-}
-
-#profilePhoto {
-	width: 18%;
-	height: auto;
-	/*max-height: 25%;*/
-}
-
-#editProfilePhoto {
-	display: inline-block;
-	width: 25%;
-	height: auto;
-	margin-bottom: 15px;
-}
-
-.remove-profile-image-form .btn {
-	width: 25%;
-}
-
-.profile-form input {
-	margin-right: 5px;
-}
-
-/*CSS for Admin Panel*/
-.admin-header {
-	margin-bottom: 30px;
-}
-
-
-
-
-
-
-
-
 
 
