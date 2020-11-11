@@ -4,9 +4,8 @@
 
 {% block page_content %}
 <header class="hero d-flex flex-wrap mb-4">
-	<div class="col-md-6 col-xl-3">
+	<div class="col-md-6 col-xl-3 d-none d-md-block">
 		<div class="d-flex align-items-center justify-content-center h-50">
-
 			{% if current_user.is_authenticated %}
 			<h2 class="text-white">Welcome, {{ current_user.first_name + " " + current_user.last_name }}!</h2>
 			{% else %}

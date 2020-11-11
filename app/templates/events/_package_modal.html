@@ -17,7 +17,7 @@
                     {% for package in packages %}
                     <li class="card mb-3">
                         <div class="card-header card-header-blue" role="tab">
-                            <h5 class="custom-font-bold">
+                            <h5 class="custom-font-semibold">
                                 <a class="d-flex align-items-center" href="javascript:void(0);" role="button"
                                     data-parent="#accordion" data-toggle="collapse"
                                     data-target="#package_{{ package.id }}" aria-expanded="true"
@@ -27,7 +27,7 @@
                                     {{ package.name }}
                                 </a>
                                 {% if package.is_sold_out() %}
-                                <span class="float-right">Sold Out</span>
+                                <span class="float-right custom-font-semibold">Sold Out</span>
                                 {% endif %}
                             </h5>
                         </div>
@@ -41,7 +41,7 @@
                                 {% if current_user.can(Permission.SPONSOR_EVENT) and event.is_ongoing() %}
                                 {% if current_user.has_purchased(package) %}
                                 <a class="btn btn-info select-package disabled" href="javascript:void(0);">Add</a>
-                                <span>Already Purchased</span>
+                                <span class="custom-font-semibold">Already Purchased</span>
                                 {% elif package.is_sold_out() %}
                                 <a class="btn btn-info select-package disabled" href="javascript:void(0);">Add</a>
                                 {% else %}
