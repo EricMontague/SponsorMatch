@@ -15,6 +15,7 @@ from app.blueprints.settings.forms import (
 )
 from app.blueprints.users.forms import EditProfileForm
 from app.helpers import permission_required
+from app.blueprints.settings import services
 
 
 @settings.route("/change-password", methods=["GET", "POST"])
@@ -40,7 +41,7 @@ def change_password():
         form=form,
         title=title,
         heading=heading,
-        endpoint="settings.change_password"
+        endpoint="settings.change_password",
     )
 
 
@@ -54,30 +55,25 @@ def change_email():
     heading = title
     form = ChangeEmailForm()
     if form.validate_on_submit():
-        if current_user.verify_password(form.password.data):
-            new_email = form.email.data
-            token = current_user.generate_change_email_token(new_email)
-            send_email(
-                new_email,
-                "Change Email Address",
-                "settings/email/confirm_email_change",
-                user=current_user,
-                token=token,
+        try:
+            services.change_email_request(
+                current_user, form.email.data, form.password.data
             )
-            flash(
-                "An email with instructions on how to change your email has been sent to you.",
-                "info",
-            )
-            session["email_change_request"] = True
-            return redirect(url_for("main.index"))
-        else:
-            flash("You entered an invalid password.", "danger")
+        except services.InvalidPassword as err:
+            flash(str(err), "danger")
+        flash(
+            "An email with instructions on how to change your email has been sent to you.",
+            "info",
+        )
+        session["email_change_request_initiated"] = True
+        return redirect(url_for("main.index"))
+
     return render_template(
         "settings/settings.html",
         form=form,
         title=title,
         heading=heading,
-        endpoint="settings.change_email"
+        endpoint="settings.change_email",
     )
 
 
@@ -87,10 +83,10 @@ def confirm_email_change(token):
     """View function to confirm the token sent to the user to change their email"""
     # used so that only a user who actually submitted an email change request
     # can access this route
-    if session.get("email_change_request"):
+    if session.get("email_change_request_initiated"):
         if current_user.change_email(token):
             db.session.commit()
-            session["email_change_request"] = False
+            session["email_change_request_initiated"] = False
             flash("Your email address has been successfully updated!", "success")
         else:
             flash("Your email address change was unsuccessful.", "danger")
@@ -108,7 +104,6 @@ def close_account():
     message = 'Please enter "CLOSE" in the field below to confirm the closing of your account.'
     form = CloseAccountForm()
     if form.validate_on_submit():
-        # user = current_user._get_current_object()
         db.session.delete(current_user)
         db.session.commit()
         flash("Your account has been closed.", "info")
@@ -119,5 +114,5 @@ def close_account():
         title=title,
         heading=heading,
         message=message,
-        endpoint="settings.close_account"
+        endpoint="settings.close_account",
     )

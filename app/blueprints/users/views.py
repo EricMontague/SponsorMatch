@@ -36,49 +36,17 @@ def user_profile(company):
     user = User.query.filter_by(company=company).first_or_404()
     page = request.args.get("page", 1, type=int)
     past = request.args.get("past", 0, type=int)
-    profile_photo = user.profile_photo
     if user.can(Permission.CREATE_EVENT) or user.is_administrator():
-        tab = "live_event"
-        if past == 1:
-            tab = "past_event"
-            query = Event.query.filter(
-                Event.user_id == user.id, Event.has_ended() == True
-            )
-        else:  # query live events
-            query = Event.query.filter(
-                Event.user_id == user.id, Event.is_ongoing() == True
-            )
-    else:  # user is a sponsor
-        tab = "current_sponsorship"
-        if past == 1:
-            tab = "past_sponsorship"
-            query = (
-                Event.query.join(Sponsorship, Sponsorship.event_id == Event.id)
-                .filter(Event.is_past() == True)
-                .filter(
-                    Sponsorship.sponsor_id == user.id, Sponsorship.is_pending() == False
-                )
-            )
-        else:  # current sponsored events
-            query = (
-                Event.query.join(Sponsorship, Sponsorship.event_id == Event.id)
-                .filter(Event.is_ongoing() == True)
-                .filter(
-                    Sponsorship.sponsor_id == user.id, Sponsorship.is_pending() == False
-                )
-            )
-
-    pagination = query.paginate(
-        page=page, per_page=current_app.config["EVENTS_PER_PAGE"], error_out=False
-    )
-    events = pagination.items
+        data = services.get_event_organizer_profile_data()
+    else:
+        data = servuces.get_sponsor_profile_data()
     return render_template(
         "users/user_profile.html",
-        tab=tab,
+        tab=data["tab"],
         user=user,
-        events=events,
-        pagination=pagination,
-        profile_photo=profile_photo,
+        events=data["pagination"].items,
+        pagination=data["pagination"],
+        profile_photo=user.profile_photo,
     )
 
 
