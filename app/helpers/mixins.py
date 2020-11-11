@@ -11,7 +11,7 @@ class FormMixin:
     """Mixin class to extend the functionality of other forms."""
 
     @staticmethod
-    def choice_value(choice_id, choices):
+    def convert_choice_to_value(choice_id, choices):
         """Return the value selected from a SelectField form element."""
         choices = choices.upper()
         choice_list = globals().get(choices, None)
@@ -24,7 +24,7 @@ class FormMixin:
             return None
 
     @staticmethod
-    def choice_id(choice_value, choices):
+    def convert_choice_to_id(choice_value, choices):
         """Return the id associated with given value in a SelectField
         form element.
         """

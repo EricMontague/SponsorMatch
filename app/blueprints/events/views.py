@@ -62,13 +62,13 @@ def create_event():
                 name=form.venue_name.data,
                 address=form.address.data,
                 city=form.city.data,
-                state=CreateEventForm.choice_value(form.state.data, "STATES"),
+                state=CreateEventForm.convert_choice_to_value(form.state.data, "STATES"),
                 zip_code=form.zip_code.data,
             )
         event_type = EventType.query.get(form.event_type.data)
         event_category = EventCategory.query.get(form.category.data)
-        start_time = CreateEventForm.choice_value(form.start_time.data, "TIMES")
-        end_time = CreateEventForm.choice_value(form.end_time.data, "TIMES")
+        start_time = CreateEventForm.convert_choice_to_value(form.start_time.data, "TIMES")
+        end_time = CreateEventForm.convert_choice_to_value(form.end_time.data, "TIMES")
         event = Event(
             title=form.title.data,
             start_datetime=datetime.combine(form.start_date.data, start_time),
@@ -101,11 +101,11 @@ def edit_basic_info(id):
         event.venue.name = form.venue_name.data
         event.venue.address = form.address.data
         event.venue.city = form.city.data
-        event.venue.state = CreateEventForm.choice_value(form.state.data, "STATES")
+        event.venue.state = CreateEventForm.convert_choice_to_value(form.state.data, "STATES")
         event.venue.zip_code = form.zip_code.data
 
-        start_time = CreateEventForm.choice_value(form.start_time.data, "TIMES")
-        end_time = CreateEventForm.choice_value(form.end_time.data, "TIMES")
+        start_time = CreateEventForm.convert_choice_to_value(form.start_time.data, "TIMES")
+        end_time = CreateEventForm.convert_choice_to_value(form.end_time.data, "TIMES")
 
         event.start_datetime = datetime.combine(form.start_date.data, start_time)
         event.end_datetime = datetime.combine(form.end_date.data, end_time)
@@ -119,12 +119,12 @@ def edit_basic_info(id):
     form.venue_name.data = venue.name
     form.address.data = venue.address
     form.city.data = venue.city
-    form.state.data = CreateEventForm.choice_id(venue.state, "STATES")
+    form.state.data = CreateEventForm.convert_choice_to_id(venue.state, "STATES")
     form.zip_code.data = venue.zip_code
     form.start_date.data = event.start_date()
     form.end_date.data = event.end_date()
-    form.start_time.data = CreateEventForm.choice_id(event.start_time(), "TIMES")
-    form.end_time.data = CreateEventForm.choice_id(event.end_time(), "TIMES")
+    form.start_time.data = CreateEventForm.convert_choice_to_id(event.start_time(), "TIMES")
+    form.end_time.data = CreateEventForm.convert_choice_to_id(event.end_time(), "TIMES")
     return render_template("events/basic_info.html", form=form, event=event)
 
 
@@ -215,7 +215,7 @@ def demographics(id):
         if form.males.data + form.females.data != 100:
             flash("Sum of males and females must equal 100.", "danger")
         else:
-            event.attendees = DemographicsForm.choice_value(
+            event.attendees = DemographicsForm.convert_choice_to_value(
                 form.attendees.data, "PEOPLE_RANGES"
             )
             distribution = str(form.males.data) + "-" + str(form.females.data)
@@ -224,7 +224,7 @@ def demographics(id):
             flash("Your information has been successfilly uploaded.", "success")
             return redirect(url_for("events.demographics", id=id))
     if event.attendees:
-        form.attendees.data = DemographicsForm.choice_id(
+        form.attendees.data = DemographicsForm.convert_choice_to_id(
             event.attendees, "PEOPLE_RANGES"
         )
     else:
@@ -270,12 +270,12 @@ def packages(id):
         package = Package(
             name=form.name.data,
             price=form.price.data,
-            audience=EventPackagesForm.choice_value(
+            audience=EventPackagesForm.convert_choice_to_value(
                 form.audience.data, "PEOPLE_RANGES"
             ),
             description=form.description.data,
             available_packages=form.available_packages.data,
-            package_type=EventPackagesForm.choice_value(
+            package_type=EventPackagesForm.convert_choice_to_value(
                 form.package_type.data, "PACKAGE_TYPES"
             ),
             event=event,
@@ -303,12 +303,12 @@ def edit_package(event_id, package_id):
     if form.validate_on_submit():
         package.name = form.name.data
         package.price = form.price.data
-        package.audience = EventPackagesForm.choice_value(
+        package.audience = EventPackagesForm.convert_choice_to_value(
             form.audience.data, "PEOPLE_RANGES"
         )
         package.description = form.description.data
         package.available_packages = form.available_packages.data
-        package.package_type = EventPackagesForm.choice_value(
+        package.package_type = EventPackagesForm.convert_choice_to_value(
             form.package_type.data, "PACKAGE_TYPES"
         )
         db.session.commit()
@@ -317,10 +317,10 @@ def edit_package(event_id, package_id):
     packages = event.packages.all()
     form.name.data = package.name
     form.price.data = package.price
-    form.audience.data = EventPackagesForm.choice_id(package.audience, "PEOPLE_RANGES")
+    form.audience.data = EventPackagesForm.convert_choice_to_id(package.audience, "PEOPLE_RANGES")
     form.description.data = package.description
     form.available_packages.data = package.available_packages
-    form.package_type.data = EventPackagesForm.choice_id(
+    form.package_type.data = EventPackagesForm.convert_choice_to_id(
         package.package_type, "PACKAGE_TYPES"
     )
     return render_template(
@@ -607,175 +607,8 @@ def create_sponsorships(id):
             return jsonify({"message": err, "url": url_for("events.event", id=event.id)})
         db.session.add(sponsorship)
     db.session.commit()
-    return jsonify({"url": url_for("events.purchase", id=event.id)})
+    return jsonify({"url": url_for("payments.checkout", event_id=event.id)})
 
 
-@events.route("/<int:id>/charge/<int:amount>", methods=["POST"])
-@login_required
-@permission_required(Permission.SPONSOR_EVENT)
-def charge(id, amount):
-    """View function to handle the POST request sent when a
-    user makes a payment.
-    """
-    event = Event.query.get_or_404(id)
-    user = current_user._get_current_object()
-    # sponsorship deals for this event that haven't been completed yet
-    sponsorships = Sponsorship.query.filter(
-        Sponsorship.confirmation_code.is_(None),
-        Sponsorship.sponsor_id == user.id,
-        Sponsorship.event_id == event.id,
-    ).all()
-    if sponsorships == []:  # user has no pending deals for this event
-        return redirect(url_for("main.index"))
-    try:
-        customer = current_app.stripe.Customer.create(
-            email=request.form["stripeEmail"], source=request.form["stripeToken"]
-        )
-        charge = current_app.stripe.Charge.create(
-            customer=customer.id,
-            amount=amount,
-            currency="usd",
-            description="Sponsorship Deal",
-        )
-        confirmation_code = str(uuid.uuid4())
-        for sponsorship in sponsorships:
-            sponsorship.confirmation_code = confirmation_code
-            sponsorship.timestamp = datetime.now()
-            sponsorship.package.num_purchased += 1
-            if (
-                sponsorship.package.available_packages
-                - sponsorship.package.num_purchased
-                < 0
-            ):  # out of stock
-                db.session.rollback()
-                flash("The package you attempted to purchase is sold out.", "danger")
-                return redirect(url_for("events.event", id=event.id))
-        db.session.commit()
-        send_email(
-            customer.email,
-            "Your Recent Purchase",
-            "events/email/purchase",
-            user=user,
-            sponsorships=sponsorships,
-            amount=amount,
-        )
-        flash("Your purchase was successful. A confirmation email was sent to you.", "success")
-        return redirect(url_for("manage.manage_sponsorships", status="all"))
-    # refactor needed. Maybe I can make a decorator to handle stripe errors?
-    except current_app.stripe.error.CardError as err:
-        # Since it's a decline, stripe.error.CardError will be caught
-        db.session.rollback()
-        flash("There was an error with your card, please try again.", "danger")
-        return redirect(url_for("events.event", id=event.id))
-    except current_app.stripe.error.RateLimitError as err:
-        # Too many requests made to the API too quickly
-        db.session.rollback()
-        flash(
-            "Sorry, we are experiencing high traffic volumes. Please wait 30 seconds before retrying your purchase.",
-            "danger"
-        )
-        return redirect(url_for("events.event", id=event.id))
-    except current_app.stripe.error.InvalidRequestError as err:
-        # Invalid parameters were supplied to Stripe's API
-        db.session.rollback()
-        flash("Invalid parameters were supplied, please try again.", "danger")
-        return redirect(url_for("events.event", id=event.id))
-    except current_app.stripe.error.AuthenticationError as err:
-        # Authentication with Stripe's API failed
-        db.session.rollback()
-        flash(
-            "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later.",
-            "danger"
-        )
-        return redirect(url_for("events.event", id=event.id))
-    except current_app.stripe.error.APIConnectionError as err:
-        # Network communication with Stripe failed
-        db.session.rollback()
-        flash(
-            "We are having issues connecting to the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later.",
-            "danger"
-        )
-        return redirect(url_for("events.event", id=event.id))
-    except current_app.stripe.error.StripeError as err:
-        # Generic Stripe error
-        db.session.rollback()
-        flash(
-            "We are having issues accessing the Stripe API. We will try to resolve this issue as soon as possible. Please try to make your purchase again later.",
-            "danger"
-        )
-        return redirect(url_for("events.event", id=event.id))
-    except Exception as err:
-        # Something else happened, completely unrelated to Stripe
-        db.session.rollback()
-        abort(500)
-
-
-# need to lock the table to avoid a race condition
-# then I need to decrement the quantity of available packages by 1 for
-# each package that was purchased
-@events.route("/<int:id>/sponsorships/purchase", methods=["GET", "POST"])
-@login_required
-@permission_required(Permission.SPONSOR_EVENT)
-def purchase(id):
-    """Return a page that allows the sponsor to complete their
-    purchases of the package(s).
-    """
-    form = ContactForm()
-    event = Event.query.get_or_404(id)
-    user = current_user._get_current_object()
-    endpoint = "events.purchase"
-    publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
-    
-    # sponsorship deals for this event that haven't been completed yet
-    amount = 0
-    sponsorships = []
-    for sponsorship in user.sponsorships:
-        if sponsorship.event_id == event.id and sponsorship.is_pending():
-            sponsorships.append(sponsorship)
-            amount += sponsorship.package.price * 100
-    url = url_for("events.charge", id=event.id, amount=amount)
-    if sponsorships == []:  # user has no pending deals for this event
-        return redirect(url_for("main.index"))
-    flash(
-        "Please note: Navigating away from or refreshing this page will cancel your purchase.",
-        "danger"
-    )
-    return render_template(
-        "events/checkout.html",
-        form=form,
-        event=event,
-        sponsorships=sponsorships,
-        endpoint=endpoint,
-        publishable_key=publishable_key,
-        amount=amount,
-        url=url,
-    )
-
-
-@events.route("/<int:id>/sponsorships/cancel-purchase", methods=["POST"])
-@login_required
-@permission_required(Permission.SPONSOR_EVENT)
-def cancel_purchase(id):
-    """Function to be activated when a user navigates away from
-    the purchase page before completing their purchase. Delete
-    the appropriate sponsorship objects from the database.
-    """
-    event = Event.query.get_or_404(id)
-    user = current_user._get_current_object()
-    sponsorships = [
-        sponsorship
-        for sponsorship in user.sponsorships
-        if sponsorship.event_id == event.id and sponsorship.is_pending()
-    ]
-    if sponsorships != []:
-        for sponsorship in sponsorships:
-            try:
-                db.session.delete(sponsorship)
-            except exc.IntegrityError as err:
-                db.session.rollback()
-                abort(500)
-        db.session.commit()
-    return redirect(url_for("manage.manage_sponsorships", status="all"))
-    
 
 
