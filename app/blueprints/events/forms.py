@@ -88,7 +88,7 @@ class CreateEventForm(FormMixin, FlaskForm):
         than the current time.
         """
         # convert string time to a time object
-        start_time = CreateEventForm.choice_value(field.data, "TIMES")
+        start_time = CreateEventForm.convert_choice_to_value(field.data, "TIMES")
         start_datetime = datetime.combine(self.start_date.data, start_time)
         # check if user's event is today and if time is before the current time
         if (
@@ -102,9 +102,9 @@ class CreateEventForm(FormMixin, FlaskForm):
         before the start time.
         """
         # convert string time to a time object
-        start_time = CreateEventForm.choice_value(self.start_time.data, "TIMES")
+        start_time = CreateEventForm.convert_choice_to_value(self.start_time.data, "TIMES")
         # datetime object
-        end_time = CreateEventForm.choice_value(field.data, "TIMES")
+        end_time = CreateEventForm.convert_choice_to_value(field.data, "TIMES")
         if end_time <= start_time:
             if self.start_date.data == self.end_date.data:
                 raise ValidationError("End time must be after start time.")
