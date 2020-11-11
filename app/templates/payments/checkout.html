@@ -12,7 +12,7 @@
 	</header>
 
 	<main class="row">
-		<div class="col-12 col-lg-8">
+		<div class="col-12 col-lg-7">
 			<div class="card mb-4">
 				<div class="card-header card-header-blue">
 					<h5 class="custom-font-semibold font-120">Order Summary</h5>
@@ -62,14 +62,14 @@
 		</div>
 
 
-		<div class="col-12 col-lg-4">
+		<div class="col-12 col-lg-5">
 			<div class="card mb-4">
 				<div class="card-header card-header-blue">
 					<h5 class="custom-font-semi-bold font-120">When & Where</h5>
 				</div>
 				<div class="card-body">
 					<div>
-						<h5 class="custom-font-semibold font-150">{{ event.venue.name }}</h5>
+						<h5 class="custom-font-semibold font-120">{{ event.venue.name }}</h5>
 						<p class="mb-0">{{ event.venue.address }}</p>
 						<p>{{ event.venue.city }}, {{ event.venue.state }} {{ event.venue.zip_code }}</p>
 					</div>
@@ -79,12 +79,12 @@
 					</div>
 				</div>
 			</div>
-			<div id="organizer" class="card">
+			<div id="organizer" class="card mb-4">
 				<div class="card-header card-header-blue">
 					<h5 class="custom-font-semibold font-120">Organizer</h5>
 				</div>
 				<div class="card-body">
-					<h5 class="custom-font-semibold font-150">{{ event.user.company }}</h5>
+					<h5 class="custom-font-semibold font-120">{{ event.user.company }}</h5>
 
 
 					<a id="{{ event.user.company }}" class="view-profile d-block mb-3"
@@ -108,9 +108,28 @@
 					</div>
 				</div>
 			</div>
+			<!-- Payment form -->
+			<div class="mb-4">
+				<form id="payment-form" class="stripe-form ">
+					<div id="card-element">
+						<!--Stripe.js injects the Card Element here-->
+					</div>
+					<button id="submit" class="stripe-button">
+						<div class="spinner hidden" id="spinner"></div>
+						<span id="button-text">Pay</span>
+					</button>
+					<p id="card-error" role="alert"></p>
+					<p class="result-message hidden">
+						Payment succeeded! Redirecting you to the homepage.
+					</p>
+				</form>
+			</div>
 
 		</div>
+
 	</main>
+
+
 
 </div>
 
@@ -119,7 +138,8 @@
 
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='js/checkout.js') }}">
-
-</script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+<script src="{{ url_for('static', filename='js/stripe_client.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/checkout.js') }}"></script>
 {% endblock %}
