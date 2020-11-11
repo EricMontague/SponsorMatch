@@ -22,7 +22,6 @@ class User(UserMixin, db.Model):
     company = db.Column(db.String(64), index=True, unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    has_paid = db.Column(db.Boolean, default=False, nullable=False)
     member_since = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     job_title = db.Column(db.String(64), nullable=True)
     website = db.Column(db.String(64), unique=True, nullable=True)
@@ -42,6 +41,15 @@ class User(UserMixin, db.Model):
     )
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
 
+    @classmethod
+    def create_from_form(cls, form_data):
+        user = cls()
+        for field in form_data:
+            if hasattr(user, field):
+                setattr(user, field, form_data[field])
+        db.session.add(user)
+        return user
+
     @property
     def password(self):
         raise AttributeError("password is not a readable attribute")
@@ -55,7 +63,7 @@ class User(UserMixin, db.Model):
     def full_name(self):
         """Return the user's full name."""
         return self.first_name + " " + self.last_name
-        
+
     def verify_password(self, password):
         """Return True if the correct password is provided by the user."""
         return check_password_hash(self.password_hash, password)
@@ -199,6 +207,49 @@ class User(UserMixin, db.Model):
             photo_dir = photo.split("/")[images_directory_index:]
             filepath = "/".join(photo_dir)
         return filepath
+
+    def pending_sponsorships(self, event_id):
+        """Return a list of this user's pending sponsorships for the given event"""
+        # sponsorship deals for this event that haven't been completed ye
+        sponsorships = []
+        for sponsorship in self.sponsorships:
+            if sponsorship.event_id == event_id and sponsorship.is_pending():
+                sponsorships.append(sponsorship)
+        return sponsorships
+
+    def get_events_by_status(self, status):
+        """Return a list of hosted events based on the given status."""
+        if status == EventStatus.LIVE:
+            events = [event for event in self.events if event.is_ongoing()]
+        elif status == EventStatus.DRAFT:
+            events = [event for event in self.events if event.is_draft()]
+        elif status == EventStatus.PAST:
+            events = [event for event in self.events if event.has_ended()]
+        else:
+            events = self.events.all()
+        return events
+
+    def get_sponsorships_by_status(self, status):
+        """Return a list of sponsorships based on the given status."""
+        if status == SponsorshipStatus.CURRENT:
+            sponsorships = [
+                sponsorship
+                for sponsorship in self.sponsorships
+                if not sponsorship.is_pending() and sponsorship.is_current()
+            ]
+        elif status == SponsorshipStatus.PAST:
+            sponsorships = [
+                sponsorship
+                for sponsorship in self.sponsorships
+                if not sponsorship.is_pending() and sponsorship.is_past()
+            ]
+        else:
+            sponsorships = [
+                sponsorship
+                for sponsorship in self.sponsorships
+                if not sponsorship.is_pending()
+            ]
+        return sponsorships
 
     def __repr__(self):
         """Return a string representation of a user> Used for debugging
