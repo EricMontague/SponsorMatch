@@ -3,7 +3,44 @@ Elasticsearch operations.
 """
 
 
-from flask import current_app
+from flask import current_app, url_for
+
+
+class FakePagination:
+    """Class that mimics the interface of Flask-SQLAlchemy's
+    Pagination object. This is needed to overcome the fact that you
+    cannot create a proper Pagination object when returning search results
+    from Elasticsearch
+    """
+
+    def __init__(self, has_prev, has_next, prev_num, next_num, page, total, items):
+        self.has_prev = has_prev
+        self.has_next = has_next
+        self.prev_num = prev_num
+        self.next_num = next_num
+        self.page = page
+        self.total = total
+        self.items = items
+
+    def iter_pages(self):
+        current_page = 1
+        total_pages = self.total
+        while total_pages > 0:
+            yield current_page
+            current_page += 1
+            total_pages -= current_app.config["EVENTS_PER_PAGE"]
+
+    @classmethod
+    def create(cls, prev_url, next_url, total, current_page):
+        has_prev = prev_url is not None
+        has_next = next_url is not None
+        prev_num = 1
+        if has_prev:
+            prev_num = current_page - 1
+        next_num = 1
+        if has_next:
+            next_num = current_page + 1
+        return cls(has_prev, has_next, prev_num, next_num, current_page, total)
 
 
 def add_to_index(index, doc_type, model):
@@ -84,3 +121,20 @@ def delete_index(index):
     if current_app.elasticsearch:
         if current_app.elasticsearch.indices.exists(index):
             current_app.elasticsearch.indices.delete(index)
+
+
+def paginate_search(model, query, endpoint, page, results_per_page):
+    data = {}
+    results, total = model.search(query, page, results_per_page)
+    prev_url = None
+    if page > 1:
+        prev_url = url_for(endpoint, query=query, page=page - 1)
+    next_url = None
+    if total > page * results_per_page:
+        next_url = url_for(endpoint, query=query, page=page + 1)
+    pagination = FakePagination.create(prev_url, next_url, total, page, results)
+    data["total"] = total
+    data["prev_url"] = prev_url
+    data["next_url"] = next_url
+    data["pagination"] = pagination
+    return data
