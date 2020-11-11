@@ -53,11 +53,7 @@ class RegistrationForm(FlaskForm):
         render_kw={"placeholder": "Email"},
     )
     password = PasswordField(
-        "Password",
-        validators=[
-            DataRequired()
-        ],
-        render_kw={"placeholder": "Password"},
+        "Password", validators=[DataRequired()], render_kw={"placeholder": "Password"},
     )
     role = SelectField("Choose account", coerce=int)
     submit = SubmitField("Create Account")
