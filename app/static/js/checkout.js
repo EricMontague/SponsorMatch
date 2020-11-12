@@ -38,18 +38,6 @@ const setOrderTotal = function () {
 
 
 
-// Delete Sponsorship objects from db if the user navigates away from the page
-const deleteSponsorshipOnUnload = function () {
-    $(window).on("unload", function () {
-        const eventId = $(".container.purchase-page").attr("id");
-        const success = navigator.sendBeacon(`${window.origin}/events/${eventId}/sponsorships/cancel-purchase`);
-        window.location.href = window.origin;
-        return false;
-    });
-};
-
-
-
 const handleUpcomingEventsClick = function (company) {
     $("#upcomingEvents").click(function () {
         window.open(`${window.origin}/users/${company}`);
@@ -65,9 +53,7 @@ const handlePastEventsClick = function (company) {
 
 setSalesTax();
 setOrderTotal();
-deleteSponsorshipOnUnload();
 handleUpcomingEventsClick(userCompany);
 handlePastEventsClick(userCompany);
 
 // will be declared in main.js which will be included before this script on the page
-setSiteBackgroundColor("#fff");
