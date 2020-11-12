@@ -3,9 +3,10 @@
 
 import os
 import uuid
+from http import HTTPStatus
 from datetime import datetime
 from flask_login import login_required, current_user
-from app.blueprints.events import events
+from app.blueprints.events import events, services
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db, images
 from app.helpers import send_email
@@ -403,26 +404,29 @@ def add_misc_images(id):
 def media(id):
     """Return a page that allows the user do at various forms of
     media to their event page."""
-    upload_video_form = UploadVideoForm()
-    upload_video_form.video_url.errors = session.pop("upload_video_form_errors", [])
-    upload_video_form.video_url.data = session.pop("video_url", "")
-    remove_video_form = RemoveVideoForm()
-    image_form = MultipleImageForm()
-    image_form.images.errors = session.pop("image_form_errors", [])
-    remove_image_form = RemoveImageForm()
     event = Event.query.get_or_404(id)
-    video = event.video
-    misc_image_paths = event.misc_images
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
+
+    # Instantiate forms
+    upload_video_form = UploadVideoForm()
+    remove_video_form = RemoveVideoForm()
+    image_form = MultipleImageForm()
+    remove_image_form = RemoveImageForm()
+
+    # Get data from user session
+    upload_video_form.video_url.errors = session.pop("upload_video_form_errors", [])
+    upload_video_form.video_url.data = session.pop("video_url", "")
+    image_form.images.errors = session.pop("image_form_errors", [])
+    
     return render_template(
         "events/media.html",
         upload_video_form=upload_video_form,
         remove_video_form=remove_video_form,
         image_form=image_form,
         remove_image_form=remove_image_form,
-        video=video,
-        misc_image_paths=misc_image_paths,
+        video=event.video,
+        misc_image_paths=event.misc_images,
         event=event,
     )
 
@@ -469,16 +473,9 @@ def publish(id):
 @events.route("/<int:id>", methods=["GET", "POST"])
 def event(id):
     """Return the view that displays the event's information"""
-    other_media = {}
-    date_format = "%m/%d/%Y"
-    time_format = "%I:%M %p"
     form = ContactForm()
     event = Event.query.get_or_404(id)
-    venue = event.venue
-    organizer = event.user
-    image_path = event.main_image
-    other_media["video"] = event.video
-    other_media["misc_image_paths"] = event.misc_images
+    other_media = {"video": event.video, "misc_image_paths": event.msic_images}
     packages = event.packages.all()
     # commented out because the fake data generated for the demo of
     # this app by the Faker package may inadvertently contain real email addresses
@@ -496,13 +493,13 @@ def event(id):
     return render_template(
         "events/event.html",
         event=event,
-        venue=venue,
-        organizer=organizer,
+        venue=event.venue,
+        organizer=event.user,
         packages=packages,
         form=form,
-        date_format=date_format,
-        image_path=image_path,
-        time_format=time_format,
+        date_format="%m/%d/%Y",
+        image_path=event.main_image,
+        time_format="%I:%M %p",
         other_media=other_media,
     )
 
@@ -512,23 +509,17 @@ def event_tab(id, tab):
     """Return an html template with the appropriate content
     based on the tab clicked by the user on an event's page.
     """
-    other_media = {}
     event = Event.query.get_or_404(id)
-    image_path = event.main_image
-    other_media["video"] = event.video
-    other_media["misc_image_paths"] = event.misc_images
+    other_media = {"video": event.video, "misc_image_paths": event.msic_images}
     if tab == "info":
         return render_template(
             "events/_event_page_content.html",
             event=event,
-            image_path=image_path,
+            image_path=event.main_image,
             other_media=other_media,
         )
     elif tab == "sponsors":
-        users = set()
-        for sponsorship in event.sponsorships:
-            if not sponsorship.is_pending():
-                users.add(sponsorship.sponsor)
+        users = {sponsorship.sponsor for sponsorship in event.sponsorships}
         return render_template("users/_users.html", event=event, users=users)
     else:
         abort(404)
@@ -539,7 +530,6 @@ def event_tab(id, tab):
 @permission_required(Permission.CREATE_EVENT)
 def delete_event(id):
     """View function to delete an event."""
-
     event = Event.query.get(id)
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
@@ -589,24 +579,27 @@ def delete_saved_event(id):
     return redirect(url_for("main.index"))
 
 
-@events.route("/<int:id>/sponsorships", methods=["POST"])
+@events.route("/<int:id>/place-order", methods=["POST"])
 @login_required
 @permission_required(Permission.SPONSOR_EVENT)
-def create_sponsorships(id):
-    """Create sponsorship objects and add them to the database."""
-    event = Event.query.get_or_404(id)
-    user = current_user._get_current_object()
-    if not request.json or "ids" not in request.json:
-        abort(400)
-    for package_id in request.json["ids"]:
-        package = Package.query.get_or_404(package_id)
-        # user can't buy the same package twice
-        try:
-            sponsorship = Sponsorship(event=event, sponsor=user, package=package)
-        except IntegrityError as err:  # need to test this
-            return jsonify({"message": err, "url": url_for("events.event", id=event.id)})
-        db.session.add(sponsorship)
-    db.session.commit()
+def place_order(id):
+    """Create an order by storing the user's requested packages
+    in a user session
+    """
+    data = services.validate_order(id, request.json, current_user)
+    if "error" in data:
+        return jsonify({"message": data["message"]}), HTTPStatus.BAD_REQUEST
+    order_key = f"PENDING_ORDER#{current_user.id}#{event.id}"
+    session[order_key] = [
+        {
+            "package_id": package.id,
+            "event_id": event.id,
+            "user_id": current_user.id,
+            "price": package.price,
+            "name": package.name
+        }
+        for package in data["packages"]
+    ]
     return jsonify({"url": url_for("payments.checkout", event_id=event.id)})
 
 
