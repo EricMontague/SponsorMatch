@@ -30,13 +30,13 @@
 							</tr>
 						</thead>
 						<tbody>
-							{% for sponsorship in sponsorships %}
+							{% for package in session[f"PENDING_ORDER#{current_user.id}#{event.id}"] %}
 							<tr>
-								<td>{{ sponsorship.package.name }}</td>
-								<td>${{ sponsorship.package.price }}</td>
-								<td>{{ "${:,.2f}".format(sponsorship.package.price | float * 0.15) }}</td>
+								<td>{{ package["name"] }}</td>
+								<td>${{ package["price"] }}</td>
+								<td>{{ "${:,.2f}".format(package["price"] | float * 0.15) }}</td>
 								<td>1</td>
-								<td class="subtotal">{{ "${:,.2f}".format(sponsorship.package.price | float * 1.15) }}
+								<td class="subtotal">{{ "${:,.2f}".format(package["price"] | float * 1.15) }}
 								</td>
 
 							</tr>
