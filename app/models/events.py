@@ -17,7 +17,6 @@ class EventStatus:
     DRAFT = "draft"
 
 
-
 # association table between users and events tables
 saved_events = db.Table(
     "saved_events",
@@ -177,11 +176,7 @@ class Event(SearchableMixin, db.Model):
 
     def num_sponsors(self):
         """Return the number of sponsors for this event."""
-        sponsors = set()
-        for sponsorship in self.sponsorships:
-            if not sponsorship.is_pending():
-                sponsors.add(sponsorship.sponsor)
-        return len(sponsors)
+        return len(self.sponsorships)
 
     def __repr__(self):
         """Return a string representation of an Event object.
