@@ -10,6 +10,14 @@ from app.helpers.form_constants import TIME_FORMAT, STATES, PACKAGE_TYPES, PEOPL
 class FormMixin:
     """Mixin class to extend the functionality of other forms."""
 
+    def populate_from_model(self, model):
+        """Populate the form's field values based on the matching
+        attributes in the given model.
+        """
+        for field in self:
+            if hasattr(model, field.name):
+                setattr(field.data, field.name, getattr(model, field.name))
+
     @staticmethod
     def convert_choice_to_value(choice_id, choices):
         """Return the value selected from a SelectField form element."""
