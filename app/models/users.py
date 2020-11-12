@@ -43,12 +43,19 @@ class User(UserMixin, db.Model):
 
     @classmethod
     def create_from_form(cls, form_data):
+        """Return a new user model."""
         user = cls()
         for field in form_data:
             if hasattr(user, field):
                 setattr(user, field, form_data[field])
         db.session.add(user)
         return user
+
+    def populate_from_form(self, form_data):
+        """Update the user model from the given form."""
+        for field in form_data:
+            if hasattr(self, field):
+                setattr(self, field, form_data[field])
 
     @property
     def password(self):
@@ -170,29 +177,24 @@ class User(UserMixin, db.Model):
         of the given status. This method is to only be called
         for a user with the permission to sponsor events.
         """
-        events = set()
+        num_events = 0
         if status == SponsorshipStatus.CURRENT:
             for sponsorship in self.sponsorships:
-                if not sponsorship.is_pending() and sponsorship.is_current():
-                    events.add(sponsorship.event)
+                if sponsorship.is_current():
+                    num_events += 1
         elif status == SponsorshipStatus.PAST:
             for sponsorship in self.sponsorships:
-                if not sponsorship.is_pending() and sponsorship.is_past():
-                    events.add(sponsorship.event)
-        else:
+                if sponsorship.is_past():
+                    num_events += 1
+        else:  # all
             for sponsorship in self.sponsorships:
-                if not sponsorship.is_pending():
-                    events.add(sponsorship.event)
-        return len(events)
+                num_events += 1
+        return num_events
 
     def has_purchased(self, package):
         """Return True if the user has already purchased the given package."""
         return any(
-            [
-                sponsorship.package == package
-                for sponsorship in self.sponsorships
-                if not sponsorship.is_pending()
-            ]
+            [sponsorship.package == package for sponsorship in self.sponsorships]
         )
 
     @property
@@ -207,15 +209,6 @@ class User(UserMixin, db.Model):
             photo_dir = photo.split("/")[images_directory_index:]
             filepath = "/".join(photo_dir)
         return filepath
-
-    def pending_sponsorships(self, event_id):
-        """Return a list of this user's pending sponsorships for the given event"""
-        # sponsorship deals for this event that haven't been completed ye
-        sponsorships = []
-        for sponsorship in self.sponsorships:
-            if sponsorship.event_id == event_id and sponsorship.is_pending():
-                sponsorships.append(sponsorship)
-        return sponsorships
 
     def get_events_by_status(self, status):
         """Return a list of hosted events based on the given status."""
@@ -235,20 +228,16 @@ class User(UserMixin, db.Model):
             sponsorships = [
                 sponsorship
                 for sponsorship in self.sponsorships
-                if not sponsorship.is_pending() and sponsorship.is_current()
+                if sponsorship.is_current()
             ]
         elif status == SponsorshipStatus.PAST:
             sponsorships = [
                 sponsorship
                 for sponsorship in self.sponsorships
-                if not sponsorship.is_pending() and sponsorship.is_past()
+                if sponsorship.is_past()
             ]
         else:
-            sponsorships = [
-                sponsorship
-                for sponsorship in self.sponsorships
-                if not sponsorship.is_pending()
-            ]
+            sponsorships = self.sponsorships.all()
         return sponsorships
 
     def __repr__(self):
