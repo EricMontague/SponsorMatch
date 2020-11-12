@@ -10,7 +10,6 @@ class SponsorshipStatus:
 
     CURRENT = "current"
     PAST = "past"
-    PENDING = "pending"
 
 
 class Sponsorship(db.Model):
@@ -30,27 +29,13 @@ class Sponsorship(db.Model):
         """Return True if the sponsorship is for a event that has a status of live, 
         return False otherwise.
         """
-        return not self.is_pending() and self.event.is_ongoing()
+        return not self.event.is_ongoing()
 
     def is_past(self):
         """Return True if the sponsorship is for an event that has a status of past,
         return False otherwise.
         """
-        return not self.is_pending() and self.event.has_ended()
-
-    @hybrid_method
-    def is_pending(self):
-        """Return True if the sponsorship is pending. Used for when a sponsor is in the middle
-        of purchasing sponsorships packages in the checkout window.
-        """
-        return self.timestamp is None and self.confirmation_code is None
-
-    @is_pending.expression
-    def is_pending(cls):
-        """Return True if the sponsorship is pending. Used for when a sponsor is in the middle
-        of purchasing sponsorships packages in the checkout window.
-        """
-        return db.and_(cls.timestamp == None, cls.confirmation_code == None)
+        return not self.event.has_ended()
 
     def __repr__(self):
         """Returns a string representation of a sponsorship deal. Used for debugging
