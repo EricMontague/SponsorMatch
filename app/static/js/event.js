@@ -136,7 +136,7 @@ const handleCheckoutButtonClick = function () {
         });
         $.ajax({
             type: "POST",
-            url: `${window.origin}/events/${eventId}/sponsorships`,
+            url: `${window.origin}/events/${eventId}/place-order`,
             contentType: "application/json",
             data: JSON.stringify({ "ids": packageIds }),
             dataType: "json",
