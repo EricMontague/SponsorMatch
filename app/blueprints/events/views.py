@@ -59,13 +59,9 @@ def create_event():
     if form.validate_on_submit():
         venue = Venue.query.filter_by(address=form.address.data).first()
         if venue is None:  # venue not already in db, need to add it
-            venue = Venue(
-                name=form.venue_name.data,
-                address=form.address.data,
-                city=form.city.data,
-                state=CreateEventForm.convert_choice_to_value(form.state.data, "STATES"),
-                zip_code=form.zip_code.data,
-            )
+            venue_data = venue.__dict__
+            venue_data["state"] = CreateEventForm.convert_choice_to_value(form.state.data, "STATES"),
+            venue = Venue.create(**venue_data)
         event_type = EventType.query.get(form.event_type.data)
         event_category = EventCategory.query.get(form.category.data)
         start_time = CreateEventForm.convert_choice_to_value(form.start_time.data, "TIMES")
@@ -79,7 +75,6 @@ def create_event():
             event_category=event_category,
             user=current_user._get_current_object(),
         )
-        db.session.add(event)
         db.session.commit()
         return redirect(url_for("events.event_details", id=event.id))
     return render_template("events/create_event.html", form=form, event=event)
@@ -96,36 +91,11 @@ def edit_basic_info(id):
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
-        event.title = form.title.data
-        event_type = EventType.query.get(form.event_type.data)
-        event_category = EventCategory.query.get(form.category.data)
-        event.venue.name = form.venue_name.data
-        event.venue.address = form.address.data
-        event.venue.city = form.city.data
-        event.venue.state = CreateEventForm.convert_choice_to_value(form.state.data, "STATES")
-        event.venue.zip_code = form.zip_code.data
-
-        start_time = CreateEventForm.convert_choice_to_value(form.start_time.data, "TIMES")
-        end_time = CreateEventForm.convert_choice_to_value(form.end_time.data, "TIMES")
-
-        event.start_datetime = datetime.combine(form.start_date.data, start_time)
-        event.end_datetime = datetime.combine(form.end_date.data, end_time)
+        services.update_models_from_create_event_form(form, event.venue, event)
         db.session.commit()
         flash("Your changes were saved.", "success")
         return redirect(url_for("events.edit_basic_info", id=id))
-    venue = event.venue
-    form.title.data = event.title
-    form.event_type.data = event.event_type.id
-    form.category.data = event.event_category.id
-    form.venue_name.data = venue.name
-    form.address.data = venue.address
-    form.city.data = venue.city
-    form.state.data = CreateEventForm.convert_choice_to_id(venue.state, "STATES")
-    form.zip_code.data = venue.zip_code
-    form.start_date.data = event.start_date()
-    form.end_date.data = event.end_date()
-    form.start_time.data = CreateEventForm.convert_choice_to_id(event.start_time(), "TIMES")
-    form.end_time.data = CreateEventForm.convert_choice_to_id(event.end_time(), "TIMES")
+    services.populate_create_event_form(form, event.venue, event)
     return render_template("events/basic_info.html", form=form, event=event)
 
 
@@ -141,7 +111,6 @@ def event_details(id):
     remove_image_form = RemoveImageForm()
     details_form.submit.label.text = "Submit"
     event = Event.query.get_or_404(id)
-    main_image_path = event.main_image
 
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
@@ -160,7 +129,7 @@ def event_details(id):
         details_form=details_form,
         upload_image_form=upload_image_form,
         remove_image_form=remove_image_form,
-        main_image_path=main_image_path,
+        main_image_path=event.main_image,
         event=event,
     )
 
@@ -175,10 +144,7 @@ def add_event_image(id):
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
-        filename = images.save(form.image.data)
-        image_type = ImageType.query.filter_by(name="Main Event Image").first()
-        image = Image(path=images.path(filename), image_type=image_type, event=event)
-        db.session.add(image)
+        services.add_event_main_image(form.image.data, event, images, db.session)
         db.session.commit()
         flash("Your image was successfully uploaded.", "success")
         return redirect(url_for("events.event_details", id=id))
@@ -213,17 +179,13 @@ def demographics(id):
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
-        if form.males.data + form.females.data != 100:
-            flash("Sum of males and females must equal 100.", "danger")
-        else:
-            event.attendees = DemographicsForm.convert_choice_to_value(
-                form.attendees.data, "PEOPLE_RANGES"
-            )
-            distribution = str(form.males.data) + "-" + str(form.females.data)
-            event.male_to_female = distribution
-            db.session.commit()
-            flash("Your information has been successfilly uploaded.", "success")
-            return redirect(url_for("events.demographics", id=id))
+        event.attendees = DemographicsForm.convert_choice_to_value(
+            form.attendees.data, "PEOPLE_RANGES"
+        )
+        event.male_to_female = str(form.males.data) + "-" + str(form.females.data)
+        db.session.commit()
+        flash("Your information has been successfilly uploaded.", "success")
+        return redirect(url_for("events.demographics", id=id))
     if event.attendees:
         form.attendees.data = DemographicsForm.convert_choice_to_id(
             event.attendees, "PEOPLE_RANGES"
@@ -268,20 +230,15 @@ def packages(id):
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
-        package = Package(
-            name=form.name.data,
-            price=form.price.data,
-            audience=EventPackagesForm.convert_choice_to_value(
-                form.audience.data, "PEOPLE_RANGES"
-            ),
-            description=form.description.data,
-            available_packages=form.available_packages.data,
-            package_type=EventPackagesForm.convert_choice_to_value(
-                form.package_type.data, "PACKAGE_TYPES"
-            ),
-            event=event,
+        form_data = form.data
+        form_data["event"] = event
+        form_data["audience"] = EventPackagesForm.convert_choice_to_value(
+            form.audience.data, "PEOPLE_RANGES"
         )
-        db.session.add(package)
+        form_data["package_type"] = EventPackagesForm.convert_choice_to_value(
+            form.package_type.data, "PACKAGE_TYPES"
+        )
+        package = Package.create(form_data)
         db.session.commit()
         return redirect(url_for("events.packages", id=id))
     return render_template(
@@ -302,28 +259,24 @@ def edit_package(event_id, package_id):
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
-        package.name = form.name.data
-        package.price = form.price.data
-        package.audience = EventPackagesForm.convert_choice_to_value(
+        form_data = form.data
+        form_data["audience"] = EventPackagesForm.convert_choice_to_value(
             form.audience.data, "PEOPLE_RANGES"
         )
-        package.description = form.description.data
-        package.available_packages = form.available_packages.data
-        package.package_type = EventPackagesForm.convert_choice_to_value(
+        form_data["package_type"] = EventPackagesForm.convert_choice_to_value(
             form.package_type.data, "PACKAGE_TYPES"
         )
+        package.populate_from_form(form_data)
         db.session.commit()
         flash("Package details were successfully updated.", "success")
         return redirect(url_for("events.packages", id=event_id))
     packages = event.packages.all()
-    form.name.data = package.name
-    form.price.data = package.price
-    form.audience.data = EventPackagesForm.convert_choice_to_id(package.audience, "PEOPLE_RANGES")
-    form.description.data = package.description
-    form.available_packages.data = package.available_packages
-    form.package_type.data = EventPackagesForm.convert_choice_to_id(
+    package_data = package.__dict__
+    package_data["audience" ] = EventPackagesForm.convert_choice_to_id(package.audience, "PEOPLE_RANGES")
+    package_data["package_type"] = EventPackagesForm.convert_choice_to_id(
         package.package_type, "PACKAGE_TYPES"
     )
+    form.populate_from_model(package_data)
     return render_template(
         "events/packages.html", form=form, event=event, packages=packages
     )
@@ -383,13 +336,7 @@ def add_misc_images(id):
         return redirect(url_for("main.index"))
     image_form = MultipleImageForm()
     if image_form.validate_on_submit():
-        image_type = ImageType.query.filter_by(name="Misc").first()
-        for data in image_form.images.data:
-            filename = images.save(data)
-            image = Image(
-                path=images.path(filename), image_type=image_type, event=event
-            )
-            db.session.add(image)
+        services.save_misc_images(image_form.images.data, event, images, db.session)
         db.session.commit()
         flash("Your upload was successful.", "success")
         return redirect(url_for("events.media", id=id))
