@@ -27,18 +27,13 @@ def validate_checkout_success(data, current_user, user_session):
 
 
 def process_order(orders, db_session):
-    confirmation_code = str(uuid.uuid4())
     for order in orders:
         purchased_package = Package.query.get(order["package_id"])
         if purchased_package.available_packages == 0:  # out of stock
             db_session.rollback()
             raise OutOfStock("The package you attempted to purchase is sold out.")
-        sponsorship = Sponsorship(
-            event_id=order["event_id"],
-            package_id=order["package_id"],
-            sponsor_id=order["user_id"],
-            confirmation_code=confirmation_code,
-            timestamp=datetime.now()
-        )
+        order["confirmation_code"] = str(uuid.uuid4())
+        order["timestamp"] = datetime.now()
+        sponsorship = Sponsorship.create(**order)
         purchased_package.num_purchased += 1
-        db.session.add(sponsorship)
+    db_session.commit()
