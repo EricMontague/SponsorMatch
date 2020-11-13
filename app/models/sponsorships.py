@@ -3,6 +3,7 @@
 
 from app.extensions import db
 from sqlalchemy.ext.hybrid import hybrid_method
+from app.models.abstract_model import AbstractModel
 
 
 class SponsorshipStatus:
@@ -12,7 +13,7 @@ class SponsorshipStatus:
     PAST = "past"
 
 
-class Sponsorship(db.Model):
+class Sponsorship(AbstractModel):
     """Class to represent a sponsorship deal."""
 
     __tablename__ = "sponsorships"

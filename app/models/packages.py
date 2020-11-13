@@ -2,9 +2,10 @@
 
 
 from app.extensions import db
+from app.models.abstract_model import AbstractModel
 
 
-class Package(db.Model):
+class Package(AbstractModel):
     """Class to represent a sponsorship package."""
 
     __tablename__ = "packages"
@@ -14,7 +15,9 @@ class Package(db.Model):
     audience = db.Column(db.String(64), nullable=False)
     description = db.Column(db.Text, nullable=True)
     num_purchased = db.Column(db.Integer, default=0, nullable=False)
-    available_packages = db.Column(db.Integer, nullable=False) #num packages made avaiable originally
+    available_packages = db.Column(
+        db.Integer, nullable=False
+    )  # num packages made avaiable originally
     package_type = db.Column(db.String(64), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
     sponsorships = db.relationship("Sponsorship", back_populates="package")

@@ -2,9 +2,10 @@
 
 
 from app.extensions import db
+from app.models.abstract_model import AbstractModel
 
 
-class Venue(db.Model):
+class Venue(AbstractModel):
     """Class to represent a venue"""
 
     __tablename__ = "venues"

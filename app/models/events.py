@@ -7,6 +7,7 @@ from datetime import datetime
 from app.extensions import db
 from app.helpers.mixins import SearchableMixin
 from app.models.images import ImageType
+from app.models.abstract_model import AbstractModel
 
 
 class EventStatus:
@@ -26,7 +27,7 @@ saved_events = db.Table(
 )
 
 
-class Event(SearchableMixin, db.Model):
+class Event(SearchableMixin, AbstractModel):
     """Class to represent an event"""
 
     __tablename__ = "events"

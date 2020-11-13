@@ -10,9 +10,10 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app.models.events import EventStatus, saved_events
 from app.models.roles import Permission
 from app.models.sponsorships import SponsorshipStatus
+from app.models.abstract_model import AbstractModel
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, AbstractModel):
     """Class to represent a user of the application"""
 
     __tablename__ = "users"
@@ -40,22 +41,6 @@ class User(UserMixin, db.Model):
         "Sponsorship", back_populates="sponsor", cascade="all, delete-orphan"
     )
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
-
-    @classmethod
-    def create_from_form(cls, form_data):
-        """Return a new user model."""
-        user = cls()
-        for field in form_data:
-            if hasattr(user, field):
-                setattr(user, field, form_data[field])
-        db.session.add(user)
-        return user
-
-    def populate_from_form(self, form_data):
-        """Update the user model from the given form."""
-        for field in form_data:
-            if hasattr(self, field):
-                setattr(self, field, form_data[field])
 
     @property
     def password(self):
