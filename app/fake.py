@@ -2,12 +2,13 @@
 It is to be used to generate fake user data for the
 application.
 """
+import os
 import random
 import uuid
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
-from app.helpers import PEOPLE_RANGES, TIMES, TIME_FORMAT
+from app.common import PEOPLE_RANGES, TIMES, TIME_FORMAT
 from app.extensions import db
 from app.models import (
     User,
@@ -18,33 +19,41 @@ from app.models import (
     Venue,
     Package,
     ImageType,
+    Image,
     Sponsorship,
 )
+
+
+DEFAULT_EVENT_IMAGE_DIR = "/app/static/images/default_event_images"
 
 
 class FakeDataGenerator:
     """Class to generate fake data for the application."""
 
     def __init__(
-        self, num_users, num_events, packages_per_event=4, sponsors_per_event=3
+        self, num_users, num_events, packages_per_event=4, sponsors_per_event=3, event_image_directory=""
     ):
         self.faker = Faker()
         self.num_users = num_users
         self.num_events = num_events
         self.packages_per_event = packages_per_event
         self.sponsors_per_event = sponsors_per_event
+        self.event_image_directory = event_image_directory or os.path.join(os.getcwd() + DEFAULT_EVENT_IMAGE_DIR)
 
     def add_all(self):
         """Create all necessary tables and create all resources."""
-        
+        print("Generating fake data...")
         self.add_users()
         self.add_events()
         self.add_packages()
         self.add_sponsorships()
+        print("Indexing Elasticsearch data...")
         Event.reindex()  # makes sure that all event data is uploaded to Elasticsearch
+        print("Done!")
 
     def add_users(self):
         """Add fake user data to the database."""
+        print("Adding users...")
         i = 0
         while i < self.num_users:
             role = Role.query.filter_by(
@@ -56,7 +65,6 @@ class FakeDataGenerator:
                 company=self.faker.company(),
                 email=self.faker.email(),
                 password="password",
-                has_paid=True,
                 job_title=self.faker.job(),
                 website=self.faker.url(),
                 about=self.faker.text(),
@@ -71,6 +79,7 @@ class FakeDataGenerator:
 
     def add_events(self):
         """Add fake event data to the database."""
+        print("Add events...")
         user_count = User.query.count()
         category_count = EventCategory.query.count()
         type_count = EventType.query.count()
@@ -93,6 +102,7 @@ class FakeDataGenerator:
             string_time = random.choice(TIMES[:40])[1]
             start_time = datetime.strptime(string_time, TIME_FORMAT)
             start_datetime = datetime.combine(start_date, start_time.time())
+            
             event = Event(
                 title=self.faker.company() + random.choice([" Party", " Gala"]),
                 start_datetime=start_datetime,
@@ -106,13 +116,15 @@ class FakeDataGenerator:
                 venue=venue,
                 event_type=event_type,
                 event_category=event_category,
-            )
-
+            ) 
+            image = self.get_random_event_image(event)
+            event.image = image
             db.session.add(event)
         db.session.commit()
 
     def add_packages(self):
         """Add fake package data to the database."""
+        print("Adding packages...")
         event_count = Event.query.count()
         for count in range(1, event_count + 1):
             event = Event.query.get(count)
@@ -135,6 +147,7 @@ class FakeDataGenerator:
 
     def add_sponsorships(self):
         """Add fake sponsorship deals to the database."""
+        print("Adding sponsorships...")
         event_count = Event.query.count()
         role = Role.query.filter_by(name="Sponsor").first()
         users = User.query.filter_by(role=role).all()
@@ -157,3 +170,21 @@ class FakeDataGenerator:
                     i += 1
                 except IntegrityError:  # a user can't buy the same package twice
                     db.session.rollback()
+
+    def get_random_event_image(self, event):
+        """Return a random event image from the default images
+        directory.
+        """
+        filename = random.choice(os.listdir(self.event_image_directory))
+        filepath = self.event_image_directory + "/" + filename
+        image = Image.query.filter_by(path=filepath).first()
+        if image is None:
+            image = Image(
+                path=filepath,
+                event=event,
+                image_type=ImageType.query.filter_by(name="Main Event Image").first()
+            )
+            db.session.add(image)
+            db.session.commit()
+        print(f"Image is: {image}")
+        return image
