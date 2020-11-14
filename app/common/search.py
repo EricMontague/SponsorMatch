@@ -31,7 +31,7 @@ class FakePagination:
             total_pages -= current_app.config["EVENTS_PER_PAGE"]
 
     @classmethod
-    def create(cls, prev_url, next_url, total, current_page):
+    def create(cls, prev_url, next_url, total, current_page, items):
         has_prev = prev_url is not None
         has_next = next_url is not None
         prev_num = 1
@@ -40,7 +40,7 @@ class FakePagination:
         next_num = 1
         if has_next:
             next_num = current_page + 1
-        return cls(has_prev, has_next, prev_num, next_num, current_page, total)
+        return cls(has_prev, has_next, prev_num, next_num, current_page, total, items)
 
 
 def add_to_index(index, doc_type, model):
