@@ -2,7 +2,7 @@
 operations in the user blueprint.
 """
 
-from app.models import EventStatus, SponsorshipStatus, Event, Sponsorship, User
+from app.models import EventStatus, SponsorshipStatus, Event, Sponsorship, User, Permission
 
 
 class InvalidUserType(Exception):
@@ -17,17 +17,15 @@ class PhotoNotFoundError(Exception):
     pass
 
 
-def get_user_profile_data(company, user_type, page, results_per_page, past):
-    if user_type.lower() == "event organizer":
-        return get_event_organizer_profile_data(company, page, results_per_page, past)
-    elif user_type.lower() == "sponsor":
-        return get_sponsor_profile_data(company, page, results_per_page, past)
-    else:
-        raise InvalidUserType(f"User type must be 'event organizer or 'sponsor'")
-
-
-def get_event_organizer_profile_data(company, page, results_per_page, past):
+def get_user_profile_data(company, page, results_per_page, past):
     user = User.query.filter_by(company=company).first_or_404()
+    if user.can(Permission.CREATE_EVENT) or user.is_administrator():
+        return get_event_organizer_profile_data(user, page, results_per_page, past)
+    return get_sponsor_profile_data(user, page, results_per_page, past)
+
+
+def get_event_organizer_profile_data(user, page, results_per_page, past):
+    
     tab = "live_event"
     if past == 1:
         tab = "past_event"
@@ -42,8 +40,7 @@ def get_event_organizer_profile_data(company, page, results_per_page, past):
     return profile_data
 
 
-def get_sponsor_profile_data(company, page, results_per_page, past):
-    user = User.query.filter_by(company=company).first_or_404()
+def get_sponsor_profile_data(user, page, results_per_page, past):
     tab = "current_sponsorship"
     if past == 1:
         tab = "past_sponsorship"
