@@ -9,7 +9,7 @@ from flask_login import login_required, current_user
 from app.blueprints.events import events, services
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db, images
-from app.helpers import send_email
+from app.common import send_email
 from flask import (
     render_template,
     url_for,
@@ -46,7 +46,7 @@ from app.models import (
     Permission,
     Sponsorship
 )
-from app.helpers import permission_required
+from app.common import permission_required
 
 
 @events.route("/create", methods=["GET", "POST"])
@@ -129,7 +129,7 @@ def event_details(id):
         details_form=details_form,
         upload_image_form=upload_image_form,
         remove_image_form=remove_image_form,
-        main_image_path=event.main_image,
+        main_image_path=event.main_image(),
         event=event,
     )
 
@@ -373,7 +373,7 @@ def media(id):
         image_form=image_form,
         remove_image_form=remove_image_form,
         video=event.video,
-        misc_image_paths=event.misc_images,
+        misc_image_paths=event.misc_images(),
         event=event,
     )
 
@@ -422,7 +422,7 @@ def event(id):
     """Return the view that displays the event's information"""
     form = ContactForm()
     event = Event.query.get_or_404(id)
-    other_media = {"video": event.video, "misc_image_paths": event.msic_images}
+    other_media = {"video": event.video, "misc_image_paths": event.misc_images()}
     packages = event.packages.all()
     # commented out because the fake data generated for the demo of
     # this app by the Faker package may inadvertently contain real email addresses
@@ -445,7 +445,7 @@ def event(id):
         packages=packages,
         form=form,
         date_format="%m/%d/%Y",
-        image_path=event.main_image,
+        image_path=event.main_image(),
         time_format="%I:%M %p",
         other_media=other_media,
     )
@@ -457,12 +457,12 @@ def event_tab(id, tab):
     based on the tab clicked by the user on an event's page.
     """
     event = Event.query.get_or_404(id)
-    other_media = {"video": event.video, "misc_image_paths": event.msic_images}
+    other_media = {"video": event.video, "misc_image_paths": event.misc_images()}
     if tab == "info":
         return render_template(
             "events/_event_page_content.html",
             event=event,
-            image_path=event.main_image,
+            image_path=event.main_image(),
             other_media=other_media,
         )
     elif tab == "sponsors":
