@@ -8,7 +8,7 @@ from app.blueprints.main import main, services
 from app.blueprints.main.forms import AdvancedSearchForm, SearchForm
 from app.extensions import db
 from app.models import Event, Venue
-from app.helpers import paginate_search
+from app.common import paginate_search
 
 
 @main.route("/")
@@ -19,7 +19,9 @@ def index():
     pagination = Event.query.filter(Event.is_ongoing() == True).paginate(
         page, per_page=current_app.config["EVENTS_PER_PAGE"], error_out=False
     )
-    events = pagination.items
+   
+    events = [(event.main_image, event) for event in pagination.items]
+    
     return render_template(
         "main/index.html", events=events, form=form, pagination=pagination
     )
@@ -53,8 +55,14 @@ def advanced_search():
             pagination=results["pagination"],
         )
     pagination = services.get_live_events(current_app.config["EVENTS_PER_PAGE"])
+    events = pagination.items
+    if events:
+        events = [
+            (event.main_image, event) 
+            for event in events if event.is_ongoing()
+        ]
     return render_template(
-        "main/index.html", events=pagination.items, form=form, pagination=pagination
+        "main/index.html", events=events, form=form, pagination=pagination
     )
 
 
@@ -75,7 +83,10 @@ def search():
     events = results["pagination"].items
     # Filter for live events only
     if events:
-        events = [event for event in results["events"] if event.is_ongoing()]
+        events = [
+            (event.main_image, event) 
+            for event in events if event.is_ongoing()
+        ]
     return render_template(
         "main/search.html",
         events=events,
