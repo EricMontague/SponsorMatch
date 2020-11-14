@@ -81,6 +81,16 @@ def make_shell_context():
     )
 
 
+@app.context_processor
+def uilitity_functions():
+    """Allow utility functions to be available
+    for use throught templates.
+    """
+    def print_in_template(message):
+        print(str(message))
+
+    return dict(debug=print_in_template)
+
 #temporary cli command to setup the environment. will delete this later
 #in favor of Docker containers
 @app.cli.command()
@@ -92,7 +102,7 @@ def setup_environment(fake_data):
     Elasticsearch, sets up the database and inserts fake data into
     the database if request.
     """
-    #create database tables if they don't already exist
+    db.drop_all()
     db.create_all()
 
     # create or update roles, event types, categories, and image types
