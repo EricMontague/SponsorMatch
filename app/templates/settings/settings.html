@@ -50,6 +50,7 @@
         {% endif %}
         <form id="settingsForm" action="{{ url_for(endpoint) }}" method="POST">
           {{form.hidden_tag()}}
+          {{ wtf.form_errors(form, hiddens="only") }}
 
           {% for field in form %}
           {% if field.type != "SubmitField" and field.type != "HiddenField"  and field.type != "CSRFTokenField" %}
@@ -57,7 +58,15 @@
 
             {{ field.label(for=field.id, class="col-form-label text-right-lg flex-grow-lg-30 align-self-start pl-4") }}
             <div class="pl-4 col-lg-4">
+              {% if field.errors %}
+              {{ field(class_="form-control is-invalid") }}
+
+              {% for error in field.errors %}
+              <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+              {% endfor %}
+              {% else %}
               {{ field(class_="form-control") }}
+              {% endif %}
             </div>
 
           </div>
