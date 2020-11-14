@@ -1,10 +1,10 @@
 """This module contains forms classes for the users blueprint."""
 
 
-from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, Optional, URL, Email
 from wtforms.fields.html5 import URLField
 from app.models import User, Role
+from app.common import AbstractForm
 from wtforms import (
     SubmitField,
     StringField,
@@ -15,7 +15,7 @@ from wtforms import (
 )
 
 
-class EditProfileForm(FlaskForm):
+class EditProfileForm(AbstractForm):
     """Class to represent a form to let a user edit their profile information"""
 
     first_name = StringField("First Name", validators=[DataRequired(), Length(1, 64)])
@@ -65,7 +65,7 @@ class EditProfileForm(FlaskForm):
             raise ValidationError("Company website already registerd.")
         
 
-class EditProfileAdminForm(EditProfileForm):
+class EditProfileAdminForm(AbstractForm):
     """Class to represent a form that allows the admin to edit a user's
     profile information."""
 

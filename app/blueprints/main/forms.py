@@ -4,25 +4,17 @@
 from flask import request
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import (
-    SubmitField,
-    StringField,
-    SelectField,
-    ValidationError
-)
+from wtforms import SubmitField, StringField, SelectField, ValidationError
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Length, Optional, Email
-from app.helpers import STATES, FormMixin
+from app.common import STATES, AbstractForm
 from app.models import EventCategory, EventType
 
 
 class SearchForm(FlaskForm):
     """Class to represent a search bar."""
 
-    query = StringField(
-        "Search",
-        validators=[DataRequired()]
-    )
+    query = StringField("Search", validators=[DataRequired()])
     search = SubmitField("Search")
 
     def __init__(self, *args, **kwargs):
@@ -35,14 +27,18 @@ class SearchForm(FlaskForm):
         super(SearchForm, self).__init__(*args, **kwargs)
 
 
-class AdvancedSearchForm(FormMixin, FlaskForm):
+class AdvancedSearchForm(AbstractForm):
     """Class to represent a search form that allows the user to
     perform mroe specific searches.
     """
 
     start_date = DateField("Start Date", default=date.today())
     end_date = DateField("End Date", default=date.today())
-    city = StringField("City", validators=[Optional(), Length(1, 64)], render_kw={"placeholder": "City"})
+    city = StringField(
+        "City",
+        validators=[Optional(), Length(1, 64)],
+        render_kw={"placeholder": "City"},
+    )
     state = SelectField("State", choices=[(0, "Select State...")] + STATES, coerce=int)
     category = SelectField("Categories", coerce=int)
     submit = SubmitField("Search")
@@ -74,5 +70,4 @@ class AdvancedSearchForm(FormMixin, FlaskForm):
         # field.data should be a datetime object
         if field.data < self.start_date.data:
             raise ValidationError("End date must be on or after start date.")
-
 

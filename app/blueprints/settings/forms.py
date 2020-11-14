@@ -1,7 +1,6 @@
 """This module contains form classes for the settings blueprint."""
 
 
-from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import (
     SubmitField,
@@ -22,9 +21,10 @@ from wtforms.validators import (
     Optional,
 )
 from app.models import User
+from app.common import AbstractForm
 
 
-class ChangePasswordForm(FlaskForm):
+class ChangePasswordForm(AbstractForm):
     """Class to represent a form to let a user change their password"""
 
     old_password = PasswordField("Old Password", validators=[DataRequired()])
@@ -39,7 +39,7 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField("Change Password")
 
 
-class ChangeEmailForm(FlaskForm):
+class ChangeEmailForm(AbstractForm):
     """Class to represent a form that lets a user change their email"""
 
     email = StringField(
@@ -49,12 +49,15 @@ class ChangeEmailForm(FlaskForm):
     submit = SubmitField("Change Email")
 
     def validate_email(self, field):
-        """Custom validator to checl if the new email already belongs to another user"""
+        """Custom validator to check if the new email already belongs to another user"""
+        print("Validating email...")
         if User.query.filter_by(email=field.data.lower()).first():
+            print("Invalid")
             raise ValidationError("Email already registered.")
+        print("VAlid email")
 
 
-class CloseAccountForm(FlaskForm):
+class CloseAccountForm(AbstractForm):
     """Class to represent a form to let a user close their account"""
 
     confirm = StringField('Type "CLOSE"', validators=[DataRequired()])

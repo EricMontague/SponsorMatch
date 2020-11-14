@@ -1,13 +1,12 @@
 """This module contains forms for the events blueprint."""
 
 
-from flask_wtf import FlaskForm
 from app.models import EventCategory, EventType
 from datetime import datetime, date
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.fields.html5 import DateField, URLField
 from wtforms.validators import DataRequired, Length, URL, NumberRange, Email
-from app.helpers import STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES, FormMixin
+from app.common import STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES, AbstractForm
 from wtforms import (
     SubmitField,
     StringField,
@@ -16,12 +15,11 @@ from wtforms import (
     ValidationError,
     DecimalField,
     IntegerField,
-    MultipleFileField
+    MultipleFileField,
 )
 
 
-
-class CreateEventForm(FormMixin, FlaskForm):
+class CreateEventForm(AbstractForm):
     """Class to represent a form to allow a user to enter basic event information
     when creating an event.
     """
@@ -102,7 +100,9 @@ class CreateEventForm(FormMixin, FlaskForm):
         before the start time.
         """
         # convert string time to a time object
-        start_time = CreateEventForm.convert_choice_to_value(self.start_time.data, "TIMES")
+        start_time = CreateEventForm.convert_choice_to_value(
+            self.start_time.data, "TIMES"
+        )
         # datetime object
         end_time = CreateEventForm.convert_choice_to_value(field.data, "TIMES")
         if end_time <= start_time:
@@ -110,32 +110,26 @@ class CreateEventForm(FormMixin, FlaskForm):
                 raise ValidationError("End time must be after start time.")
 
 
-class EventDetailsForm(FlaskForm):
+class EventDetailsForm(AbstractForm):
     """Form to allow the user to enter event details in a longer format"""
 
     description = TextAreaField(
-        "Event Description",
-        validators=[DataRequired()],
-        render_kw={"rows": 6}
+        "Event Description", validators=[DataRequired()], render_kw={"rows": 6}
     )
     pitch = TextAreaField(
-        "Your sponsorship pitch",
-        validators=[DataRequired()],
-        render_kw={"rows": 6}
+        "Your sponsorship pitch", validators=[DataRequired()], render_kw={"rows": 6}
     )
     submit = SubmitField("Save & Continue")
 
 
-class EventPackagesForm(FormMixin, FlaskForm):
+class EventPackagesForm(AbstractForm):
     """Form to allow the user to select sponsorship packages for their event."""
 
     name = StringField("Name", validators=[DataRequired(), Length(1, 64)])
     price = DecimalField("Price", validators=[NumberRange(min=1, max=2147483647)])
     audience = SelectField("Audience Reached", coerce=int, choices=PEOPLE_RANGES)
     description = TextAreaField(
-        "Description",
-        validators=[DataRequired()],
-        render_kw={"rows": 5},
+        "Description", validators=[DataRequired()], render_kw={"rows": 5},
     )
     available_packages = IntegerField(
         "Number of available packages", validators=[NumberRange(min=1, max=2147483647)]
@@ -149,7 +143,7 @@ class EventPackagesForm(FormMixin, FlaskForm):
             raise ValidationError("Please choose the audience reached.")
 
 
-class UploadImageForm(FlaskForm):
+class UploadImageForm(AbstractForm):
     """Class to represent a form to let a user upload an image."""
 
     image = FileField(
@@ -162,13 +156,13 @@ class UploadImageForm(FlaskForm):
     upload = SubmitField("Upload")
 
 
-class RemoveImageForm(FlaskForm):
+class RemoveImageForm(AbstractForm):
     """Class to represent a form to let a user remove an image."""
 
     submit = SubmitField("Remove")
 
 
-class UploadVideoForm(FlaskForm):
+class UploadVideoForm(AbstractForm):
     """Class to represent a form that allows the user to upload the urls
     for videos."""
 
@@ -192,7 +186,7 @@ class UploadVideoForm(FlaskForm):
         return domain + video_id
 
 
-class RemoveVideoForm(FlaskForm):
+class RemoveVideoForm(AbstractForm):
     """Class to represent a form to allow a user to delete a video
     they've uploaded to their event.
     """
@@ -200,7 +194,7 @@ class RemoveVideoForm(FlaskForm):
     remove = SubmitField("Remove")
 
 
-class MultipleImageForm(FlaskForm):
+class MultipleImageForm(AbstractForm):
     """Class to represent a form that allows the user to upload multiple
     images to their event.
     """
@@ -219,7 +213,7 @@ class MultipleImageForm(FlaskForm):
                 raise ValidationError("File type not allowed.")
 
 
-class DemographicsForm(FormMixin, FlaskForm):
+class DemographicsForm(AbstractForm):
     """Class to represent a form that allows the user to enter details
     about who is expected to attend the event.
     """
@@ -249,7 +243,7 @@ class DemographicsForm(FormMixin, FlaskForm):
         return True
 
 
-class ContactForm(FlaskForm):
+class ContactForm(AbstractForm):
     """Class to represent a contact form for organizers."""
 
     name = StringField("Your Name", validators=[DataRequired(), Length(1, 64)])
@@ -258,8 +252,6 @@ class ContactForm(FlaskForm):
     )
     subject = StringField("Subject", validators=[DataRequired(), Length(1, 64)])
     message = TextAreaField(
-        "Message",
-        validators=[DataRequired()],
-        render_kw={"rows": 6},
+        "Message", validators=[DataRequired()], render_kw={"rows": 6},
     )
     submit = SubmitField("Send")
