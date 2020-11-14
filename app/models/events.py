@@ -5,8 +5,8 @@ import math
 from sqlalchemy.ext.hybrid import hybrid_method
 from datetime import datetime
 from app.extensions import db
-from app.helpers.mixins import SearchableMixin
-from app.models.images import ImageType
+from app.common.search_mixin import SearchableMixin
+from app.models.images import ImageType, Image
 from app.models.abstract_model import AbstractModel
 
 
@@ -150,31 +150,16 @@ class Event(SearchableMixin, AbstractModel):
 
     @property
     def main_image(self):
-        """Return the filepaths for the main event image.
-        Filepath will be used to render the image in Jinja templates.
-        """
-        filepath = None
-        image_type = ImageType.query.filter_by(name="Main Event Image").first()
-        image = self.images.filter_by(image_type=image_type).first()
-        if image is not None:
-            image_dir = image.path.split("/")[6:]
-            filepath = "/".join(image_dir)
-        return filepath
+        """Return the filepath for the main event image."""
+        for image in self.images:
+            if image.image_type.name == "Main Event Image":
+                return "/".join(image.path.split("/")[6:])
 
-    @property
     def misc_images(self):
-        """Return the filepaths for other miscaelaneous images associated with this event.
-        Filepath will be used to render the image in Jinja templates.
-        """
-        filepaths = []
-        image_type = ImageType.query.filter_by(name="Misc").first()
-        images = self.images.filter_by(image_type=image_type).all()
-        for image in images:
-            image_dir = image.path.split("/")[6:]
-            filepath = "/".join(image_dir)
-            filepaths.append(filepath)
-        return filepaths
-
+        """Return the filepaths for other miscaelaneous images associated with this event."""
+        images = [image.path for image in self.images if image.image_type.name == "Misc"]
+        return images
+        
     def num_sponsors(self):
         """Return the number of sponsors for this event."""
         return len(self.sponsorships)
