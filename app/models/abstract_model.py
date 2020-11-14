@@ -2,18 +2,19 @@
 SQLAlchemy's Model class to provide some 
 extra functionality.
 """
-from abc import ABC
 from app.extensions import db
 
 
-class AbstractModel(ABC, db.Model):
+class AbstractModel(db.Model):
     """Abstract base class that provides extra functionality
     to SQLAlchemy's Model class.
     """
 
+    __abstract__ = True
+
     @classmethod
     def create(cls, **data):
-        """Return a new model."""
+        """Create and return a new model."""
         model = cls()
         for attribute in data:
             if hasattr(model, attribute):

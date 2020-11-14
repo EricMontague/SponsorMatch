@@ -4,7 +4,6 @@ be used throughout the application.
 
 
 from datetime import datetime, timedelta
-from abc import ABC
 from flask_wtf import FlaskForm
 
 
@@ -83,12 +82,7 @@ PEOPLE_RANGES = [
 ]
 
 
-
-
-
-
-
-class AbstractForm(ABC, FlaskForm):
+class AbstractForm(FlaskForm):
     """Abstract base class to extend the functionality of FlaskForm"""
 
     def populate_from_obj(self, obj):
@@ -127,7 +121,6 @@ class AbstractForm(ABC, FlaskForm):
             return reversed_choices[choice_value]
         else:
             return None
-
 
 
 def time_intervals(start, end, delta):
