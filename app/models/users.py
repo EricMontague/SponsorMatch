@@ -42,6 +42,26 @@ class User(UserMixin, AbstractModel):
     )
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
 
+    # need to override these two methods bc setattr doesn't set properties
+    @classmethod
+    def create(cls, **data):
+        """Create and return a new user."""
+        user = cls()
+        for attribute in data:
+            if hasattr(user, attribute):
+                setattr(user, attribute, data[attribute])
+        user.password = data["password"]
+        db.session.add(user)
+        return user
+
+    def update(self, **data):
+        """Update the model from the given data."""
+        for attribute in data:
+            if hasattr(self, attribute):
+                setattr(self, attribute, data[attribute])
+        if "password" in data:
+            self.password = data["password"]
+
     @property
     def password(self):
         raise AttributeError("password is not a readable attribute")
