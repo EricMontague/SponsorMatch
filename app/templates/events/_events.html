@@ -1,9 +1,14 @@
 <ul class="list-unstyled mt-4 event-card-grid px-4 mb-5">
-	{% for event in events %}
+	{% for main_image, event in events %}
+	{% if main_image %}
+	{% set src=url_for('static', filename=main_image) %}
+	{% else %}
+	{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
+	{% endif %}
+
 	<li id="eventListItem{{ event.id }}" class="event-card bg-white">
 		<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">
-			<img class="w-100 h-auto" src="{{ url_for('static', filename='images/default_event_image2.jpg') }}"
-				alt="Event Image">
+			<img class="w-100 h-auto" src="{{ src }}" alt="Event Image">
 			<div class="d-flex flex-column  pt-4 px-3">
 				<p class="text-orange">{{ event.start_date("%a, %b %-d") }}, {{ event.start_time("%-I:%M %p") }}
 				</p>
