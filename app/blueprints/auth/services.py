@@ -3,7 +3,7 @@ authentication operations.
 """
 
 from app.models import User, Role
-from app.helpers import send_email
+from app.common import send_email
 
 
 class InvalidLoginCredentials(Exception):
@@ -35,7 +35,7 @@ def register_user(form_data, admin_email, db_session):
         role = Role.query.get(form_data["role"])
     # replace role field with role object
     form_data["role"] = role
-    user = User.create_from_form(form_data)
+    user = User.create(**form_data)
     db_session.commit()
     return user
 

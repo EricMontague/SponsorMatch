@@ -7,7 +7,7 @@ from app.blueprints.dashboard import dashboard, services
 from app.extensions import db
 from flask import render_template, url_for, redirect, abort
 from app.blueprints.dashboard.forms import DropdownForm
-from app.helpers import permission_required, admin_required
+from app.common import permission_required, admin_required
 from app.models import (
     User,
     Role,    

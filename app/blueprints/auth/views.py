@@ -13,7 +13,7 @@ from flask import (
     current_app,
 )
 from flask_login import login_user, logout_user, login_required, current_user
-from app.helpers import send_email
+from app.common import send_email
 from app.blueprints.auth import auth
 from app.blueprints.auth.forms import (
     LoginForm,
@@ -87,7 +87,7 @@ def register():
         user = services.register_user(
             form.data, current_app.config["ADMIN_EMAIL"], db.session
         )
-        flash("Registration successful!. Please login.", "success")
+        flash("Registration successful! Please login.", "success")
         return redirect(url_for("auth.login"))
     return render_template("auth/register.html", form=form)
 
