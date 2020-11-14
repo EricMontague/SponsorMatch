@@ -4,14 +4,7 @@ in event blueprint."""
 from datetime import datetime
 from flask import url_for
 from http import HTTPStatus
-from app.models import (
-    Event, 
-    Package, 
-    ImageType, 
-    Image, 
-    EventCategory, 
-    EventType
-)
+from app.models import Event, Package, ImageType, Image, EventCategory, EventType
 from app.blueprints.events.forms import CreateEventForm
 
 
@@ -30,7 +23,7 @@ def save_misc_images(images, event, file_uploader, db_session):
 
 def save_event_main_image(images, event, file_uploader, db_session):
     """Store the given main image for the event in the database."""
-     filename = images.save(images)
+    filename = file_uploader.save(images)
     image_type = ImageType.query.filter_by(name="Main Event Image").first()
     image = Image(path=file_uploader.path(filename), image_type=image_type, event=event)
     db_session.add(image)
@@ -59,7 +52,6 @@ def validate_order(id, data, user):
     return {"packages": packages}
 
 
-
 def populate_create_event_form(form, venue, event):
     """Helper function to population the Create Event Form."""
     # Venue info
@@ -76,7 +68,9 @@ def populate_create_event_form(form, venue, event):
     form.category.data = event.event_category.id
     form.start_date.data = event.start_date()
     form.end_date.data = event.end_date()
-    form.start_time.data = CreateEventForm.convert_choice_to_id(event.start_time(), "TIMES")
+    form.start_time.data = CreateEventForm.convert_choice_to_id(
+        event.start_time(), "TIMES"
+    )
     form.end_time.data = CreateEventForm.convert_choice_to_id(event.end_time(), "TIMES")
 
 
@@ -89,7 +83,9 @@ def update_models_from_create_event_form(form, venue, event):
     event.venue.name = form.venue_name.data
     event.venue.address = form.address.data
     event.venue.city = form.city.data
-    event.venue.state = CreateEventForm.convert_choice_to_value(form.state.data, "STATES")
+    event.venue.state = CreateEventForm.convert_choice_to_value(
+        form.state.data, "STATES"
+    )
     event.venue.zip_code = form.zip_code.data
 
     # Event info
