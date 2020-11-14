@@ -5,7 +5,7 @@ import os
 from flask import render_template, redirect, url_for, flash, session, abort
 from flask_login import current_user, login_required
 from app.models import User, Permission
-from app.helpers import send_email
+from app.common import send_email
 from app.extensions import db
 from app.blueprints.settings import settings
 from app.blueprints.settings.forms import (
@@ -14,7 +14,7 @@ from app.blueprints.settings.forms import (
     CloseAccountForm,
 )
 from app.blueprints.users.forms import EditProfileForm
-from app.helpers import permission_required
+from app.common import permission_required
 from app.blueprints.settings import services
 
 
@@ -55,18 +55,17 @@ def change_email():
     heading = title
     form = ChangeEmailForm()
     if form.validate_on_submit():
-        try:
-            services.change_email_request(
-                current_user, form.email.data, form.password.data
+        if current_user.verify_password(form.password.data):
+            services.change_email_request(current_user, form.email.data)
+            flash(
+                "An email with instructions on how to change your email has been sent to you.",
+                "info",
             )
-        except services.InvalidPassword as err:
-            flash(str(err), "danger")
-        flash(
-            "An email with instructions on how to change your email has been sent to you.",
-            "info",
-        )
-        session["email_change_request_initiated"] = True
-        return redirect(url_for("main.index"))
+            session["email_change_request_initiated"] = True
+            return redirect(url_for("main.index"))
+        else:
+            flash("You entered an invalid passowrd", "danger")
+            
 
     return render_template(
         "settings/settings.html",
