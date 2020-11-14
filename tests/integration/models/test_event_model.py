@@ -470,7 +470,7 @@ class EventModelTestCase(unittest.TestCase):
         image = TestModelFactory.create_image(path=path, image_type=image_type)
         image.event = event
 
-        image_path = event.main_image
+        image_path = event.main_image()
         self.assertEqual(image_path, "images/test_image.jpg")
 
     def test_get_misc_images(self):
@@ -504,7 +504,7 @@ class EventModelTestCase(unittest.TestCase):
         image_two.event = event
         db.session.commit()
 
-        paths = event.misc_images
+        paths = event.misc_images()
         self.assertEqual(paths[0], "images/test_image_one.jpg")
         self.assertEqual(paths[1], "images/test_image_two.jpg")
 

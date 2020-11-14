@@ -6,7 +6,7 @@ import unittest
 import time
 from app import create_app
 from tests.integration.testing_data import TestModelFactory
-from app.helpers.search import add_to_index, remove_from_index, query_index, delete_index
+from app.common.search import add_to_index, remove_from_index, query_index, delete_index
 from app.models import Event
 from elasticsearch.exceptions import NotFoundError, RequestError, SerializationError
 
