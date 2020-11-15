@@ -36,7 +36,15 @@ def get_event_organizer_profile_data(user, page, results_per_page, past):
         pagination = get_user_events_by_status(
             EventStatus.LIVE, user, page, results_per_page
         )
-    profile_data = {"user": user, "pagination": pagination, "tab": tab}
+    profile_data = {
+        "user": user, 
+        "pagination": pagination, 
+        "tab": tab,
+        "events": [
+            (event.main_image, event)
+            for event in pagination.items
+        ]
+    }
     return profile_data
 
 
@@ -51,7 +59,15 @@ def get_sponsor_profile_data(user, page, results_per_page, past):
         pagination = get_user_sponsored_events_by_status(
             SponsorshipStatus.CURRENT, user, page, results_per_page
         )
-    profile_data = {"user": user, "pagination": pagination, "tab": tab}
+    profile_data = {
+        "user": user, 
+        "pagination": pagination, 
+        "tab": tab,
+        "events": [
+            (event.main_image, event)
+            for event in pagination.items
+        ]
+    }
     return profile_data
 
 
