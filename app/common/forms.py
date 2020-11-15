@@ -91,7 +91,8 @@ class AbstractForm(FlaskForm):
         """
         for field in self:
             if hasattr(obj, field.name):
-                setattr(field.data, field.name, getattr(obj, field.name))
+                value = getattr(obj, field.name)
+                setattr(field, "data", value)
 
     @staticmethod
     def convert_choice_to_value(choice_id, choices):
