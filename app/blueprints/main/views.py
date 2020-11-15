@@ -37,7 +37,7 @@ def advanced_search():
     if form.validate_on_submit():
         state = AdvancedSearchForm.convert_choice_to_value(form.state.data, "STATES")
         query = services.build_event_search_query(
-            state, form.start_date.data, form.end_data.data
+            state, form.start_date.data, form.end_date.data
         )
         form_data = {"category": form.category.data, "city": form.city.data}
         results = services.execute_advanced_event_search(
@@ -69,8 +69,8 @@ def advanced_search():
 @main.route("/search")
 def search():
     """Return search results."""
-    if not g.search_form.validate():
-        return redirect(url_for("main.index"))
+
+
     endpoint = "main.search"
     page = request.args.get("page", 1, type=int)
     results = paginate_search(
