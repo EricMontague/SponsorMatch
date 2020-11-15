@@ -97,7 +97,7 @@ class FakeDataGenerator:
                 zip_code=self.faker.zipcode(),
             )
             start_date = self.faker.date_between(
-                start_date=datetime.now() + timedelta(days=1), end_date="+30d"
+                start_date=datetime.now() + timedelta(days=random.randint(1, 365)), end_date="+30d"
             )
             string_time = random.choice(TIMES[:40])[1]
             start_time = datetime.strptime(string_time, TIME_FORMAT)
