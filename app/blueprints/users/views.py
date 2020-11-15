@@ -3,7 +3,7 @@
 
 import os
 from flask_login import login_required, current_user
-from app.blueprints.users import users
+from app.blueprints.users import users, services
 from app.extensions import db, images
 from flask import (
     render_template,
@@ -24,9 +24,9 @@ from app.models import (
     EventStatus,
     SponsorshipStatus
 )
-from app.blueprints.events.forms import UploadImag-eForm, RemoveImageForm
+from app.blueprints.events.forms import UploadImageForm, RemoveImageForm
 from app.blueprints.users.forms import EditProfileForm, EditProfileAdminForm
-from app.helpers import admin_required
+from app.common import admin_required
 
 
 
@@ -35,12 +35,8 @@ def user_profile(company):
     """Return a page that allows someone to view a user's profile."""
     page = request.args.get("page", 1, type=int)
     past = request.args.get("past", 0, type=int)
-    user_type = "sponsor"
-    if user.can(Permission.CREATE_EVENT) or user.is_administrator():
-        user_type = "event_organizer"
-    profile_data = services.get_event_organizer_profile_data(
+    profile_data = services.get_user_profile_data(
         company,
-        user_type, 
         page, 
         current_app.config["EVENTS_PER_PAGE"], 
         past
@@ -49,7 +45,7 @@ def user_profile(company):
         "users/user_profile.html",
         tab=profile_data["tab"],
         user=profile_data["user"],
-        events=profile_data["pagination"].items,
+        events=profile_data["events"],
         pagination=profile_data["pagination"],
         profile_photo=profile_data["user"].profile_photo,
     )
@@ -61,7 +57,10 @@ def user_events_by_status(id, status):
     if status not in (EventStatus.LIVE, EventStatus.PAST):
         abort(404)
     user = User.query.get_or_404(id)
-    events = user.get_events_by_status(status)
+    events = [
+        (event.main_image, event)
+        for event in user.get_events_by_status(status)
+    ]
     return render_template("events/_events.html", events=events)
 
 
@@ -72,7 +71,10 @@ def user_sponsored_events_by_status(id, status):
         abort(404)
     user = User.query.get_or_404(id)
     sponsorships = user.get_sponsorships_by_status(status)
-    events = [sponsorship.event for sponsorship in sponsorships]
+    events = [
+        (sponsorship.event.main_image, sponsorship.event) 
+        for sponsorship in sponsorships
+    ]
     return render_template("events/_events.html", events=events)
 
 
@@ -103,20 +105,21 @@ def edit_profile():
     upload_image_form = UploadImageForm()
     upload_image_form.image.errors = session.pop("image_form_errors", [])
     remove_image_form = RemoveImageForm()
-    profile_form = EditProfileForm(user)
+    profile_form = EditProfileForm(current_user)
     if profile_form.validate_on_submit():
-        current_user.populate_from_form(form)
-        db.session.add(current_user)
+        current_user.update(**profile_form.data)
+        db.session.add(current_user._get_current_object())
         db.session.commit()
         flash("Your profile information has been successfully updated.", "success")
         return redirect(url_for("users.edit_profile"))
-    profile_form.populate_from_model(current_user)
+    print("###")
+    profile_form.populate_from_obj(current_user)
     return render_template(
         "users/edit_profile.html",
         profile_form=profile_form,
         upload_image_form=upload_image_form,
         remove_image_form=remove_image_form,
-        user=user,
+        user=current_user,
         admin_route=admin_route,
         profile_photo=current_user.profile_photo,
     )
@@ -171,11 +174,11 @@ def edit_profile_admin(id):
     if profile_form.validate_on_submit():
         form_data = form.data
         form_data["role"] = Role.query.get(profile_form.role.data)
-        user.populate_from_form(form_data)
+        user.updated(**form_data)
         db.session.commit()
         flash("The user's profile information has been successfully updated.", "success")
         return redirect(url_for("users.edit_profile_admin", id=user.id))
-    profile_form.populate_from_model(user)
+    profile_form.populate_from_obj(user)
     return render_template(
         "users/edit_profile.html",
         profile_form=profile_form,
