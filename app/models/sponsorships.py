@@ -27,16 +27,16 @@ class Sponsorship(AbstractModel):
     package = db.relationship("Package", back_populates="sponsorships")
 
     def is_current(self):
-        """Return True if the sponsorship is for a event that has a status of live, 
+        """Return True if the sponsorship is for an event that has a status of live, 
         return False otherwise.
         """
-        return not self.event.is_ongoing()
+        return self.event.is_ongoing()
 
     def is_past(self):
         """Return True if the sponsorship is for an event that has a status of past,
         return False otherwise.
         """
-        return not self.event.has_ended()
+        return self.event.has_ended()
 
     def __repr__(self):
         """Returns a string representation of a sponsorship deal. Used for debugging
