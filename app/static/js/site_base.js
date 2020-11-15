@@ -93,7 +93,19 @@ const handleCloseAlertClick = function () {
     });
 };
 
+const cacheSimpleSearchQuery = function () {
+    const searchForm = document.querySelector(".has-search").parentElement;
+
+    searchForm.addEventListener("submit", function (event) {
+        const searchInput = this.elements[0];
+        sessionStorage.setItem("simpleSearchQuery", searchInput.value);
+
+    });
+
+
+}
 
 showDeleteEventLink();
 removeCreateEventNavLink();
 handleCloseAlertClick();
+cacheSimpleSearchQuery();
