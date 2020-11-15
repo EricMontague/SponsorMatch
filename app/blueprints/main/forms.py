@@ -14,7 +14,7 @@ from app.models import EventCategory, EventType
 class SearchForm(FlaskForm):
     """Class to represent a search bar."""
 
-    query = StringField("Search", validators=[DataRequired()])
+    query = StringField("Search")
     search = SubmitField("Search")
 
     def __init__(self, *args, **kwargs):
