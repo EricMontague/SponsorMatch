@@ -1,7 +1,6 @@
 // function to change the appropriate tab to active
 const toggleTab = function (tab) {
-    console.log(tab);
-    $(".nav-tabs .nav-link").each(function (index) {
+    $(".nav-tabs .nav-link").each(function () {
         if ($(this).hasClass("active") && $(this) !== tab) {
             $(this).removeClass("active");
         };
@@ -86,7 +85,6 @@ const handlePastSponsorshipTabClick = function () {
 
 };
 
-toggleTab();
 handleLiveTabClick();
 handlePastEventTabClick();
 handleCurrentTabClick();
