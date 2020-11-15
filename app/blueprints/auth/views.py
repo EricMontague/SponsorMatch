@@ -66,7 +66,8 @@ def login():
             user = services.login_user(form_data, User.query, login_user)
         except services.InvalidLoginCredentials as err:
             flash(str(err), "danger")
-        return redirect_to_next_url("main.index")
+        else:
+            return redirect_to_next_url("main.index")
     return render_template("auth/login.html", form=form)
 
 
@@ -92,7 +93,6 @@ def register():
     return render_template("auth/register.html", form=form)
 
 
-
 @auth.route("/request-password-reset", methods=["GET", "POST"])
 def request_password_reset():
     """View function for when a user forgets their password
@@ -105,14 +105,15 @@ def request_password_reset():
         try:
             services.initiate_password_reset(form.email.data)
         except services.InvalidEmail as err:
-            flash(str(err), "info")
-        flash(
-            "An email with instructions to reset your password has been "
-            "sent to your email address.",
-            "info",
-        )
-        session["password_reset_initiated"] = True
-        return redirect(url_for("auth.login"))
+            flash(str(err), "danger")
+        else:
+            flash(
+                "An email with instructions to reset your password has been "
+                "sent to your email address.",
+                "info",
+            )
+            session["password_reset_initiated"] = True
+            return redirect(url_for("auth.login"))
     return render_template("auth/forgot_password.html", form=form)
 
 
