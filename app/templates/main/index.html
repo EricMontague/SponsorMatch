@@ -57,3 +57,9 @@
 	{% endif %}
 </main>
 {% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
