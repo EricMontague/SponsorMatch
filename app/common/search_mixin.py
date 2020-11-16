@@ -2,7 +2,7 @@
 
 
 from app.extensions import db
-from app.common.search import add_to_index, remove_from_index, query_index, delete_index
+from app.common.search import add_to_index, remove_from_index, query_index, delete_index, date_range_query
 
 
 class SearchableMixin:
@@ -16,6 +16,24 @@ class SearchableMixin:
         as well as the number of results.
         """
         ids, total = query_index(cls.__tablename__, query, page, results_per_page)
+        return cls._get_results(ids, total)
+
+    @classmethod
+    def date_range_query(cls, queries, page, results_per_page):
+        """Perform a date range query on Elasticsearch using and return the corresponding 
+        objects as well as the number of results.
+        """
+        must = []
+        for key in queries:
+            range_query = {"range": {}}
+            range_query["range"] = queries[key]
+            must.append(range_query)
+        ids, total = date_range_query(cls.__tablename__, must, page, results_per_page)
+        return cls._get_results(ids, totals)
+
+    @classmethod
+    def _get_results(cls, ids, total):
+        """Return the results from the search query."""
         if total == 0:
             return cls.query.filter_by(id=0), 0
         whens = []
@@ -23,6 +41,7 @@ class SearchableMixin:
             whens.append((id_, index))
         # order by + case statement used to preserve the order of the results
         # essentially sorts the output using the index as the key
+        # https://stackoverflow.com/questions/6332043/sql-order-by-multiple-values-in-specific-order/6332081#6332081
         return (
             cls.query.filter(cls.id.in_(ids)).order_by(db.case(whens, value=cls.id)),
             total,
