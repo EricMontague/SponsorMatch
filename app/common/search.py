@@ -43,6 +43,14 @@ class FakePagination:
         return cls(has_prev, has_next, prev_num, next_num, current_page, total, items)
 
 
+def get_ids_and_num_results(search):
+    """Return the ids of the documents found in the search as well as
+    the number of hits.
+    """
+    ids = [int(hit["_id"]) for hit in search["hits"]["hits"]]
+    num_results = search["hits"]["total"]["value"]
+    return ids, num_results
+
 def add_to_index(index, doc_type, model):
     """Add fields from the given model to the given index.
 
@@ -106,9 +114,68 @@ def query_index(index, query, page, results_per_page):
             "size": results_per_page,
         },
     )
-    ids = [int(hit["_id"]) for hit in search["hits"]["hits"]]
-    num_results = search["hits"]["total"]["value"]
-    return ids, num_results
+    return get_ids_and_num_results(search)
+
+
+def date_range_query(index, must, page, results_per_page):
+    """Perform a date range query on the given index and return the ids of the documents
+	found during the search as well as the number of matching results.
+
+	Args:
+		index(str): The name of the index
+		query(str): The data to be searched for in the given index
+        range(dict): A dictionary containing the upper and lower bounds for the range
+		page(int): The page to be searched in elasticsearch
+		result_per_page(int): The number of results to return per page
+	Returns:
+		ids(list): A list of the ids of the documents found during the search
+		num_results(int): The number of search results returned
+	"""
+    if not current_app.elasticsearch:
+        return [], 0
+    search = current_app.elasticsearch.search(
+        index=index,
+        body={
+            "query": {
+                "bool": {
+                    "must": must
+                }
+            },
+            "from": (page - 1) * results_per_page,
+            "size": results_per_page
+        }
+    )
+    return get_ids_and_num_results(search)
+
+
+"must": [
+    {
+        "range": {
+            "start_datetime": {
+                "gte": "2020-12-05",
+                "lte": "2020-12-05",
+                "format": "yyyy-MM-dd"
+            }
+        }
+    },
+    {
+        "range": {
+            "end_datetime": {
+                "gte": "2020-12-06",
+                "lte": "2020-12-06",
+                "format": "yyyy-MM-dd"
+            }
+        }
+    }
+]
+
+query = {
+    "start_datetime": {
+        "gte": "2020-12-05",
+        "lte": "2020-12-05",
+        "format": "yyyy-MM-dd"
+    }
+}
 
 
 def delete_index(index):
