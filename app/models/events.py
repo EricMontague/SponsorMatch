@@ -31,7 +31,7 @@ class Event(SearchableMixin, AbstractModel):
     """Class to represent an event"""
 
     __tablename__ = "events"
-    __searchable__ = ["title"]
+    __searchable__ = ["title", "state", "city", "start_datetime", "end_datetime"]
     __doctype__ = "event"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), nullable=False)
