@@ -4,9 +4,29 @@ Elasticsearch operations.
 
 
 from flask import current_app, url_for
+from app.common.string_helpers import getattr_nested
 
 
-class FakePagination:
+class QueryType:
+    """Class that contains constants the denote
+    different types of Elasticsearch queries.
+    """
+
+    MATCH = "match"
+    BOOL = "bool"
+
+
+class SearchRequest:
+    """Class to represent a search request to Elasticsearch."""
+
+    def __init__(self, query_type):
+        self.query_type = query_type
+
+    def to_dict(self):
+        pass
+
+
+class ElasticsearchPagination:
     """Class that mimics the interface of Flask-SQLAlchemy's
     Pagination object. This is needed to overcome the fact that you
     cannot create a proper Pagination object when returning search results
@@ -51,22 +71,14 @@ def get_ids_and_num_results(search):
     num_results = search["hits"]["total"]["value"]
     return ids, num_results
 
-def add_to_index(index, doc_type, model):
-    """Add fields from the given model to the given index.
 
-	Args:
-		index(str): The name of the index
-		doc_type(str): The document type
-		model(object): An instance of the model whose fields
-			are to be added to the index
-	Returns:
-		None
-	"""
+def add_to_index(index, doc_type, model):
+    """Add fields from the given model to the given index."""
     if not current_app.elasticsearch:
         return
     payload = {}
     for field in model.__searchable__:
-        payload[field] = getattr(model, field)
+        payload[field] = getattr_nested(model, field)
     current_app.elasticsearch.index(
         index=index, id=model.id, doc_type=doc_type, body=payload
     )
@@ -74,132 +86,77 @@ def add_to_index(index, doc_type, model):
 
 def remove_from_index(index, doc_type, model):
     """Remove a document in the given index based on the id
-	of the given model.
-
-	Args:
-		index(str): The name of the index
-		doc_type(str): The document type
-		model(object): An instance of the model whose fields a
-		are to be removed from the index
-	Returns:
-		None
-	"""
+	of the given model
+    """
     if not current_app.elasticsearch:
         return
     current_app.elasticsearch.delete(index=index, id=model.id, doc_type=doc_type)
 
 
-def query_index(index, query, page, results_per_page):
-    """Query the given index and return the ids of the documents
+def query_index(index, request, page, results_per_page):
+    """Perform a date range query on the given index and return the ids of the documents
 	found during the search as well as the number of matching results.
-
-	Args:
-		index(str): The name of the index
-		query(str): The data to be searched for in the given index
-		page(int): The page to be searched in elasticsearch
-		result_per_page(int): The number of results to return per page
-	Returns:
-		ids(list): A list of the ids of the documents found during the search
-		num_results(int): The number of search results returned
-	"""
+    """
     if not current_app.elasticsearch:
         return [], 0
-    search = current_app.elasticsearch.search(
+    if request["query_type"] == QueryType.MATCH:
+        search_results = execute_match_query(index, request, page, results_per_page)
+    elif request["query_type"] == QueryType.BOOL:
+        search_results = execute_bool_query(index, request, page, results_per_page)
+    else:
+        return [], 0
+    return get_ids_and_num_results(search_results)
+
+
+def execute_match_query(index, request, page, results_per_page):
+    search_results = current_app.elasticsearch.search(
         index=index,
         body={
-            "query": {
-                "multi_match": {"query": query, "lenient": "true", "fields": ["*"]}
-            },
+            "query": {"match": {request["field"]: {"query": request["query"]}}},
             "from": (page - 1) * results_per_page,
             "size": results_per_page,
         },
     )
-    return get_ids_and_num_results(search)
+    return search_results
 
 
-def date_range_query(index, must, page, results_per_page):
-    """Perform a date range query on the given index and return the ids of the documents
-	found during the search as well as the number of matching results.
-
-	Args:
-		index(str): The name of the index
-		query(str): The data to be searched for in the given index
-        range(dict): A dictionary containing the upper and lower bounds for the range
-		page(int): The page to be searched in elasticsearch
-		result_per_page(int): The number of results to return per page
-	Returns:
-		ids(list): A list of the ids of the documents found during the search
-		num_results(int): The number of search results returned
-	"""
-    if not current_app.elasticsearch:
-        return [], 0
-    search = current_app.elasticsearch.search(
+def execute_bool_query(index, request, page, results_per_page):
+    search_results = current_app.elasticsearch.search(
         index=index,
         body={
             "query": {
                 "bool": {
-                    "must": must
+                    "must": request.get("must", []),
+                    "filter": request.get("filter", []),
+                    "must_not": request.get("must_not", []),
+                    "should": request.get("should", []),
+                    **request.get("extra_params", {}),
                 }
-            },
-            "from": (page - 1) * results_per_page,
-            "size": results_per_page
-        }
+            }
+        },
     )
-    return get_ids_and_num_results(search)
-
-
-"must": [
-    {
-        "range": {
-            "start_datetime": {
-                "gte": "2020-12-05",
-                "lte": "2020-12-05",
-                "format": "yyyy-MM-dd"
-            }
-        }
-    },
-    {
-        "range": {
-            "end_datetime": {
-                "gte": "2020-12-06",
-                "lte": "2020-12-06",
-                "format": "yyyy-MM-dd"
-            }
-        }
-    }
-]
-
-query = {
-    "start_datetime": {
-        "gte": "2020-12-05",
-        "lte": "2020-12-05",
-        "format": "yyyy-MM-dd"
-    }
-}
+    return search_results
 
 
 def delete_index(index):
-    """Delete the given index
-    Args:
-        index(str): The name of the index to be deleted.
-    Returns:
-        None
-    """
+    """Delete the given index"""
     if current_app.elasticsearch:
         if current_app.elasticsearch.indices.exists(index):
             current_app.elasticsearch.indices.delete(index)
 
 
-def paginate_search(model, query, endpoint, page, results_per_page):
+def paginate_search(model, data, endpoint, page, results_per_page):
     data = {}
-    results, total = model.search(query, page, results_per_page)
+    results, total = model.search(data, page, results_per_page)
     prev_url = None
     if page > 1:
         prev_url = url_for(endpoint, query=query, page=page - 1)
     next_url = None
     if total > page * results_per_page:
         next_url = url_for(endpoint, query=query, page=page + 1)
-    pagination = FakePagination.create(prev_url, next_url, total, page, results)
+    pagination = ElasticsearchPagination.create(
+        prev_url, next_url, total, page, results
+    )
     data["total"] = total
     data["prev_url"] = prev_url
     data["next_url"] = next_url
