@@ -31,7 +31,17 @@ class Event(SearchableMixin, AbstractModel):
     """Class to represent an event"""
 
     __tablename__ = "events"
-    __searchable__ = ["title", "state", "city", "start_datetime", "end_datetime"]
+    __searchable__ = [
+        "title",
+        "description",
+        "venue.state",
+        "venue.city",
+        "start_datetime",
+        "end_datetime",
+        "event_category_id",
+        "event_type_id",
+        "published",
+    ]
     __doctype__ = "event"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), nullable=False)
@@ -157,9 +167,11 @@ class Event(SearchableMixin, AbstractModel):
 
     def misc_images(self):
         """Return the filepaths for other miscaelaneous images associated with this event."""
-        images = [image.path for image in self.images if image.image_type.name == "Misc"]
+        images = [
+            image.path for image in self.images if image.image_type.name == "Misc"
+        ]
         return images
-        
+
     def num_sponsors(self):
         """Return the number of sponsors for this event."""
         return len(self.sponsorships)
