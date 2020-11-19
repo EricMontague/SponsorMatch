@@ -753,7 +753,7 @@ event-card style */
 	object-fit: cover;
 	height: 100%;
 	border-radius: 0.5rem;
-	max-width: 100%;
+	width: 100%;
 }
 
 
@@ -809,6 +809,8 @@ event-card style */
 }
 
 .event-card img {
+	max-height: 200px;
+	object-fit: cover;
 	border-radius: 0.5rem 0.5rem 0 0;
 }
 
