@@ -5,29 +5,41 @@ the main blueprint.
 from sqlalchemy import func
 from app.models import Event, Venue
 from flask import url_for
+from app.common import QueryType
 
 
 
-def create_advanced_search_request(form_data):
+def create_simple_event_search_request(query, field):
     search_request = {
+        "query": query,
+        "field": field,
+        "query_type": QueryType.MATCH,
+    }
+    return search_request
+
+
+
+def create_advanced_event_search_request(form_data):
+    search_request = {
+        "query_type": QueryType.BOOL,
         "must": [
             {
                 "term": {
                     "event_category_id": {
-                        "value": form_data["event_category"]
+                        "value": form_data["category"]
                     }
                 }
             },
             {
                 "match": {
-                    "city": {
+                    "venue.city": {
                         "query": form_data["city"]
                     }
                 }
             },
             {
                 "match": {
-                    "state": {
+                    "venue.state": {
                         "query": form_data["state"]
                     }
                 }
