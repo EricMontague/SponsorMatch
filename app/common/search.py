@@ -132,7 +132,9 @@ def execute_bool_query(index, request, page, results_per_page):
                     "should": request.get("should", []),
                     **request.get("extra_params", {}),
                 }
-            }
+            },
+            "from": (page - 1) * results_per_page,
+            "size": results_per_page
         },
     )
     return search_results
@@ -145,20 +147,22 @@ def delete_index(index):
             current_app.elasticsearch.indices.delete(index)
 
 
-def paginate_search(model, data, endpoint, page, results_per_page):
-    data = {}
-    results, total = model.search(data, page, results_per_page)
+def paginate_search(model, request, endpoint, page, results_per_page):
+    results, total = model.search(request, page, results_per_page)
     prev_url = None
     if page > 1:
-        prev_url = url_for(endpoint, query=query, page=page - 1)
+        prev_url = url_for(endpoint, query=request["query"], page=page - 1)
     next_url = None
     if total > page * results_per_page:
-        next_url = url_for(endpoint, query=query, page=page + 1)
+        next_url = url_for(endpoint, query=request["query"], page=page + 1)
     pagination = ElasticsearchPagination.create(
         prev_url, next_url, total, page, results
     )
-    data["total"] = total
-    data["prev_url"] = prev_url
-    data["next_url"] = next_url
-    data["pagination"] = pagination
+    data = {
+        "total": total,
+        "prev_url": prev_url,
+        "next_url": next_url,
+        "pagination": pagination,
+        model.__tablename__: results
+    }
     return data
