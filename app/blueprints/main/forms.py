@@ -43,8 +43,12 @@ class AdvancedSearchForm(AbstractForm):
     category = SelectField("Categories", coerce=int)
     submit = SubmitField("Search")
 
-    def __init__(self, **kwargs):
-        super(AdvancedSearchForm, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(AdvancedSearchForm, self).__init__(*args, **kwargs)
         self.category.choices = [(0, "Select Categories...")] + [
             (category.id, category.name)
             for category in EventCategory.query.order_by(EventCategory.name).all()
