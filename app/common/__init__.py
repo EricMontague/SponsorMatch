@@ -14,4 +14,5 @@ from app.common.forms import (
 )
 from app.common.search_mixin import SearchableMixin
 from app.common.forms import AbstractForm
-from app.common.search import paginate_search
+from app.common.search import paginate_search, QueryType
+from app.common.string_helpers import getattr_nested, setattr_nested
