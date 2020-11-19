@@ -2,7 +2,7 @@
 
 
 from app.extensions import db
-from app.common.search import add_to_index, remove_from_index, query_index, delete_index, date_range_query
+from app.common.search import add_to_index, remove_from_index, query_index, delete_index
 
 
 class SearchableMixin:
@@ -11,25 +11,12 @@ class SearchableMixin:
     """
 
     @classmethod
-    def search(cls, query, page, results_per_page):
+    def search(cls, request, page, results_per_page):
         """Perform a search on Elasticsearch and return the corresponding objects
         as well as the number of results.
         """
-        ids, total = query_index(cls.__tablename__, query, page, results_per_page)
+        ids, total = query_index(cls.__tablename__, request, page, results_per_page)
         return cls._get_results(ids, total)
-
-    @classmethod
-    def date_range_query(cls, queries, page, results_per_page):
-        """Perform a date range query on Elasticsearch using and return the corresponding 
-        objects as well as the number of results.
-        """
-        must = []
-        for key in queries:
-            range_query = {"range": {}}
-            range_query["range"] = queries[key]
-            must.append(range_query)
-        ids, total = date_range_query(cls.__tablename__, must, page, results_per_page)
-        return cls._get_results(ids, totals)
 
     @classmethod
     def _get_results(cls, ids, total):
