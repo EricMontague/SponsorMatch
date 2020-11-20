@@ -13,7 +13,7 @@ from flask import (
     current_app,
 )
 from flask_login import login_user, logout_user, login_required, current_user
-from app.common import send_email
+from app.utils import send_email
 from app.blueprints.auth import auth
 from app.blueprints.auth.forms import (
     LoginForm,

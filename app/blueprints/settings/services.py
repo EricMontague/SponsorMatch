@@ -2,7 +2,7 @@
 the settings blueprint.
 """
 
-from app.common import send_email
+from app.utils import send_email
 
 
 class InvalidPassword(Exception):

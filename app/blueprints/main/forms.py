@@ -6,8 +6,8 @@ from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, StringField, SelectField, ValidationError
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, Length, Optional, Email
-from app.common import STATES, AbstractForm
+from wtforms.validators import DataRequired, Length, Email
+from app.forms import STATES, AbstractForm
 from app.models import EventCategory, EventType
 
 
@@ -36,7 +36,7 @@ class AdvancedSearchForm(AbstractForm):
     end_date = DateField("End Date", default=date.today())
     city = StringField(
         "City",
-        validators=[Optional(), Length(1, 64)],
+        validators=[DataRequired(), Length(1, 64)],
         render_kw={"placeholder": "City"},
     )
     state = SelectField("State", choices=[(0, "Select State...")] + STATES, coerce=int)
@@ -58,6 +58,11 @@ class AdvancedSearchForm(AbstractForm):
         """Custom validation for the state field."""
         if field.data == 0:
             raise ValidationError("Please select a state.")
+
+    def validate_category(self, field):
+        """Custom validation for the category field."""
+        if field.data == 0:
+            raise ValidationError("Please select a category")
 
     def validate_start_date(self, field):
         """Custom validator to ensure that the start date field

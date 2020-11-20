@@ -21,7 +21,7 @@ from wtforms.validators import (
     Optional,
 )
 from app.models import User
-from app.common import AbstractForm
+from app.forms import AbstractForm
 
 
 class ChangePasswordForm(AbstractForm):

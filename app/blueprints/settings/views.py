@@ -5,7 +5,7 @@ import os
 from flask import render_template, redirect, url_for, flash, session, abort
 from flask_login import current_user, login_required
 from app.models import User, Permission
-from app.common import send_email
+from app.utils import send_email
 from app.extensions import db
 from app.blueprints.settings import settings
 from app.blueprints.settings.forms import (
@@ -14,7 +14,7 @@ from app.blueprints.settings.forms import (
     CloseAccountForm,
 )
 from app.blueprints.users.forms import EditProfileForm
-from app.common import permission_required
+from app.utils import permission_required
 from app.blueprints.settings import services
 
 

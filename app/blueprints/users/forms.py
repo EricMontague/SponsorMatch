@@ -4,7 +4,7 @@
 from wtforms.validators import DataRequired, Length, Optional, URL, Email
 from wtforms.fields.html5 import URLField
 from app.models import User, Role
-from app.common import AbstractForm
+from app.forms import AbstractForm
 from wtforms import (
     SubmitField,
     StringField,

@@ -26,7 +26,7 @@ from app.models import (
 )
 from app.blueprints.events.forms import UploadImageForm, RemoveImageForm
 from app.blueprints.users.forms import EditProfileForm, EditProfileAdminForm
-from app.common import admin_required
+from app.utils import admin_required
 
 
 

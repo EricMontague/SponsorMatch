@@ -6,7 +6,7 @@ from datetime import datetime, date
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.fields.html5 import DateField, URLField
 from wtforms.validators import DataRequired, Length, URL, NumberRange, Email
-from app.common import STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES, AbstractForm
+from app.forms import STATES, PACKAGE_TYPES, PEOPLE_RANGES, TIMES, AbstractForm
 from wtforms import (
     SubmitField,
     StringField,

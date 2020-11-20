@@ -9,7 +9,7 @@ from flask_login import login_required, current_user
 from app.blueprints.events import events, services
 from sqlalchemy.exc import IntegrityError
 from app.extensions import db, images
-from app.common import send_email
+from app.utils import send_email
 from flask import (
     render_template,
     url_for,
@@ -46,7 +46,7 @@ from app.models import (
     Permission,
     Sponsorship
 )
-from app.common import permission_required
+from app.utils import permission_required
 
 
 @events.route("/create", methods=["GET", "POST"])

@@ -3,7 +3,7 @@ authentication operations.
 """
 
 from app.models import User, Role
-from app.common import send_email
+from app.utils import send_email
 
 
 class InvalidLoginCredentials(Exception):

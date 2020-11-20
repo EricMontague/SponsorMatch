@@ -16,7 +16,7 @@ from app.extensions import db
 from sqlalchemy import exc
 from app.blueprints.payments import payments, services
 from flask_login import login_required, current_user
-from app.common import permission_required
+from app.utils import permission_required
 from app.models import Permission, Event
 
 
