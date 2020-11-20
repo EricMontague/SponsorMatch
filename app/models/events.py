@@ -5,7 +5,6 @@ import math
 from sqlalchemy.ext.hybrid import hybrid_method
 from datetime import datetime
 from app.extensions import db
-from app.common.search_mixin import SearchableMixin
 from app.models.images import ImageType, Image
 from app.models.abstract_model import AbstractModel
 
@@ -27,7 +26,7 @@ saved_events = db.Table(
 )
 
 
-class Event(SearchableMixin, AbstractModel):
+class Event(AbstractModel):
     """Class to represent an event"""
 
     __tablename__ = "events"
