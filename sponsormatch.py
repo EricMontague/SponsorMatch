@@ -36,6 +36,7 @@ from werkzeug.exceptions import (
     BadRequest,
     Forbidden,
 )
+from app.search import sqlalchemy_search_middleware, MatchQuery, BooleanQuery
 
 
 app = create_app(os.environ.get("FLASK_CONFIG") or "default")
@@ -78,6 +79,9 @@ def make_shell_context():
         Video=Video,
         Permission=Permission,
         Sponsorship=Sponsorship,
+        MatchQuery=MatchQuery,
+        BooleanQuery=BooleanQuery,
+        sm=sqlalchemy_search_middleware
     )
 
 
