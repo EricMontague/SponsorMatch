@@ -32,8 +32,8 @@ class AdvancedSearchForm(AbstractForm):
     perform mroe specific searches.
     """
 
-    start_date = DateField("Start Date", default=date.today())
-    end_date = DateField("End Date", default=date.today())
+    start_date = DateField("Start Date", default=date.today(), validators=[DataRequired()])
+    end_date = DateField("End Date", default=date.today(), validators=[DataRequired()])
     city = StringField(
         "City",
         validators=[DataRequired(), Length(1, 64)],
