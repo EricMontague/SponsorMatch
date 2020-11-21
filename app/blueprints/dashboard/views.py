@@ -50,7 +50,10 @@ def sponsorships_dashboard(status):
     choices = [(1, "All"), (2, "Current"), (3, "Past")]
     dropdown_form = DropdownForm(choices)
     user = current_user._get_current_object()
-    sponsorships = user.get_sponsorships_by_status(status.lower())
+    sponsorships = [
+        (sponsorship.event.main_image(), sponsorship)
+        for sponsorship in user.get_sponsorships_by_status(status.lower())
+    ]
     reverse_choices = {choice.lower(): number for number, choice in choices}
     dropdown_form.options.data = reverse_choices[status]
     return render_template(
