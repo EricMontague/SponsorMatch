@@ -34,7 +34,6 @@ class MatchQuery(Query):
         self._query = {
             "query": {"match": {field: {"query": query}}}, "from": from_, "size": size
         }
-        self.fool = None
 
     def update(self, field, query):
         """Update a query for a specific field."""

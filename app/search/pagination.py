@@ -29,7 +29,7 @@ class ElasticsearchPagination:
             total_pages -= self.per_page
 
     @classmethod
-    def create(cls, has_prev, has_next, total, current_page, per_page,items):
+    def create(cls, has_prev, has_next, total, current_page, per_page, items):
         prev_num = 1
         if has_prev:
             prev_num = current_page - 1
