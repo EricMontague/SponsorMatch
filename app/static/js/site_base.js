@@ -82,7 +82,7 @@ const ajaxErrorHandler = function (jqXHR, exception, showAlert = false) {
     if (showAlert === true) {
         alert(message);
     } else {
-        displayAlert(message);
+        displayAlert(message, "danger");
     }
 
 };

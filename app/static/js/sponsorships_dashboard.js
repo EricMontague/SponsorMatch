@@ -30,6 +30,7 @@ const handleOpenModalClick = function () {
                 $(".audience-reached").html(`<span class="custom-font-semibold">Audience Reached</span>: ${response.audience}`);
                 $(".description").html(`<span class="custom-font-semibold">Description</span>: ${response.description}`);
                 $(".type").html(`<span class="custom-font-semibold">Package Type</span>: ${response.package_type}`);
+                $("#viewEvent").attr("href", `${window.origin}/events/${response.event_id}`);
                 $("#packageModal").modal("show");
             },
             error: function (jqXHR, exception) {

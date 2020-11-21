@@ -49,7 +49,7 @@ const orderComplete = function (paymentIntentId) {
             window.location.href = window.origin;
         }, 3000);
     }).catch(function (error) {
-        console.log(error);
+        displayAlert(error, "danger");
     })
 };
 
@@ -82,6 +82,9 @@ const payWithCard = function (stripe, card, clientSecret) {
                 // The payment succeeded!
                 orderComplete(result.paymentIntent.id);
             }
+        })
+        .catch(function (error) {
+            displayAlert(error, "danger");
         });
 };
 
@@ -154,7 +157,7 @@ const processOrder = function () {
             createFormEventListener(card, data);
         })
         .catch(function (error) {
-            console.log(error);
+            displayAlert(error, "danger");
         });
 };
 
