@@ -588,9 +588,7 @@ a.text-dark-override:hover {
 	.event-card-grid {
 		grid-template-columns: 1fr 1fr 1fr !important;
 	}
-	.user-info {
-		padding-left: 3rem !important;
-	}
+	
 }
 
 
@@ -623,6 +621,9 @@ a.text-dark-override:hover {
 	}
 	.user-card-grid {
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+	}
+	.user-info {
+		padding-left: 3rem !important;
 	}
 	
 }
