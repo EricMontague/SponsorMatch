@@ -49,7 +49,7 @@ def validate_order(id, data, user):
                 "url": url_for("events.event", id=event.id),
             }
         packages.append(package)
-    return {"packages": packages}
+    return {"packages": packages, "event": event}
 
 
 def populate_create_event_form(form, venue, event):
