@@ -58,7 +58,7 @@ def user_events_by_status(id, status):
         abort(404)
     user = User.query.get_or_404(id)
     events = [
-        (event.main_image, event)
+        (event.main_image(), event)
         for event in user.get_events_by_status(status)
     ]
     return render_template("events/_events.html", events=events)
@@ -72,7 +72,7 @@ def user_sponsored_events_by_status(id, status):
     user = User.query.get_or_404(id)
     sponsorships = user.get_sponsorships_by_status(status)
     events = [
-        (sponsorship.event.main_image, sponsorship.event) 
+        (sponsorship.event.main_image(), sponsorship.event) 
         for sponsorship in sponsorships
     ]
     return render_template("events/_events.html", events=events)

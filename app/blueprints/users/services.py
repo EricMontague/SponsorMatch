@@ -41,7 +41,7 @@ def get_event_organizer_profile_data(user, page, results_per_page, past):
         "pagination": pagination, 
         "tab": tab,
         "events": [
-            (event.main_image, event)
+            (event.main_image(), event)
             for event in pagination.items
         ]
     }
@@ -64,7 +64,7 @@ def get_sponsor_profile_data(user, page, results_per_page, past):
         "pagination": pagination, 
         "tab": tab,
         "events": [
-            (event.main_image, event)
+            (event.main_image(), event)
             for event in pagination.items
         ]
     }

@@ -157,7 +157,6 @@ class Event(AbstractModel):
                 low = package.price
         return "$" + str(math.floor(low)) + " - " + "$" + str(math.ceil(high))
 
-    @property
     def main_image(self):
         """Return the filepath for the main event image."""
         for image in self.images:
