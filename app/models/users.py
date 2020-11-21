@@ -242,7 +242,7 @@ class User(UserMixin, AbstractModel):
                 if sponsorship.is_past()
             ]
         else:
-            sponsorships = self.sponsorships.all()
+            sponsorships = self.sponsorships
         return sponsorships
 
     def __repr__(self):
