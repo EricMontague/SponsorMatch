@@ -5,6 +5,7 @@ import math
 from app.extensions import db
 from app.search.client import elasticsearch_client
 from app.search.pagination import ElasticsearchPagination
+from app.search.utils import getattr_nested
 from flask import url_for
 
 
@@ -26,7 +27,7 @@ class FlaskSQLAlchemyMiddleware:
     def _create_query(self, model, response):
         """Return the results from the search query as a SQLAlchemy query object"""
         if response.total == 0:
-            return model.query.filter_by(id=0), 0
+            return model.query.filter_by(id=0)
         whens = []
         for index, id_ in enumerate(response.document_ids):
             whens.append((id_, index))
@@ -49,54 +50,67 @@ class FlaskSQLAlchemyMiddleware:
             has_prev = response.page > 0
             has_next = response.page < num_pages - 1
         pagination = ElasticsearchPagination.create(
-          has_prev, has_next, response.total, response.page, response.results_per_page, query
+          has_prev, has_next, response.total, response.page + 1, response.results_per_page, query
         )
         return pagination
 
-    @classmethod
-    def before_commit(cls, session):
+    @staticmethod
+    def extract_searchable_fields(model):
+        """Return a dictionary containing all of the 
+        searchable fields in a sqlalchemy model.
+        """
+        payload = {}
+        if not hasattr(model, "__searchable__"):
+            return payload
+        for field in model.__searchable__:
+            payload[field] = getattr_nested(model, field)
+        payload["id"] = model.id
+        payload["index"] = model.__tablename__
+        payload["doc_type"] = model.__doctype__
+        return payload
+
+    @staticmethod
+    def before_commit(session):
         """Method to be called before any commits to the database. Stores all new
         objects to be added to, modified, and deleted from the database to a dictionaty
         that will persist after the commit.
         """
+        extract_fields = FlaskSQLAlchemyMiddleware.extract_searchable_fields
         session._changes = {
-            "add": list(session.new),
-            "update": list(session.dirty),
-            "delete": list(session.deleted),
+            "add": [extract_fields(model) for model in session.new],
+            "update": [extract_fields(model) for model in session.dirty],
+            "delete": [extract_fields(model) for model in session.deleted],
         }
 
     def after_commit(self, session):
-        """Method to be called after any commits to the database. Iterates over the 
-        changes dictionary stored in the session and performs the necessary actions on 
-        Elasticsearch to make sure that both have the same data.
+        """Method to be called after any changes are commited to the database.
+        Iterates over the changes dictionary stored in the session and 
+        performs the necessary actions on Elasticsearch to make sure that both have the 
+        same data.
         """
-        for obj in session._changes["add"]:
-            if hasattr(obj, "__searchable___"):
+        for payload in session._changes["add"]:
+            if payload:
                 self._elasticsearch_client.add_to_index(
-                    obj.__tablename__, obj.__doctype__, obj
+                    payload["index"], payload["doc_type"], payload["id"], payload
                 )
-        for obj in session._changes["update"]:
-            if hasattr(obj, "__searchable___"):
+        for payload in session._changes["update"]:
+            if payload:
                 self._elasticsearch_client.add_to_index(
-                    obj.__tablename__, obj.__doctype__, obj
+                    payload["index"], payload["doc_type"], payload["id"], payload
                 )
-        for obj in session._changes["delete"]:
-            if hasattr(obj, "__searchable___"):
+        for payload in session._changes["delete"]:
+            if payload:
                 self._elasticsearch_client.remove_from_index(
-                    obj.__tablename__, obj.__doctype__, obj
+                    payload["index"], payload["doc_type"], payload["id"]
                 )
         session._changes = None
 
     def reindex(self, model):
         """Refresh an index with all of the data from this model's table."""
-        for obj in model.query:
+        for query in model.query:
             self._elasticsearch_client.add_to_index(
-                model.__tablename__, model.__doctype__, obj
+                model.__tablename__, model.__doctype__, query
             )
-
-    def delete_index(self, index):
-        """Delete the related index in Elasticsearch."""
-        self._elasticsearch_client.delete_index(index)
 
 
 sqlalchemy_search_middleware = FlaskSQLAlchemyMiddleware(elasticsearch_client)
