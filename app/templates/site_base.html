@@ -91,7 +91,8 @@
 				{% endif %}
 			</ul>
 			<!--Search Bar-->
-			<form class="form-inline my-1 order-lg-1" method="GET" action="{{ url_for('main.search') }}">
+			<form class="form-inline my-1 order-lg-1" method="GET"
+				action="{{ url_for('main.search_events_by_title') }}">
 
 				<div class="form-group has-search d-flex align-items-center flex-no-wrap">
 					{{ utils.render_icon("search") }}

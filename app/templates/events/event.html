@@ -6,19 +6,20 @@
 <div id="{{ event.id }}" class="container event-page pt-4">
 
 	<div class="w-100 d-flex justify-content-center">
-		{% if image_path %}
-		<img class="img-fluid main-event-image" src="{{ url_for('static', filename=image_path) }}">
+		{% if main_image %}
+		{% set src=url_for('static', filename=main_image) %}
 		{% else %}
-		<img class="img-fluid main-event-image"
-			src="{{ url_for('static', filename='images/default_event_image.png') }}">
+		{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
 		{% endif %}
+		<img class="img-fluid main-event-image" src="{{ src }}">
 	</div>
 
 	<div class="d-flex flex-column align-items-center py-4 mb-4 event-info border-x border-bottom mx-auto bg-white">
 		{% if event.is_ongoing() %}
 		<p class="custom-font-semibold font-150 text-center text-dark-second">{{ event.title }}</p>
 		{% else %}
-		<p>{{ event.title }} (Event Ended)</p>
+		<p class="custom-font-semibold font-150 text-center text-dark-second">{{ event.title }} <span
+				class="custom-font-semibold">(Event Ended)</span></p>
 		{% endif %}
 		<p>{{ event.price_range() }}</p>
 		<p>{{ event.start_date("%A, %B %-d") }}</p>
@@ -47,15 +48,14 @@
 		<li id="sponsorsTab" class="nav-item" role="presentation"><a class="nav-link">Sponsors <span
 					class="badge badge-primary-override d-inline-block ml-2">{{ event.num_sponsors() }}</span></a>
 		</li>
-		{% if event.has_ended() %}
-		<li id="salesEnded"><a class="no-link-styling" href="#">Sales Ended</a></li>
-		{% endif %}
+		{% if current_user.can(Permission.SPONSOR_EVENT) and not event.has_ended() %}
 		<li class="ml-auto d-none d-md-block text-align-center col-md-4 px-4">
 			<button id="packageBtn" type="button" class="btn btn-primary-override w-100" data-toggle="modal"
 				data-target="#packageModal">
 				Buy Packages
 			</button>
 		</li>
+		{% endif %}
 	</ul>
 
 
@@ -94,6 +94,8 @@
 	<!-- Contact Modal -->
 	{% include "events/_contact_modal.html" %}
 </div>
+
+{% if current_user.can(Permission.SPONSOR_EVENT) %}
 <footer class="border-top bg-white py-2 fixed-bottom d-block d-md-none">
 	<div class="d-flex flex-column  justify-content-center align-items-center">
 		<p class="font-120 custom-font-semibold">Buy Packages</p>
@@ -103,6 +105,7 @@
 		</button>
 	</div>
 </footer>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}

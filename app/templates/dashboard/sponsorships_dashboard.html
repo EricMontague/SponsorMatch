@@ -13,13 +13,17 @@
 	</div>
 	<div class="row justify-content-center justify-content-xl-start">
 		<ul class="col-12 list-unstyled">
-			{% for sponsorship in sponsorships %}
+			{% for event_image, sponsorship in sponsorships %}
+			{% if event_image %}
+			{% set src=url_for('static', filename=event_image) %}
+			{% else %}
+			{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
+			{% endif %}
 			<li class="sponsorship horizontal-card flex-nowrap bg-white mb-3 py-3 px-4"
 				id="{{ sponsorship.package_id }}">
 				<div class="flex-column flex-md-row d-flex cursor-pointer">
 					<div class="horizontal-card-image-wrapper">
-						<img src="{{ url_for('static', filename='images/default_event_image.png') }}"
-							alt="Main Event Image">
+						<img src="{{ src }}" alt="Main Event Image">
 					</div>
 					<div class="horizontal-card-body">
 						<a class="custom-font-semibold font-120 d-block no-link-styling"
