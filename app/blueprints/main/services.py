@@ -6,7 +6,7 @@ from app.search import BooleanQuery, QueryType, BooleanClause
 
 
     
-def create_advanced_event_search_request(form_data):
+def create_advanced_event_search_query(form_data):
     bool_query = BooleanQuery()
     bool_query.add(
         BooleanClause.MUST, 
