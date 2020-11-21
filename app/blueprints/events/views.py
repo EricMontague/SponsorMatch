@@ -209,6 +209,8 @@ def view_package(id):
     package = Package.query.get_or_404(id)
     return jsonify(
         {
+            "package_id": package.id,
+            "event_id": package.event.id,
             "price": float(package.price),
             "audience": package.audience,
             "description": package.description,
@@ -445,7 +447,7 @@ def event(id):
         packages=packages,
         form=form,
         date_format="%m/%d/%Y",
-        image_path=event.main_image(),
+        main_image=event.main_image(),
         time_format="%I:%M %p",
         other_media=other_media,
     )
@@ -505,7 +507,10 @@ def save_event(id):
 def saved_events():
     """Return a page where sponsors can view their list of saved events."""
     endpoint = "events.saved_events"
-    events = current_user.saved_events.all()
+    events = [
+        (event.main_image(), event)
+        for event in current_user.saved_events
+    ]
     return render_template(
         "events/saved_events.html", events=events, endpoint=endpoint
     )
@@ -536,18 +541,19 @@ def place_order(id):
     data = services.validate_order(id, request.json, current_user)
     if "error" in data:
         return jsonify({"message": data["message"]}), HTTPStatus.BAD_REQUEST
-    order_key = f"PENDING_ORDER#{current_user.id}#{event.id}"
+    order_key = f"PENDING_ORDER#{current_user.id}#{data['event'].id}"
     session[order_key] = [
         {
             "package_id": package.id,
-            "event_id": event.id,
-            "user_id": current_user.id,
-            "price": package.price,
+            "event_id": data["event"].id,
+            "sponsor_id": current_user.id,
+            "price": float(package.price),
             "name": package.name
         }
         for package in data["packages"]
     ]
-    return jsonify({"url": url_for("payments.checkout", event_id=event.id)})
+    session["user"] = "Facebook"
+    return jsonify({"url": url_for("payments.checkout", event_id=data["event"].id)})
 
 
 
