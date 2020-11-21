@@ -8,7 +8,7 @@ from app.blueprints.main import main, services
 from app.blueprints.main.forms import AdvancedSearchForm, SearchForm
 from app.extensions import db
 from app.models import Event, Venue
-from app.search import sqlalchemy_search_middleware
+from app.search import sqlalchemy_search_middleware, MatchQuery
 
 
 @main.route("/")
@@ -19,7 +19,7 @@ def index():
     pagination = Event.query.filter(Event.is_ongoing() == True).paginate(
         page, per_page=current_app.config["EVENTS_PER_PAGE"], error_out=False
     )
-    events = [(event.main_image, event) for event in pagination.items]
+    events = [(event.main_image(), event) for event in pagination.items]
     return render_template(
         "main/index.html", events=events, form=form, pagination=pagination
     )
@@ -36,19 +36,19 @@ def advanced_search():
         form_data = form.data
         state_id = form.state.data
         form_data["state"] = AdvancedSearchForm.convert_choice_to_value(form.state.data, "STATES")
-        search_query = services.create_advanced_event_search_request(form_data)
+        search_query = services.create_advanced_event_search_query(form_data)
         search_response, pagination = sqlalchemy_search_middleware.search(
             Event, search_query
         )
-        fragment = f'''
-            query={state_id}
-            &{form_data["city"]}
-            &{form_data["start_date"]}
-            &{form_data["end_date"]}
-            &{form_data["category"]}&
-        '''
+        fragment = (
+            f"state={state_id}"
+            + f"&city={form_data['city']}"
+            + f"&start_date={form_data['start_date']}"
+            + f"&end_date={form_data['end_date']}"
+            + f"&category={form_data['category']}&"
+        )
         events = [
-            (event.main_image, event)
+            (event.main_image(), event)
             for event in pagination.items
         ]
         
@@ -62,7 +62,7 @@ def advanced_search():
     pagination = Event.query.filter(Event.is_ongoing() == True).paginate(
         page, per_page=current_app.config["EVENTS_PER_PAGE"], error_out=False
     ) 
-    events = [(event.main_image, event) for event in pagination.items]
+    events = [(event.main_image(), event) for event in pagination.items]
     return render_template(
         "main/index.html", events=events, form=form, pagination=pagination
     )
@@ -75,15 +75,15 @@ def search_events_by_title():
     """Return search results for searching for events
     by title.
     """
-    search_endpoint = "main.search"
+    search_endpoint = "main.search_events_by_title"
     page = request.args.get("page", 1, type=int)
-    match_query = MatchQuery(field, query)
+    match_query = MatchQuery("title", g.search_form.query.data, from_=page-1)
     fragment = f"query={g.search_form.query.data}&"
     search_response, pagination = sqlalchemy_search_middleware.search(
         Event, match_query
     )
     events = [
-        (event.main_image, event)
+        (event.main_image(), event)
         for event in pagination.items
     ]
     return render_template(
