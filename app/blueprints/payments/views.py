@@ -31,10 +31,6 @@ def checkout(event_id):
     publishable_key = current_app.config["STRIPE_PUBLISHABLE_KEY"]
     if session.get(f"PENDING_ORDER#{current_user.id}#{event_id}") is None:
         return redirect(url_for("main.index"))
-    flash(
-        "Please note: Navigating away from or refreshing this page will cancel your purchase.",
-        "danger",
-    )
     return render_template(
         "payments/checkout.html", event=event, publishable_key=publishable_key,
     )
