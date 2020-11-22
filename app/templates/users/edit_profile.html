@@ -67,11 +67,6 @@
 				<div class="col-md-12">
 					{{ wtf.render_field(profile_form.about) }}
 				</div>
-				{% if admin_route %}
-				<div class="col-md-12">
-					{{ wtf.render_field(profile_form.has_paid) }}
-				</div>
-				{% endif %}
 				<div class="col-md-12">
 					{{ wtf.render_field(profile_form.submit, button_map={"submit": "primary-override"}) }}
 					<a class="btn btn-info" href="{{ url_for('users.user_profile', company=user.company) }}">Back</a>
