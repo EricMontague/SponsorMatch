@@ -112,8 +112,7 @@ def edit_profile():
         db.session.commit()
         flash("Your profile information has been successfully updated.", "success")
         return redirect(url_for("users.edit_profile"))
-    print("###")
-    profile_form.populate_from_obj(current_user)
+    profile_form.populate(**current_user.to_dict())
     return render_template(
         "users/edit_profile.html",
         profile_form=profile_form,
@@ -172,13 +171,14 @@ def edit_profile_admin(id):
     remove_image_form = RemoveImageForm()
     profile_form = EditProfileAdminForm(user)
     if profile_form.validate_on_submit():
-        form_data = form.data
+        form_data = profile_form.data
         form_data["role"] = Role.query.get(profile_form.role.data)
-        user.updated(**form_data)
+        user.update(**form_data)
         db.session.commit()
         flash("The user's profile information has been successfully updated.", "success")
         return redirect(url_for("users.edit_profile_admin", id=user.id))
-    profile_form.populate_from_obj(user)
+    profile_form.populate(**user.to_dict())
+    profile_form.role.data = user.role.id
     return render_template(
         "users/edit_profile.html",
         profile_form=profile_form,
