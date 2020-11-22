@@ -166,7 +166,8 @@ class Event(AbstractModel):
     def misc_images(self):
         """Return the filepaths for other miscaelaneous images associated with this event."""
         images = [
-            image.path for image in self.images if image.image_type.name == "Misc"
+            "/".join(image.path.split("/")[6:]) 
+            for image in self.images if image.image_type.name == "Misc"
         ]
         return images
 
