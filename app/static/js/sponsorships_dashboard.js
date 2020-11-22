@@ -1,6 +1,6 @@
 const handleSponsorshipStatusListChange = function () {
-    $("#options").change(function () {
-        const status = $("#options :selected").text().toLowerCase();
+    $("#filter").change(function () {
+        const status = $("#filter :selected").text().toLowerCase();
         window.location.href = `${window.origin}/dashboard/sponsorships/${status}`
     });
 

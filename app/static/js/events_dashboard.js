@@ -8,6 +8,7 @@ const handleDeleteEventClickDashboard = function () {
             dataType: "json",
             success: function (response) {
                 $(`#${eventId}`).remove();
+                displayAlert(response.message, "success");
             },
             error: function (jqXHR, exception) {
                 ajaxErrorHandler(jqXHR, exception);
@@ -19,8 +20,8 @@ const handleDeleteEventClickDashboard = function () {
 
 
 const handleEventStatusListChange = function () {
-    $("#options").change(function () {
-        let status = $("#options :selected").text().toLowerCase();
+    $("#filter").change(function () {
+        let status = $("#filter :selected").text().toLowerCase();
         window.location.href = `${window.origin}/dashboard/events/${status}`
     });
 };
