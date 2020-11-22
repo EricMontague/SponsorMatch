@@ -232,15 +232,13 @@ class DemographicsForm(AbstractForm):
         if field.data == 1:
             raise ValidationError("Please choose the number of attendees.")
 
-    def validate(self):
-        """Overidden method to allow for validation against
-        multiple fields.
+    def validate_males(self, field):
+        """Custom validation to validate that the sum of the percentages
+        of males and females equals 100.
         """
-        if not super().validate():
-            return False
-        if self.males.data + self.females.data != 100:
+        if field.data + self.females.data != 100:
             raise ValidationError("Sum of males and females must equal 100.")
-        return True
+        
 
 
 class ContactForm(AbstractForm):
