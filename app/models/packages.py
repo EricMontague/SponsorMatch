@@ -34,6 +34,20 @@ class Package(AbstractModel):
         """Return True if the package was purchased by at least one sponsor."""
         return len(self.sponsorships) > 0
 
+    def to_dict(self):
+        """Return the attributes of the model as a dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "audience": self.audience,
+            "description": self.description,
+            "num_purchased": self.num_purchased,
+            "available_packages": self.available_packages,
+            "package_type": self.package_type,
+            "sponsorships": self.sponsorships
+        }
+
     def __repr__(self):
         """Return the string representation of a Package.
         Used for debugging purposes.

@@ -17,6 +17,18 @@ class Venue(AbstractModel):
     zip_code = db.Column(db.String(10), nullable=False)
     events = db.relationship("Event", backref="venue", lazy="dynamic")
 
+    def to_dict(self):
+        """Return the attributes of the model as a dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "address": self.address,
+            "city": self.city,
+            "state": self.state,
+            "zip_code": self.zip_code,
+            "events": self.events,
+        }
+
     def __repr__(self):
         """Return a string representation of an Address object.
         Used for debugging purposes.
