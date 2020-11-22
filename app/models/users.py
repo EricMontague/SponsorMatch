@@ -8,7 +8,7 @@ from app.extensions import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app.models.events import EventStatus, saved_events
-from app.models.roles import Permission
+from app.models.roles import Permission, Role
 from app.models.sponsorships import SponsorshipStatus
 from app.models.abstract_model import AbstractModel
 
@@ -61,6 +61,15 @@ class User(UserMixin, AbstractModel):
                 setattr(self, attribute, data[attribute])
         if "password" in data:
             self.password = data["password"]
+    
+    @classmethod
+    def get_users_by_role(cls, role_name):
+        """Return a list of users based on the role provided."""
+        if role_name == "All":
+            users = cls.query.all()
+        else:
+            users = cls.query.join(Role, Role.id == cls.role_id).filter(Role.name == role_name).all()
+        return users
 
     @property
     def password(self):
