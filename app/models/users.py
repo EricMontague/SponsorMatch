@@ -254,6 +254,25 @@ class User(UserMixin, AbstractModel):
             sponsorships = self.sponsorships
         return sponsorships
 
+    def to_dict(self):
+        """Return the attributes of a user as a dictionary."""
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "company": self.company,
+            "member_since": self.member_since,
+            "email": self.email,
+            "job_title": self.job_title,
+            "website": self.website,
+            "about": self.about,
+            "profile_photo_path": self.profile_photo_path,
+            "events": self.events,
+            "saved_events": self.saved_events,
+            "sponsorships": self.sponsorships,
+            "role": self.role
+        }
+
     def __repr__(self):
         """Return a string representation of a user> Used for debugging
         purposes."""
