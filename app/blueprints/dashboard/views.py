@@ -3,7 +3,7 @@
 
 from datetime import datetime
 from flask_login import login_required, current_user
-from app.blueprints.dashboard import dashboard, services
+from app.blueprints.dashboard import dashboard
 from app.extensions import db
 from flask import render_template, url_for, redirect, abort
 from app.blueprints.dashboard.forms import DropdownForm
@@ -28,10 +28,13 @@ def events_dashboard(status):
     choices = [(1, "All"), (2, "Live"), (3, "Past"), (4, "Draft")]
     dropdown_form = DropdownForm(choices)
     user = current_user._get_current_object()
-    events = user.get_events_by_status(status.lower())
+    events = [
+        (event.main_image(), event)
+        for event in user.get_events_by_status(status.lower())
+    ]
     # set default value equal to status
     reverse_choices = {choice.lower(): number for number, choice in choices}
-    dropdown_form.options.data = reverse_choices[status]
+    dropdown_form.filter.data = reverse_choices[status]
     return render_template(
         "dashboard/events_dashboard.html",
         user=user,
@@ -55,7 +58,7 @@ def sponsorships_dashboard(status):
         for sponsorship in user.get_sponsorships_by_status(status.lower())
     ]
     reverse_choices = {choice.lower(): number for number, choice in choices}
-    dropdown_form.options.data = reverse_choices[status]
+    dropdown_form.filter.data = reverse_choices[status]
     return render_template(
         "dashboard/sponsorships_dashboard.html",
         sponsorships=sponsorships,
@@ -71,9 +74,9 @@ def admin_dashboard(role_name):
     to manage the website."""
     roles = [(1, "All"), (2, "Sponsor"), (3, "Event Organizer"), (4, "Administrator")]
     dropdown_form = DropdownForm(roles)
-    users = services.get_users_by_role(role_name.title())
+    users = User.get_users_by_role(role_name.title())
     reverse_roles = {role_name.lower(): number for number, role_name in roles}
-    dropdown_form.options.data = reverse_roles[role_name]
+    dropdown_form.filter.data = reverse_roles[role_name]
     return render_template(
         "dashboard/admin_dashboard.html", users=users, dropdown_form=dropdown_form
     )
