@@ -11,14 +11,20 @@ from app.forms.constants import STATES, TIME_FORMAT, PACKAGE_TYPES, PEOPLE_RANGE
 class AbstractForm(FlaskForm):
     """Abstract base class to extend the functionality of FlaskForm"""
 
-    def populate_from_obj(self, obj):
+    def __init___(self, *args, **kwargs):
+        super(AbstractForm, self).__init__(*args, **kwargs)
+
+    def populate(self, **data):
         """Populate the form's field values based on the matching
-        attributes in the given object.
+        attributes in the given key value apirs.
         """
         for field in self:
-            if hasattr(obj, field.name):
-                value = getattr(obj, field.name)
+            print(field.name)
+            if field.name in data:
+                value = data[field.name]
                 setattr(field, "data", value)
+                print(field)
+                print(field.data)
 
     @staticmethod
     def convert_choice_to_value(choice_id, choices):
