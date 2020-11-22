@@ -12,13 +12,17 @@
 	</div>
 	<div class="row justify-content-center justify-content-xl-start">
 		<ul class="col-12 list-unstyled">
-			{% for event in events %}
+			{% for main_image, event in events %}
+			{% if main_image %}
+			{% set src=url_for('static', filename=main_image) %}
+			{% else %}
+			{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
+			{% endif %}
 			<li class="horizontal-card flex-nowrap bg-white mb-3 py-3 px-4" id="{{ event.id }}">
 				<a class="no-link-styling flex-column flex-md-row d-flex"
 					href="{{ url_for('events.edit_basic_info', id=event.id) }}">
 					<div class="horizontal-card-image-wrapper">
-						<img src="{{ url_for('static', filename='images/default_event_image.png') }}"
-							alt="Main Event Image">
+						<img src="{{ src }}" alt="Main Event Image">
 					</div>
 					<div class="horizontal-card-body">
 						<h5 class="custom-font-semibold font-120">{{ event.title }}</h5>
@@ -44,7 +48,7 @@
 							<a href="{{ url_for('events.edit_basic_info', id=event.id) }}" class="icon-link">
 								{{ utils.render_icon("pencil-square", size="1.2rem", color="2fb7ec")}}
 							</a>
-							<a class="icon-link ml-2" href="#">
+							<a class="icon-link ml-2 delete-event" href="#">
 								{{ utils.render_icon("trash", size="1.2rem", color="#dc3545")}}
 							</a>
 						</div>
