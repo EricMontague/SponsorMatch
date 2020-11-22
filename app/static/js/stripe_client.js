@@ -2,9 +2,7 @@
 // Code taken from Stripe's documentation and modified for this application
 // Source - https://stripe.com/docs/payments/integration-builder
 
-// A reference to Stripe.js initialized with a fake API key.
-// Sign in to see examples pre-filled with your key.
-const stripe = Stripe("pk_test_BwwGznIRJevFxs6X3ZaFPZLF00tr4JEERX");
+const stripe = Stripe($("#payment-form").data("stripe"));
 
 
 // Disable the button until we have Stripe set up on the page

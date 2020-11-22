@@ -110,7 +110,7 @@
 			</div>
 			<!-- Payment form -->
 			<div class="mb-4">
-				<form id="payment-form" class="stripe-form ">
+				<form id="payment-form" data-stripe="{{ publishable_key }}" class="stripe-form ">
 					<div id="card-element">
 						<!--Stripe.js injects the Card Element here-->
 					</div>
