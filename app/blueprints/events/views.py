@@ -59,8 +59,9 @@ def create_event():
     if form.validate_on_submit():
         venue = Venue.query.filter_by(address=form.address.data).first()
         if venue is None:  # venue not already in db, need to add it
-            venue_data = venue.__dict__
-            venue_data["state"] = CreateEventForm.convert_choice_to_value(form.state.data, "STATES"),
+            venue_data = form.data
+            venue_data["name"] = venue_data["venue_name"]
+            venue_data["state"] = CreateEventForm.convert_choice_to_value(form.state.data, "STATES")
             venue = Venue.create(**venue_data)
         event_type = EventType.query.get(form.event_type.data)
         event_category = EventCategory.query.get(form.category.data)
@@ -144,7 +145,7 @@ def add_event_image(id):
     if not current_user.is_organizer(event) and not current_user.is_administrator():
         return redirect(url_for("main.index"))
     if form.validate_on_submit():
-        services.add_event_main_image(form.image.data, event, images, db.session)
+        services.save_event_main_image(form.image.data, event, images, db.session)
         db.session.commit()
         flash("Your image was successfully uploaded.", "success")
         return redirect(url_for("events.event_details", id=id))
@@ -240,7 +241,7 @@ def packages(id):
         form_data["package_type"] = EventPackagesForm.convert_choice_to_value(
             form.package_type.data, "PACKAGE_TYPES"
         )
-        package = Package.create(form_data)
+        package = Package.create(**form_data)
         db.session.commit()
         return redirect(url_for("events.packages", id=id))
     return render_template(
@@ -268,17 +269,17 @@ def edit_package(event_id, package_id):
         form_data["package_type"] = EventPackagesForm.convert_choice_to_value(
             form.package_type.data, "PACKAGE_TYPES"
         )
-        package.populate_from_form(form_data)
+        package.update(**form_data)
         db.session.commit()
         flash("Package details were successfully updated.", "success")
         return redirect(url_for("events.packages", id=event_id))
     packages = event.packages.all()
-    package_data = package.__dict__
+    package_data = package.to_dict()
     package_data["audience" ] = EventPackagesForm.convert_choice_to_id(package.audience, "PEOPLE_RANGES")
     package_data["package_type"] = EventPackagesForm.convert_choice_to_id(
         package.package_type, "PACKAGE_TYPES"
     )
-    form.populate_from_model(package_data)
+    form.populate(**package_data)
     return render_template(
         "events/packages.html", form=form, event=event, packages=packages
     )
@@ -367,6 +368,7 @@ def media(id):
     upload_video_form.video_url.errors = session.pop("upload_video_form_errors", [])
     upload_video_form.video_url.data = session.pop("video_url", "")
     image_form.images.errors = session.pop("image_form_errors", [])
+    
     
     return render_template(
         "events/media.html",
