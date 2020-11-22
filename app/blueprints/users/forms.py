@@ -11,7 +11,7 @@ from wtforms import (
     SelectField,
     TextAreaField,
     ValidationError,
-    BooleanField
+    BooleanField,
 )
 
 
@@ -36,7 +36,7 @@ class EditProfileForm(AbstractForm):
         "Website",
         validators=[URL(message="Please provide a valid url."), Optional()],
         default=None,
-        render_kw={"placeholder": "http://www.example.com"}
+        render_kw={"placeholder": "http://www.example.com"},
     )
     submit = SubmitField("Save")
 
@@ -63,15 +63,14 @@ class EditProfileForm(AbstractForm):
             and User.query.filter_by(website=self.website.data).first()
         ):
             raise ValidationError("Company website already registerd.")
-        
 
-class EditProfileAdminForm(AbstractForm):
+
+class EditProfileAdminForm(EditProfileForm, AbstractForm):
     """Class to represent a form that allows the admin to edit a user's
     profile information."""
 
     email = StringField("Email", validators=[DataRequired(), Length(1, 64), Email()])
     role = SelectField("Role", coerce=int)
-    has_paid = BooleanField("User has Paid")
     submit = SubmitField("Save")
 
     def __init__(self, user, *args, **kwargs):
