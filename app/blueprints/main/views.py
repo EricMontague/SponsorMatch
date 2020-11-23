@@ -8,7 +8,7 @@ from app.blueprints.main import main, services
 from app.blueprints.main.forms import AdvancedSearchForm, SearchForm
 from app.extensions import db
 from app.models import Event, Venue
-from app.search import sqlalchemy_search_middleware, MatchQuery
+from app.search import MatchQuery
 
 
 @main.route("/")
@@ -37,7 +37,7 @@ def advanced_search():
         state_id = form.state.data
         form_data["state"] = AdvancedSearchForm.convert_choice_to_value(form.state.data, "STATES")
         search_query = services.create_advanced_event_search_query(form_data)
-        search_response, pagination = sqlalchemy_search_middleware.search(
+        search_response, pagination = current_app.sqlalchemy_search_middleware.search(
             Event, search_query
         )
         fragment = (
@@ -79,7 +79,7 @@ def search_events_by_title():
     page = request.args.get("page", 1, type=int)
     match_query = MatchQuery("title", g.search_form.query.data, from_=page-1)
     fragment = f"query={g.search_form.query.data}&"
-    search_response, pagination = sqlalchemy_search_middleware.search(
+    search_response, pagination = current_app.sqlalchemy_search_middleware.search(
         Event, match_query
     )
     events = [
