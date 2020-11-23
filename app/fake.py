@@ -8,7 +8,8 @@ import uuid
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
-from app.common import PEOPLE_RANGES, TIMES, TIME_FORMAT
+from app.forms import PEOPLE_RANGES, TIMES, TIME_FORMAT
+# from app.search import sqlalchemy_search_middleware
 from app.extensions import db
 from app.models import (
     User,
@@ -31,14 +32,21 @@ class FakeDataGenerator:
     """Class to generate fake data for the application."""
 
     def __init__(
-        self, num_users, num_events, packages_per_event=4, sponsors_per_event=3, event_image_directory=""
+        self,
+        num_users,
+        num_events,
+        packages_per_event=4,
+        sponsors_per_event=3,
+        event_image_directory="",
     ):
         self.faker = Faker()
         self.num_users = num_users
         self.num_events = num_events
         self.packages_per_event = packages_per_event
         self.sponsors_per_event = sponsors_per_event
-        self.event_image_directory = event_image_directory or os.path.join(os.getcwd() + DEFAULT_EVENT_IMAGE_DIR)
+        self.event_image_directory = event_image_directory or os.path.join(
+            os.getcwd() + DEFAULT_EVENT_IMAGE_DIR
+        )
 
     def add_all(self):
         """Create all necessary tables and create all resources."""
@@ -48,7 +56,7 @@ class FakeDataGenerator:
         self.add_packages()
         self.add_sponsorships()
         print("Indexing Elasticsearch data...")
-        Event.reindex()  # makes sure that all event data is uploaded to Elasticsearch
+        # makes sure that all event data is uploaded to Elasticsearch
         print("Done!")
 
     def add_users(self):
@@ -97,12 +105,13 @@ class FakeDataGenerator:
                 zip_code=self.faker.zipcode(),
             )
             start_date = self.faker.date_between(
-                start_date=datetime.now() + timedelta(days=random.randint(1, 365)), end_date="+30d"
+                start_date=datetime.now() + timedelta(days=random.randint(1, 365)),
+                end_date="+30d",
             )
             string_time = random.choice(TIMES[:40])[1]
             start_time = datetime.strptime(string_time, TIME_FORMAT)
             start_datetime = datetime.combine(start_date, start_time.time())
-            
+
             event = Event(
                 title=self.faker.company() + random.choice([" Party", " Gala"]),
                 start_datetime=start_datetime,
@@ -116,7 +125,7 @@ class FakeDataGenerator:
                 venue=venue,
                 event_type=event_type,
                 event_category=event_category,
-            ) 
+            )
             image = self.get_random_event_image(event)
             event.image = image
             db.session.add(event)
@@ -182,7 +191,7 @@ class FakeDataGenerator:
             image = Image(
                 path=filepath,
                 event=event,
-                image_type=ImageType.query.filter_by(name="Main Event Image").first()
+                image_type=ImageType.query.filter_by(name="Main Event Image").first(),
             )
             db.session.add(image)
             db.session.commit()
