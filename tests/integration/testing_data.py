@@ -29,17 +29,17 @@ class ViewFunctionTestData:
         {
             "email": "dave@gmail.com",
             "password": "books",
-            "error_message": "Invalid email or password.",
+            "error_message": "Invalid email or password",
         },
         {
             "email": "dave",
             "password": "password",
-            "error_message": "Invalid email address.",
+            "error_message": "Invalid email address",
         },
         {
             "email": "dave" * 25,
             "password": "password",
-            "error_message": "Field must be between 1 and 64 characters long.",
+            "error_message": "Field must be between 1 and 64 characters long",
         },
     ]
     VALID_LOGINS = [
@@ -47,13 +47,13 @@ class ViewFunctionTestData:
             "role_name": "Event Organizer",
             "email": "greg@gmail.com",
             "password": "password",
-            "message": "Please complete your signup process by purchasing your subscription below.",
+            "company": "DEF Corp"
         },
         {
             "role_name": "Sponsor",
-            "email": "greg@gmail.com",
+            "email": "joe@gmail.com",
             "password": "password",
-            "message": "Greg",
+            "company": "XYZ Corp"
         },
     ]
     INVALID_REGISTRATIONS = [
@@ -120,16 +120,6 @@ class ViewFunctionTestData:
         {
             "first_name": "Dave",
             "last_name": "McBride",
-            "company": "Facebook",
-            "email": "dave@gmail.com",
-            "password": "cat",
-            "confirm_password": "password",
-            "role": 1,  # event organizer
-            "error_message": "Passwords must match.",
-        },
-        {
-            "first_name": "Dave",
-            "last_name": "McBride",
             "company": "Amazon",
             "email": "dave@gmail.com",
             "password": "password",
@@ -157,7 +147,7 @@ class ViewFunctionTestData:
             "password": "password",
             "confirm_password": "password",
             "role": 1,  # event organizer
-            "message": "Registration successful!. You will be asked for your payment information upon login.",
+            "message": "Registration successful! Please login.",
         },
         {
             "first_name": "Bob",
@@ -167,7 +157,7 @@ class ViewFunctionTestData:
             "password": "password",
             "confirm_password": "password",
             "role": 2,  # sponsor
-            "message": "Registration successful!. Please login.",
+            "message": "Registration successful! Please login.",
         },
     ]
     INVALID_CLOSE_ACCOUNT_DATA = [{"confirm": "close"}, {"confirm": "Foo"}]
@@ -377,23 +367,23 @@ class ViewFunctionTestData:
         },
     ]
     # numbers here are arbitrary
-    ADMIN_ROUTES = ["/edit_profile/1", "/admin_panel/sponsor"]
+    ADMIN_ROUTES = ["/users/edit-profile/1", "/dashboard/admin/sponsor"]
     # numbers here are arbitrary
     SPONSOR_ROUTES = [
-        "/saved_events",
-        "/sponsorships/all",
-        "/events/1/sponsorships/purchase",
+        "/events/saved-events",
+        "/dashboard/sponsorships/all",
+        "/payments/1/checkout"
     ]
     # numbers here are arbitrary
     ORGANIZER_ROUTES = [
         "/events/create",
-        "/events/1/basic_info",
-        "/events/1/event_details",
+        "/events/1/basic-info",
+        "/events/1/event-details",
         "/events/1/demographics",
         "/events/1/packages",
         "/events/1/packages/1/edit",
         "/events/1/media",
-        "/events/all",
+        "/dashboard/events/all",
     ]
 
 
@@ -406,7 +396,6 @@ class TestModelFactory:
         password="password",
         email="greg@gmail.com",
         company="ABC Corp",
-        has_paid=True,
         profile_photo_path=None,
     ):
         """Return an instance of the User class."""
@@ -416,7 +405,6 @@ class TestModelFactory:
             company=company,
             email=email,
             password=password,
-            has_paid=has_paid,
             profile_photo_path=profile_photo_path,
         )
         return user

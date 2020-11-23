@@ -13,12 +13,13 @@ from app.models import User, Role, Event, EventType, EventCategory, Venue, Packa
 #the project structure around
 class MainViewsTestCase(unittest.TestCase):
     """Class to test view functions in the main blueprint."""
-
+        
     def setUp(self):
         """Create application instance and insert necessary
         information into the database before each test.
         """
-        self.app = create_app("testing")
+        
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -29,13 +30,13 @@ class MainViewsTestCase(unittest.TestCase):
         """Pop application context, remove the db session,
         and drop all tables in the database.
         """
+        
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
     def test_home_page(self):
         """Test the index view function when not logged in."""
-
         # send GET request
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
@@ -55,7 +56,7 @@ class MainViewsTestCase(unittest.TestCase):
         """
         response = self.client.get("/foobar")
         self.assertEqual(response.status_code, 404)
-        self.assertTrue("Page Not Found" in response.get_data(as_text=True))
+        self.assertTrue("Not Found" in response.get_data(as_text=True))
 
     def test_create_event_valid_input(self):
         """Test sending valid inputs to the create event view function."""
@@ -110,7 +111,7 @@ class MainViewsTestCase(unittest.TestCase):
                 follow_redirects=True,
             )
             self.assertEqual(response.status_code, 200)
-
+            
             # sidebar text
             self.assertTrue("Basic Info" in response.get_data(as_text=True))
             self.assertTrue("Event Details" in response.get_data(as_text=True))
@@ -193,7 +194,7 @@ class MainViewsTestCase(unittest.TestCase):
         event = TestModelFactory.create_event("Test Event", "live")
         event.user = user
         event.venue = venue
-        db.session.add_all([user, event])
+        db.session.add_all([user, event, venue])
         db.session.commit()
 
         # Should be redirected if not logged in

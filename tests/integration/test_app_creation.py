@@ -14,7 +14,7 @@ class BasicsTestCase(unittest.TestCase):
 
     # runs before each test
     def setUp(self):
-        self.app = create_app("testing")
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()

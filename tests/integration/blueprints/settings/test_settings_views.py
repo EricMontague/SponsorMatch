@@ -15,7 +15,7 @@ class SettingsViewsTestCase(unittest.TestCase):
         """Create application instance and insert necessary
         information into the database before each test.
         """
-        self.app = create_app("testing")
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -58,7 +58,6 @@ class SettingsViewsTestCase(unittest.TestCase):
                 "/settings/change-password", follow_redirects=True
             )
             self.assertTrue(response.status_code, 200)
-            self.assertTrue("Account Information" in response.get_data(as_text=True))
             self.assertTrue("Change Password" in response.get_data(as_text=True))
             self.assertTrue("Change Email" in response.get_data(as_text=True))
             self.assertTrue("Change Your Password" in response.get_data(as_text=True))
@@ -150,7 +149,6 @@ class SettingsViewsTestCase(unittest.TestCase):
             # Send GET request
             response = self.client.get("/settings/close-account", follow_redirects=True)
             self.assertEqual(response.status_code, 200)
-            self.assertTrue("Account Information" in response.get_data(as_text=True))
             self.assertTrue("Change Password" in response.get_data(as_text=True))
             self.assertTrue("Change Email" in response.get_data(as_text=True))
             self.assertTrue("Close Your Account" in response.get_data(as_text=True))

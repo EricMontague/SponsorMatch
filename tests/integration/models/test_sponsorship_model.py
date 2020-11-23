@@ -17,7 +17,7 @@ class SponsorshipModelTestCase(unittest.TestCase):
         """Create application instance and insert necessary
         information into the database before each test.
         """
-        self.app = create_app("testing")
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -52,7 +52,6 @@ class SponsorshipModelTestCase(unittest.TestCase):
 
         self.assertTrue(sponsorship.is_current())
         self.assertFalse(sponsorship.is_past())
-        self.assertFalse(sponsorship.is_pending())
 
     def test_sponsorship_is_past(self):
         """Test to ensure that a sponsorship for an event that has ended
@@ -76,64 +75,7 @@ class SponsorshipModelTestCase(unittest.TestCase):
 
         self.assertFalse(sponsorship.is_current())
         self.assertTrue(sponsorship.is_past())
-        self.assertFalse(sponsorship.is_pending())
 
-    def test_sponsorship_is_pending_instance_method(self):
-        """Test to ensure that a sponsorship without a confirmation code
-        and timestamp is recognized as pending.
-        """
-        role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user()
-        user.role = role
-        venue = TestModelFactory.create_venue()
-        event = TestModelFactory.create_event("Test Event", "live")
-        event.user = user
-        event.venue = venue
-        package = TestModelFactory.create_package(price=100, available_packages=10)
-        package.event = event
-        sponsorship = TestModelFactory.create_sponsorship(status="pending")
-        sponsorship.sponsor = user
-        sponsorship.package = package
-        sponsorship.event = event
-        db.session.add_all([user, event, package, sponsorship])
-        db.session.commit()
-
-        self.assertFalse(sponsorship.is_current())
-        self.assertFalse(sponsorship.is_past())
-        self.assertTrue(sponsorship.is_pending())
-
-    def test_sponsorship_is_pending_hybrid_expressions(self):
-        """Test to ensure that the SQLAlchemy hybrid method
-        decorator is functioning correctly when used in database queries.
-        """
-        role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user()
-        user.role = role
-        venue = TestModelFactory.create_venue()
-        event = TestModelFactory.create_event("Test Event", "live")
-        event.user = user
-        event.venue = venue
-        package = TestModelFactory.create_package(price=100, available_packages=10)
-        package.event = event
-        sponsorship = TestModelFactory.create_sponsorship(status="pending")
-        sponsorship.sponsor = user
-        sponsorship.package = package
-        sponsorship.event = event
-        db.session.add_all([user, event, package, sponsorship])
-        db.session.commit()
-
-        query_obj = Sponsorship.query.filter(Sponsorship.is_pending() == True).first()
-        self.assertIsNotNone(query_obj)
-        self.assertEqual(sponsorship, query_obj)
-
-        # update the sponsorship obejct so it is not pending and check that the query returns null
-        sponsorship.timestamp = datetime.now()
-        sponsorship.confirmation_code = str(uuid.uuid4())
-        db.session.commit()
-        query_obj = Sponsorship.query.filter(Sponsorship.is_pending() == True).first()
-
-        self.assertIsNone(query_obj)
-
-
+  
 if __name__ == "__main__":
     unittest.main()

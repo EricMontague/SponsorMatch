@@ -15,7 +15,7 @@ class AuthViewsTestCase(unittest.TestCase):
         """Create application instance and insert necessary
         information into the database before each test.
         """
-        self.app = create_app("testing")
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -30,38 +30,8 @@ class AuthViewsTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_organizer_has_not_paid(self):
-        """Test to ensure the before qpp request hook redirects
-        an organizer who hasn't paid for their subscription
-        can't access pages on the site until they pay.
-        """
-        role = Role.query.filter_by(name="Event Organizer").first()
-        user = TestModelFactory.create_user(password="password", has_paid=False)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        with self.client:
-            # send POST request to login view
-            response = self.client.post(
-                "/auth/login",
-                data={"email": user.email, "password": "password"},
-                follow_redirects=True,
-            )
-
-            # send GET request to home page. should issue a redirect
-            response = self.client.get("/")
-            self.assertEqual(response.status_code, 302)
-
-            response = self.client.get("/", follow_redirects=True)
-            self.assertEqual(response.status_code, 200)
-            self.assertTrue(
-                "Please complete your signup process by purchasing your subscription below."
-                in response.get_data(as_text=True)
-            )
-
     def test_login_valid_input(self):
-        """Test the login view function for an event organizer."""
+        """Test the login view function with valid inputs."""
 
         # send GET request to login view
         response = self.client.get("/auth/login")
@@ -82,7 +52,11 @@ class AuthViewsTestCase(unittest.TestCase):
             with self.subTest(login=login):
                 # create user
                 role = Role.query.filter_by(name=login["role_name"]).first()
-                user = TestModelFactory.create_user(password="password", has_paid=False)
+                user = TestModelFactory.create_user(
+                    password="password", 
+                    company=login["company"], 
+                    email=login["email"]
+                )
                 user.role = role
                 db.session.add(user)
                 db.session.commit()
@@ -95,7 +69,6 @@ class AuthViewsTestCase(unittest.TestCase):
                 )
 
                 self.assertEqual(response.status_code, 200)
-                self.assertTrue(login["message"] in response.get_data(as_text=True))
 
                 # logged in users should see different things in the dropdown menu
                 self.assertTrue("Account" in response.get_data(as_text=True))
@@ -104,15 +77,15 @@ class AuthViewsTestCase(unittest.TestCase):
                 if login["role_name"] == "Event Organizer":
                     self.assertTrue("Create Event" in response.get_data(as_text=True))
                     self.assertTrue(
-                        "Organizer Profile" in response.get_data(as_text=True)
+                        user.full_name in response.get_data(as_text=True)
                     )
-                    self.assertTrue("Manage Events" in response.get_data(as_text=True))
+                    self.assertTrue("Events Dashboard" in response.get_data(as_text=True))
                 else:
                     self.assertTrue(
-                        "Sponsor Profile" in response.get_data(as_text=True)
+                        user.full_name in response.get_data(as_text=True)
                     )
                     self.assertTrue(
-                        "Manage Sponsorships" in response.get_data(as_text=True)
+                        "Sponsorships Dashboard" in response.get_data(as_text=True)
                     )
                     self.assertTrue("Saved Events" in response.get_data(as_text=True))
 

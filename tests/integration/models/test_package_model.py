@@ -14,7 +14,7 @@ class PackageModelTestCase(unittest.TestCase):
         """Create application instance and insert necessary
         information into the database before each test.
         """
-        self.app = create_app("testing")
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()

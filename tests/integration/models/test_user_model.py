@@ -15,7 +15,7 @@ class UserModelTestCase(unittest.TestCase):
 
     def setUp(self):
         """Manually push application context and setup the database."""
-        self.app = create_app("testing")
+        self.app = create_app("testing", False)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -413,35 +413,6 @@ class UserModelTestCase(unittest.TestCase):
         self.assertEqual(past_events, 1)
         self.assertEqual(all_events, 1)
 
-    def test_num_events_sponsored_excluding_pending_sponsorships(self):
-        """Test the number of events sponsored by a user.
-        If a sponsorship doesn't have a timestamp or confirmation code,
-        it is marked as pending and shouldn't be counted towards
-        the number of sponsored events.
-        """
-        role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user()
-        user.role = role
-        venue = TestModelFactory.create_venue()
-        event = TestModelFactory.create_event("Test Event", "live")
-        event.user = user
-        event.venue = venue
-        package = TestModelFactory.create_package(price=100, available_packages=10)
-        package.event = event
-        sponsorship = TestModelFactory.create_sponsorship(status="pending")
-        sponsorship.sponsor = user
-        sponsorship.package = package
-        sponsorship.event = event
-        db.session.add_all([user, event, package, sponsorship])
-        db.session.commit()
-
-        current_events = user.num_events_sponsored("current")
-        past_events = user.num_events_sponsored("past")
-        all_events = user.num_events_sponsored()
-        self.assertEqual(current_events, 0)
-        self.assertEqual(past_events, 0)
-        self.assertEqual(all_events, 0)
-
     def test_has_purchased_package_sponsorship_completed(self):
         """Test to confirm whether a user has purchased a package already.
         A sponsor ship is complete if it has a timestamp and confirmation code.
@@ -463,28 +434,6 @@ class UserModelTestCase(unittest.TestCase):
         db.session.commit()
 
         self.assertTrue(user.has_purchased(package))
-
-    def test_has_purchased_package_sponsorship_pending(self):
-        """Test to confirm whether a user has purchased a package already.
-        This shoul return False if the sponsorship deal is pending.
-        """
-        role = TestModelFactory.create_role("Event Organizer")
-        user = TestModelFactory.create_user()
-        user.role = role
-        venue = TestModelFactory.create_venue()
-        event = TestModelFactory.create_event("Test Event", "live")
-        event.user = user
-        event.venue = venue
-        package = TestModelFactory.create_package(price=100, available_packages=10)
-        package.event = event
-        sponsorship = TestModelFactory.create_sponsorship(status="pending")
-        sponsorship.sponsor = user
-        sponsorship.package = package
-        sponsorship.event = event
-        db.session.add_all([user, event, package, sponsorship])
-        db.session.commit()
-
-        self.assertFalse(user.has_purchased(package))
 
     def test_profile_photo_getter(self):
         """Test that functionality of the profile_photo method."""
