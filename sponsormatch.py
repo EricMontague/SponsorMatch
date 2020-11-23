@@ -28,7 +28,7 @@ from app.error_handlers import (
     page_not_found,
     internal_server_error,
     bad_request,
-    forbidden
+    forbidden,
 )
 from werkzeug.exceptions import (
     NotFound,
@@ -36,10 +36,13 @@ from werkzeug.exceptions import (
     BadRequest,
     Forbidden,
 )
-from app.search import sqlalchemy_search_middleware, MatchQuery, BooleanQuery
+from app.search import MatchQuery, BooleanQuery
 
 
-app = create_app(os.environ.get("FLASK_CONFIG") or "default")
+app = create_app(
+    os.environ.get("FLASK_CONFIG", "default"),
+    os.environ.get("USE_ELASTICSEARCH", 1) == 1,
+)
 
 # Register application wide error handlers
 app.register_error_handler(NotFound, page_not_found)
@@ -49,7 +52,6 @@ app.register_error_handler(Forbidden, forbidden)
 
 # Register with Flask-Migrate
 migrate.init_app(app, db)
-
 
 
 COV = None
@@ -81,7 +83,6 @@ def make_shell_context():
         Sponsorship=Sponsorship,
         MatchQuery=MatchQuery,
         BooleanQuery=BooleanQuery,
-        sm=sqlalchemy_search_middleware
     )
 
 
@@ -90,22 +91,27 @@ def uilitity_functions():
     """Allow utility functions to be available
     for use throught templates.
     """
+
     def print_in_template(message):
         print(str(message))
 
     return dict(debug=print_in_template)
 
-#temporary cli command to setup the environment. will delete this later
-#in favor of Docker containers
+
+# temporary cli command to setup the environment. will delete this later
+# in favor of Docker containers
 @app.cli.command()
 @click.option(
-    "--fake-data/--no-fake-data", default=True, help="Setup the developement environment."
+    "--fake-data/--no-fake-data",
+    default=True,
+    help="Setup the developement environment.",
 )
 def setup_environment(fake_data):
     """Cli command to setup the development environment. Starts up
     Elasticsearch, sets up the database and inserts fake data into
     the database if request.
     """
+
     db.drop_all()
     db.create_all()
 
@@ -115,16 +121,15 @@ def setup_environment(fake_data):
     EventCategory.insert_event_categories()
     ImageType.insert_image_types()
 
-    #add fake data to the database
+    # add fake data to the database
     if fake_data:
         fake = FakeDataGenerator(40, 40)
         fake.add_all()
 
 
-
 @app.cli.command()
 @click.option(
-    "--coverage/--no coverage", default=False, help="Run tests under code coverage."
+    "--coverage/--no-coverage", default=False, help="Run tests under code coverage."
 )
 @click.argument("test_names", nargs=-1)
 def test(coverage, test_names):
@@ -132,8 +137,9 @@ def test(coverage, test_names):
     the OPTION field blank, will run the unit tests without printing a
     coverage report. Must be run from the root directory of the project.
     """
-    #add the root project directory to the python path so that the app directory
-    #and all subdirectories are able to be imported during tests
+
+    # add the root project directory to the python path so that the app directory
+    # and all subdirectories are able to be imported during tests
     directory = os.path.dirname(__file__)
     if directory not in sys.path:
         sys.path.insert(0, directory)
@@ -144,6 +150,7 @@ def test(coverage, test_names):
         sys.exit(subprocess.call(sys.argv))
 
     import unittest
+
     if test_names:
         tests = unittest.TestLoader().loadTestsFromNames(test_names)
     else:
@@ -164,7 +171,9 @@ def test(coverage, test_names):
 
 @app.cli.command()
 @click.option(
-    "--fake-data/--no-fake-data", default=False, help="Add fake data to the database before deployment."
+    "--fake-data/--no-fake-data",
+    default=False,
+    help="Add fake data to the database before deployment.",
 )
 def deploy(fake_data):
     """Run the below set of tasks before deployment."""
@@ -177,7 +186,7 @@ def deploy(fake_data):
     EventCategory.insert_event_categories()
     ImageType.insert_image_types()
 
-    #add fake data to the database if there isn't already fake data in the tables
+    # add fake data to the database if there isn't already fake data in the tables
     if fake_data:
         fake = FakeDataGenerator(40, 40)
         fake.add_all()
