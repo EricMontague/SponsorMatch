@@ -28,13 +28,15 @@
             <ul class="navbar-nav">
                 <li class="nav-item d-flex align-items-center">
                     {{ utils.render_icon("text-paragraph", size="1.2rem") }}
-                    <a class="nav-link font-120 pl-3" href="{{ url_for('events.edit_basic_info', id=event.id) }}">Basic
-                        Info</a>
+                    <a class="nav-link font-120 pl-3" href="{{ url_for('events.edit_basic_info', id=event.id) }}">
+                        Basic Info
+                    </a>
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     {{ utils.render_icon("card-image", size="1.2rem")}}
-                    <a class="nav-link font-120 pl-3" href="{{ url_for('events.event_details', id=event.id) }}">Event
-                        Details</a>
+                    <a class="nav-link font-120 pl-3" href="{{ url_for('events.event_details', id=event.id) }}">
+                        Event Details
+                    </a>
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     {{ utils.render_icon("people", size="1.2rem")}}
