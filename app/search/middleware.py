@@ -3,10 +3,8 @@
 
 import math
 from app.extensions import db
-from app.search.client import elasticsearch_client
 from app.search.pagination import ElasticsearchPagination
 from app.search.utils import getattr_nested
-from flask import url_for
 
 
 class FlaskSQLAlchemyMiddleware:
@@ -113,7 +111,4 @@ class FlaskSQLAlchemyMiddleware:
             )
 
 
-sqlalchemy_search_middleware = FlaskSQLAlchemyMiddleware(elasticsearch_client)
-db.event.listen(db.session, "before_commit", FlaskSQLAlchemyMiddleware.before_commit)
-db.event.listen(db.session, "after_commit", sqlalchemy_search_middleware.after_commit)
 

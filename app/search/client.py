@@ -2,13 +2,12 @@
 around the low level Elasticsearch client.
 """
 
-import os
 from elasticsearch import Elasticsearch
 from app.search.response import SearchResponse
 
 
 
-class _ElasticsearchClient:
+class ElasticsearchClient:
     """Class that is a wrapper around the low level
     elasticsearch client.
     """
@@ -42,5 +41,3 @@ class _ElasticsearchClient:
 
 
 
-
-elasticsearch_client = _ElasticsearchClient(os.getenv("ELASTICSEARCH_URL"))

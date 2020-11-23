@@ -1,18 +1,17 @@
 import stripe
 from flask import Flask
-from elasticsearch import Elasticsearch
 from app.extensions import (
     bootstrap,
-    db, 
-    mail, 
+    db,
+    mail,
     login_manager,
     images,
     configure_uploads,
-    patch_request_class
+    patch_request_class,
 )
+from app.search import FlaskSQLAlchemyMiddleware, ElasticsearchClient
 from config import CONFIG_MAPPER
-
-
+import os
 
 def register_blueprints(app):
     """Register blueprints with the application."""
@@ -32,6 +31,7 @@ def register_blueprints(app):
     app.register_blueprint(events_blueprint, url_prefix="/events")
     app.register_blueprint(payments_blueprint, url_prefix="/payments")
 
+
 def register_extensions(app):
     """Register the application instance with the extensions."""
     bootstrap.init_app(app)
@@ -44,29 +44,37 @@ def register_extensions(app):
     # redirect requests sent to http to secure https when deployed on Heroku
     if app.config["SSL_REDIRECT"]:
         from flask_sslify import SSLify
+
         sslify = SSLify(app)
 
 
-def add_attributes(app):
+def add_attributes(app, use_elasticsearch):
     """Add attributes to the application instance."""
     stripe.api_key = app.config["STRIPE_SECRET_KEY"]
     app.stripe = stripe
 
-    # if statement is so that I have the option of
-    # not having Elasticsearch run during testing
-    if app.config["ELASTICSEARCH_URL"]:
-        app.elasticsearch = Elasticsearch([app.config["ELASTICSEARCH_URL"]])
+    if use_elasticsearch:
+        elasticsearch_client = ElasticsearchClient(app.config["ELASTICSEARCH_URL"])
+        sqlalchemy_search_middleware = FlaskSQLAlchemyMiddleware(elasticsearch_client)
+        app.sqlalchemy_search_middleware = sqlalchemy_search_middleware
+        db.event.listen(
+            db.session, "before_commit", FlaskSQLAlchemyMiddleware.before_commit
+        )
+        db.event.listen(
+            db.session, "after_commit", sqlalchemy_search_middleware.after_commit
+        )
 
 
-def create_app(config_name):
+def create_app(config_name, use_elasticsearch):
     """Return an instance of the application
 	after configuration and initializing it with
 	the necessary Flask extensions.
 	"""
+    
     app = Flask(__name__.split(".")[0])
     app.config.from_object(CONFIG_MAPPER[config_name])
     register_extensions(app)
-    add_attributes(app)
+    add_attributes(app, use_elasticsearch)
     register_blueprints(app)
     return app
 
