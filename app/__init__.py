@@ -55,10 +55,10 @@ def add_attributes(app, use_elasticsearch):
 
     if use_elasticsearch:
         elasticsearch_client = ElasticsearchClient(app.config["ELASTICSEARCH_URL"])
-        sqlalchemy_search_middleware = FlaskSQLAlchemyMiddleware(elasticsearch_client)
+        sqlalchemy_search_middleware = FlaskSQLAlchemyMiddleware(elasticsearch_client, db)
         app.sqlalchemy_search_middleware = sqlalchemy_search_middleware
         db.event.listen(
-            db.session, "before_commit", FlaskSQLAlchemyMiddleware.before_commit
+            db.session, "before_commit", sqlalchemy_search_middleware.before_commit
         )
         db.event.listen(
             db.session, "after_commit", sqlalchemy_search_middleware.after_commit
