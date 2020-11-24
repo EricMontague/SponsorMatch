@@ -54,14 +54,6 @@ app.register_error_handler(Forbidden, forbidden)
 migrate.init_app(app, db)
 
 
-COV = None
-if os.environ.get("FLASK_COVERAGE"):
-    import coverage
-
-    COV = coverage.coverage(branch=True, include="app/*")
-    COV.start()
-
-
 @app.shell_context_processor
 def make_shell_context():
     """Allow the models to be automatically imported
@@ -127,46 +119,6 @@ def setup_environment(fake_data):
         fake.add_all()
 
 
-@app.cli.command()
-@click.option(
-    "--coverage/--no-coverage", default=False, help="Run tests under code coverage."
-)
-@click.argument("test_names", nargs=-1)
-def test(coverage, test_names):
-    """Run the unit tests. Typing the --no-coverage option or leaving
-    the OPTION field blank, will run the unit tests without printing a
-    coverage report. Must be run from the root directory of the project.
-    """
-
-    # add the root project directory to the python path so that the app directory
-    # and all subdirectories are able to be imported during tests
-    directory = os.path.dirname(__file__)
-    if directory not in sys.path:
-        sys.path.insert(0, directory)
-    if coverage and not os.environ.get("FLASK_COVERAGE"):
-        import subprocess
-
-        os.environ["FLASK_COVERAGE"] = "1"
-        sys.exit(subprocess.call(sys.argv))
-
-    import unittest
-
-    if test_names:
-        tests = unittest.TestLoader().loadTestsFromNames(test_names)
-    else:
-        tests = unittest.TestLoader().discover("tests", pattern="test*.py")
-    unittest.TextTestRunner(verbosity=2).run(tests)
-    # executes only if the --coverage option was typed
-    if COV:
-        COV.stop()
-        COV.save()
-        print("Coverage Summary: ")
-        COV.report()
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        covdir = os.path.join(basedir, "tmp/coverage")
-        COV.html_report(directory=covdir)
-        print(f"HTML version file://{covdir}/index.html")
-        COV.erase()
 
 
 @app.cli.command()
