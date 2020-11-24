@@ -2,7 +2,6 @@
 
 
 import math
-from app.extensions import db
 from app.search.pagination import ElasticsearchPagination
 from app.search.utils import getattr_nested
 
@@ -10,14 +9,17 @@ from app.search.utils import getattr_nested
 class FlaskSQLAlchemyMiddleware:
     """Class that acts as middleware between FlaskSQLAlchemy and Elasticsearch."""
 
-    def __init__(self, elasticsearch_client):
+    def __init__(self, elasticsearch_client, database):
         self._elasticsearch_client = elasticsearch_client
+        self._database = database
 
     def search(self, model, search_query):
         """Perform a search on Elasticsearch and return the corresponding objects
         as well as the number of results.
         """
-        response = self._elasticsearch_client.query_index(model.__tablename__, search_query)
+        response = self._elasticsearch_client.query_index(
+            model.__tablename__, search_query
+        )
         sql_query = self._create_query(model, response)
         pagination = self._create_pagination(response, sql_query)
         return response, pagination
@@ -32,10 +34,8 @@ class FlaskSQLAlchemyMiddleware:
         # order by + case statement used to preserve the order of the results
         # essentially sorts the output using the index as the key
         # https://stackoverflow.com/questions/6332043/sql-order-by-multiple-values-in-specific-order/6332081#6332081
-        return (
-            model.query.filter(model.id.in_(response.document_ids)).order_by(
-                db.case(whens, value=model.id)
-            )
+        return model.query.filter(model.id.in_(response.document_ids)).order_by(
+            self._database.case(whens, value=model.id)
         )
 
     def _create_pagination(self, response, query):
@@ -48,7 +48,12 @@ class FlaskSQLAlchemyMiddleware:
             has_prev = response.page > 0
             has_next = response.page < num_pages - 1
         pagination = ElasticsearchPagination.create(
-          has_prev, has_next, response.total, response.page + 1, response.results_per_page, query
+            has_prev,
+            has_next,
+            response.total,
+            response.page + 1,
+            response.results_per_page,
+            query,
         )
         return pagination
 
@@ -67,8 +72,7 @@ class FlaskSQLAlchemyMiddleware:
         payload["doc_type"] = model.__doctype__
         return payload
 
-    @staticmethod
-    def before_commit(session):
+    def before_commit(self, session):
         """Method to be called before any commits to the database. Stores all new
         objects to be added to, modified, and deleted from the database to a dictionaty
         that will persist after the commit.
@@ -101,7 +105,7 @@ class FlaskSQLAlchemyMiddleware:
                 self._elasticsearch_client.remove_from_index(
                     payload["index"], payload["doc_type"], payload["id"]
                 )
-        session._changes = None
+        self._changes = {}
 
     def reindex(self, model):
         """Refresh an index with all of the data from this model's table."""
@@ -109,6 +113,4 @@ class FlaskSQLAlchemyMiddleware:
             self._elasticsearch_client.add_to_index(
                 model.__tablename__, model.__doctype__, query
             )
-
-
 
