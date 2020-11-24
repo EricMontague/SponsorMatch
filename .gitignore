@@ -6,3 +6,5 @@ data-dev.sqlite
 sponsormatch.code-workspace
 venv 
 tmp/
+tests/integration/blueprints/dashboard/
+tests/integration/blueprints/users/
