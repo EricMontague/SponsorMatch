@@ -19,6 +19,7 @@ class ElasticsearchClient:
             self._client = Elasticsearch(hosts, **kwargs)
 
     def query_index(self, index, query):
+        """Query the given index and return the results of the search."""
         search_results = self._client.search(index=index, body=query.to_dict())
         return SearchResponse(search_results, query)
 
@@ -32,7 +33,8 @@ class ElasticsearchClient:
         """Remove a document in the given index based on the id
         of the given model
         """
-        self._client.delete(index=index, id=document_id, doc_type=doc_type)
+        if self._client.exists(index=index, id=document_id, doc_type=doc_type):
+            self._client.delete(index=index, id=document_id, doc_type=doc_type)
 
     def delete_index(self, index):
         """Delete the given index"""
