@@ -139,7 +139,7 @@ def deploy(fake_data):
 
     # add fake data to the database if there isn't already fake data in the tables
     if fake_data:
-        fake = FakeDataGenerator(40, 40)
+        fake = FakeDataGenerator(48, 48)
         fake.add_all()
 
 
