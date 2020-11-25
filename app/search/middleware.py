@@ -2,6 +2,7 @@
 
 
 import math
+import time
 from app.search.pagination import ElasticsearchPagination
 from app.search.utils import getattr_nested
 
@@ -13,29 +14,29 @@ class FlaskSQLAlchemyMiddleware:
         self._elasticsearch_client = elasticsearch_client
         self._database = database
 
-    def search(self, model, search_query):
+    def search(self, model_class, search_query):
         """Perform a search on Elasticsearch and return the corresponding objects
         as well as the number of results.
         """
         response = self._elasticsearch_client.query_index(
-            model.__tablename__, search_query
+            model_class.__tablename__, search_query
         )
-        sql_query = self._create_query(model, response)
+        sql_query = self._create_query(model_class, response)
         pagination = self._create_pagination(response, sql_query)
         return response, pagination
 
-    def _create_query(self, model, response):
+    def _create_query(self, model_class, response):
         """Return the results from the search query as a SQLAlchemy query object"""
         if response.total == 0:
-            return model.query.filter_by(id=0)
+            return model_class.query.filter_by(id=0)
         whens = []
         for index, id_ in enumerate(response.document_ids):
             whens.append((id_, index))
         # order by + case statement used to preserve the order of the results
         # essentially sorts the output using the index as the key
         # https://stackoverflow.com/questions/6332043/sql-order-by-multiple-values-in-specific-order/6332081#6332081
-        return model.query.filter(model.id.in_(response.document_ids)).order_by(
-            self._database.case(whens, value=model.id)
+        return model_class.query.filter(model_class.id.in_(response.document_ids)).order_by(
+            self._database.case(whens, value=model_class.id)
         )
 
     def _create_pagination(self, response, query):
@@ -107,10 +108,15 @@ class FlaskSQLAlchemyMiddleware:
                 )
         self._changes = {}
 
-    def reindex(self, model):
+    def reindex(self, model_class):
         """Refresh an index with all of the data from this model's table."""
-        for query in model.query:
+        extract_fields = FlaskSQLAlchemyMiddleware.extract_searchable_fields
+        for model in model_class.query.all():
             self._elasticsearch_client.add_to_index(
-                model.__tablename__, model.__doctype__, query
+                model_class.__tablename__, 
+                model_class.__doctype__, 
+                model.id, 
+                extract_fields(model)
             )
+            time.sleep(1)
 
