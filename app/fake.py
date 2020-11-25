@@ -5,11 +5,12 @@ application.
 import os
 import random
 import uuid
+import itertools
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
 from app.forms import PEOPLE_RANGES, TIMES, TIME_FORMAT
-# from app.search import sqlalchemy_search_middleware
+from app.search import ElasticsearchClient, FlaskSQLAlchemyMiddleware
 from app.extensions import db
 from app.models import (
     User,
@@ -23,9 +24,30 @@ from app.models import (
     Image,
     Sponsorship,
 )
-
-
 DEFAULT_EVENT_IMAGE_DIR = "/app/static/images/default_event_images"
+LOCATIONS = [
+    ("New York", "New York"),
+    ("Philadelphia", "Pennsylvania"),
+    ("Chicago", "Illinois"),
+    ("Boston", "Massachusetts"),
+    ("San Francisco", "California"),
+    ("Los Angeles", "California")
+]
+
+CATEGORIES = [
+    "Business & Professional",
+    "Charity & Causes",
+    "Film, Media & Entertainment",
+    "Food & Drink",
+    "Home & Lifestyle",
+    "Performing & Visual Arts"
+]
+
+CATEGORIES_AND_LOCATIONS = list(itertools.product(CATEGORIES, LOCATIONS))
+
+es_client = ElasticsearchClient(os.environ["ELASTICSEARCH_URL"])
+search_middleware = FlaskSQLAlchemyMiddleware(es_client, db)
+
 
 
 class FakeDataGenerator:
@@ -56,7 +78,7 @@ class FakeDataGenerator:
         self.add_packages()
         self.add_sponsorships()
         print("Indexing Elasticsearch data...")
-        # makes sure that all event data is uploaded to Elasticsearch
+        search_middleware.reindex(Event)
         print("Done!")
 
     def add_users(self):
@@ -95,18 +117,21 @@ class FakeDataGenerator:
         users = User.query.filter_by(role=role).all()
         for index in range(self.num_events):
             user = random.choice(users)
-            event_category = EventCategory.query.get(random.randint(1, category_count))
+            
             event_type = EventType.query.get(random.randint(1, type_count))
+            category, location = random.choice(CATEGORIES_AND_LOCATIONS)
+            event_category = EventCategory.query.filter_by(name=category).first()
             venue = Venue(
                 name=self.faker.company(),
                 address=self.faker.street_address(),
-                city=self.faker.city(),
-                state=self.faker.state(),
+                city=location[0],
+                state=location[1],
                 zip_code=self.faker.zipcode(),
             )
+            random_start_date = datetime.now() + timedelta(days=random.randint(1, 90))
             start_date = self.faker.date_between(
-                start_date=datetime.now() + timedelta(days=random.randint(1, 365)),
-                end_date="+30d",
+                start_date=random_start_date,
+                end_date=random_start_date + timedelta(days=30),
             )
             string_time = random.choice(TIMES[:40])[1]
             start_time = datetime.strptime(string_time, TIME_FORMAT)
@@ -184,7 +209,12 @@ class FakeDataGenerator:
         """Return a random event image from the default images
         directory.
         """
-        filename = random.choice(os.listdir(self.event_image_directory))
+        # the while loop is to account for any hidden files in the directory
+        filename = ""
+        while not filename:
+            filename = random.choice(os.listdir(self.event_image_directory))
+            if not filename.startswith("default_event_image"):
+                filename = ""
         filepath = self.event_image_directory + "/" + filename
         image = Image.query.filter_by(path=filepath).first()
         if image is None:
@@ -195,5 +225,4 @@ class FakeDataGenerator:
             )
             db.session.add(image)
             db.session.commit()
-        print(f"Image is: {image}")
         return image
