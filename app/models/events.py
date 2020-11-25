@@ -200,26 +200,12 @@ class EventType(db.Model):
     def insert_event_types():
         """Method to insert event types into the database"""
         event_types = [
-            "Appearance or Signing",
             "Attraction",
-            "Camp, Trip, or Retreat",
-            "Class, Training or Workshop",
             "Concert or Performance",
-            "Conference",
             "Convention",
             "Dinner or Gala",
             "Festival or Fair",
-            "Game or Competition",
-            "Meeting or Networking Event",
-            "Other",
-            "Party or Social Gathering",
-            "Race or Endurance Event",
-            "Rally",
-            "Screening",
-            "Seminar or Talk",
-            "Tour",
-            "Tournament",
-            "Tradeshow, Consumer Show or Expo",
+            "Meeting or Networking Event"
         ]
 
         for event_type in event_types:
@@ -242,27 +228,12 @@ class EventCategory(db.Model):
     def insert_event_categories():
         """Method to insert event categories into the database"""
         categories = [
-            "Auto, Boat & Air",
             "Business & Professional",
             "Charity & Causes",
-            "Community & Culture",
-            "Family & Education",
-            "Fashion & Beauty",
             "Film, Media & Entertainment",
             "Food & Drink",
-            "Government & Politics",
-            "Health & Wellness",
-            "Hobbies & Special Interest",
             "Home & Lifestyle",
-            "Music",
-            "Other",
-            "Performing & Visual Arts",
-            "Religion & Spirituality",
-            "School Activities",
-            "Science & Technology",
-            "Seasonal & Holiday",
-            "Sports & Fitness",
-            "Travel & Outdoor",
+            "Performing & Visual Arts"
         ]
 
         for category in categories:
