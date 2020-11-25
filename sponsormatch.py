@@ -90,8 +90,7 @@ def uilitity_functions():
     return dict(debug=print_in_template)
 
 
-# temporary cli command to setup the environment. will delete this later
-# in favor of Docker containers
+
 @app.cli.command()
 @click.option(
     "--fake-data/--no-fake-data",
@@ -103,7 +102,7 @@ def setup_environment(fake_data):
     Elasticsearch, sets up the database and inserts fake data into
     the database if request.
     """
-
+    app.sqlalchemy_search_middleware._elasticsearch_client.delete_index(Event.__tablename__)
     db.drop_all()
     db.create_all()
 
@@ -115,7 +114,7 @@ def setup_environment(fake_data):
 
     # add fake data to the database
     if fake_data:
-        fake = FakeDataGenerator(40, 40)
+        fake = FakeDataGenerator(48, 48)
         fake.add_all()
 
 
