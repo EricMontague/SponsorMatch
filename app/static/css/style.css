@@ -427,6 +427,14 @@ a.badge-primary-override:focus, a.badge-primary-override.focus {
 
 
 /* Text and Fonts */
+.welcome {
+	font-size: 2.2rem;
+}
+
+.welcome-text {
+	letter-spacing: 0.3px;
+}
+
 .text-white {
 	color: #fff;
 }
@@ -916,7 +924,7 @@ table-layout: fixed;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.3);
 	z-index: -1;
  }
 
