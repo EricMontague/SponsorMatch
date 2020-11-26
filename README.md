@@ -10,7 +10,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 <br>
 
 ## Using the live application: 
-If you're using the live application and you choose to register as a sponsor, use **4242 4242 4242 4242** as the credit card number when purchasing packages as this is one of Stripe's test credit card numbers. The rest of the purchase form can be filled in with whatever numbers you wish to complete your purchase.
+- If you're using the live application and you choose to register as a sponsor, use **4242 4242 4242 4242** as the credit card number when purchasing packages as this is one of Stripe's test credit card numbers. The rest of the purchase form can be filled in with whatever numbers you wish to complete your purchase.
 <br>
 <br>
 
@@ -72,7 +72,6 @@ DATABASE_URL= (optional)
 ELASTICSEARCH_URL=
 
 ```
-<br>
 <br>
 
 ## Testing
