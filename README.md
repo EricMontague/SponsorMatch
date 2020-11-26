@@ -3,7 +3,7 @@
 > SponsorMatch is a Flask application that connects event organizers with companies who are looking to sponsor events.
 
 ![code-coverage](https://img.shields.io/badge/coverage-66%25-yellowgreen)
-![last-commit](https://img.shields.io/badge/last%20commit-November%202020-blue)
+![last-commit](https://img.shields.io/badge/last%20commit-Nov%202020-blue)
 
 <br>
 
