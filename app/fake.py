@@ -48,7 +48,8 @@ CATEGORIES_AND_LOCATIONS = list(itertools.product(CATEGORIES, LOCATIONS))
 es_client = ElasticsearchClient(os.environ["ELASTICSEARCH_URL"])
 search_middleware = FlaskSQLAlchemyMiddleware(es_client, db)
 
-
+print(os.path.dirname(__file__))
+print()
 
 class FakeDataGenerator:
     """Class to generate fake data for the application."""
@@ -214,6 +215,7 @@ class FakeDataGenerator:
             if not filename.startswith("default_event_image"):
                 filename = ""
         filepath = images_directory + "/" + filename
+        print(filepath)
         image = Image.query.filter_by(path=filepath).first()
         if image is None:
             image = Image(
