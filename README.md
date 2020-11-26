@@ -1,11 +1,12 @@
 # SponsorMatch
 
 > SponsorMatch is a Flask application that connects event organizers with companies who are looking to sponsor events.
+
 ![Coveralls github](https://img.shields.io/coveralls/github/EricMontague/SponsorMatch)
 
-[Live Application Here](https://sponsormatch.herokuapp.com/)
 
-After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of the concepts from his book and build my own Flask application. While looking for ideas about what type of application to build, I stumbled upon an old post on Quora where the founder of Eventbrite was talking about how it can be difficult for event organizers to find sponsors for their events. This inspired me to build a web application dedicated to solving this problem. 
+After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of the concepts from his book and build my own Flask application. While looking for ideas about what type of application to build, I stumbled upon an old post on Quora where the founder of Eventbrite was talking about how it can be difficult for event organizers to find sponsors for their events. This inspired me to build, [SponsorMatch](https://sponsormatch.herokuapp.com/), a web application dedicated to solving this problem. 
+<br>
 <br>
 
 ## Using the live application: 
@@ -17,7 +18,7 @@ If you're using the live application and you choose to register as a sponsor, us
 ## Development:
 - First you need to [register with Stripe](https://stripe.com/) and then [obtain your API keys](https://stripe.com/docs/keys) from your Stripe dashboard
 - Next you will need [download Elasticsearch](https://www.elastic.co/downloads/elasticsearch) if you don't have it installed on your computer already. I built this application using version 7.6, but I believe that any subversion of version 7 should work
-
+<br>
 
 
 
@@ -44,6 +45,7 @@ DATABASE_URL= postgresql://sponsormatch:password@database:5432/sponsormatch_db
 ELASTICSEARCH_URL=http://elasticsearch:9200 (Elasticsearch defaults to listening on port 9200, but adjust this to your needs)
 
 ```
+<br>
 
 ### Running with the Werkzeug development server
 
@@ -70,14 +72,17 @@ DATABASE_URL= (optional)
 ELASTICSEARCH_URL=
 
 ```
+<br>
+<br>
 
-
-## Testing:
+## Testing
 ```sh
 ➜ flask run-tests
 ```
+<br>
+<br>
 
-### Core Features:
+## Core Features
  - Organizers can create events as well as sponsorship packages that can be purchased in the app by potential sponsors through the Stripe API. 
  - Organizers have an area where they can manage their events, make changes, and see what purchases have been made.
  - Sponsors have an area where they can review past purchases
