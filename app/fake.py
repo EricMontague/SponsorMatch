@@ -58,17 +58,13 @@ class FakeDataGenerator:
         num_users,
         num_events,
         packages_per_event=4,
-        sponsors_per_event=3,
-        event_image_directory="",
+        sponsors_per_event=3
     ):
         self.faker = Faker()
         self.num_users = num_users
         self.num_events = num_events
         self.packages_per_event = packages_per_event
         self.sponsors_per_event = sponsors_per_event
-        self.event_image_directory = event_image_directory or os.path.join(
-            os.getcwd() + DEFAULT_EVENT_IMAGE_DIR
-        )
 
     def add_all(self):
         """Create all necessary tables and create all resources."""
@@ -209,13 +205,15 @@ class FakeDataGenerator:
         """Return a random event image from the default images
         directory.
         """
+        images_directory = os.path.dirname(__file__) + "/static/images/default_event_images"
+        default_event_images = os.listdir(images_directory)
         # the while loop is to account for any hidden files in the directory
         filename = ""
         while not filename:
-            filename = random.choice(os.listdir(self.event_image_directory))
+            filename = random.choice(default_event_images)
             if not filename.startswith("default_event_image"):
                 filename = ""
-        filepath = self.event_image_directory + "/" + filename
+        filepath = images_directory + "/" + filename
         image = Image.query.filter_by(path=filepath).first()
         if image is None:
             image = Image(
