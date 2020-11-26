@@ -2,7 +2,8 @@
 
 > SponsorMatch is a Flask application that connects event organizers with companies who are looking to sponsor events.
 
-![Coveralls github](https://img.shields.io/coveralls/github/EricMontague/SponsorMatch)
+![code-coverage](https://img.shields.io/badge/coverage-66%25-yellowgreen)
+![last-commit](https://img.shields.io/badge/last%20commit-November%202020-blue)
 
 
 After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of the concepts from his book and build my own Flask application. While looking for ideas about what type of application to build, I stumbled upon an old post on Quora where the founder of Eventbrite was talking about how it can be difficult for event organizers to find sponsors for their events. This inspired me to build, [SponsorMatch](https://sponsormatch.herokuapp.com/), a web application dedicated to solving this problem. 
