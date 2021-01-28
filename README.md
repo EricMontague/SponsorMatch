@@ -25,6 +25,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 ### Running with Docker
 ```sh
 ➜ git clone https://github.com/EricMontague/SponsorMatch.git
+➜ cd Sponsormatch
 ➜ touch .docker-env
 ➜ docker-compose up
 ```
@@ -48,11 +49,15 @@ ELASTICSEARCH_URL=http://elasticsearch:9200 (Elasticsearch defaults to listening
 <br>
 
 ### Running with the Werkzeug development server
+- Open a tab in your terminal and start up Elasticsearch before running any of the commands below
 
 ```sh
 ➜ git clone https://github.com/EricMontague/SponsorMatch.git
+➜ cd Sponsormatch
+➜ python3 -m venv venv
+➜ source venv/bin/activate
+➜ pip install --upgrade pip && pip install -r requirements.txt
 ➜ touch .flask-env
-➜ [insert command to start up Elasticsearch]
 ➜ flask setup-environment --fake-data (optional flag if you want to insert fake data into the database)
 ```
 
