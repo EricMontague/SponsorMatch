@@ -6,6 +6,12 @@ convenient command line tools
 import os
 import click
 import sys
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
 from app import create_app
 from app.fake import FakeDataGenerator
 from app.models import (
@@ -94,7 +100,7 @@ def uilitity_functions():
 @app.cli.command()
 @click.option(
     "--fake-data/--no-fake-data",
-    default=True,
+    default=False,
     help="Setup the developement environment.",
 )
 def setup_environment(fake_data):
