@@ -25,7 +25,8 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 ### Running with Docker
 ```sh
 ➜ git clone https://github.com/EricMontague/SponsorMatch.git
-➜ touch .docker-env
+➜ cd Sponsormatch
+➜ touch .docker-env (add environment variables here)
 ➜ docker-compose up
 ```
 
@@ -33,8 +34,8 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 `.docker-env`
 
 ```sh
-FLASK_APP=
-FLASK_CONFIG=
+FLASK_APP=sponsormatch.py
+FLASK_CONFIG=docker
 MAIL_USERNAME=(optional) - Use if you want to utilize email functionality
 MAIL_PASSWORD=(optional) - Use if you want to utilize email functionality
 ADMIN_EMAIL=(optional)
@@ -42,26 +43,37 @@ SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 DATABASE_URL= postgresql://sponsormatch:password@database:5432/sponsormatch_db
-ELASTICSEARCH_URL=http://elasticsearch:9200 (Elasticsearch defaults to listening on port 9200, but adjust this to your needs)
+POSTGRES_USER=sponsormatch
+POSTGRES_PASSWORD=password
+POSTGRES_DB=sponsormatch_db
+ELASTICSEARCH_URL=http://elasticsearch:9200 
 
 ```
 <br>
 
 ### Running with the Werkzeug development server
+- Open a tab in your terminal, navigate to the directory that contains Elasticsearch and run ```elasticsearch-7.6.0/bin/elasticsearch``` in order to start
+up Elasticsearch
+- Then, in a new tab, sequentially enter the commands below 
 
 ```sh
 ➜ git clone https://github.com/EricMontague/SponsorMatch.git
-➜ touch .flask-env
-➜ [insert command to start up Elasticsearch]
+➜ cd Sponsormatch
+➜ python3 -m venv venv
+➜ source venv/bin/activate
+➜ pip install --upgrade pip && pip install -r requirements.txt
+➜ touch .env (add environment variables here)
 ➜ flask setup-environment --fake-data (optional flag if you want to insert fake data into the database)
+➜ flask run
 ```
 
 
-`.flask-env`
+`.env`
 
 ```sh
-FLASK_APP=
-FLASK_CONFIG=
+FLASK_APP=sponsormatch.py
+FLASK_ENV=development
+FLASK_DEBUG=1
 MAIL_USERNAME=(optional) - Use if you want to utilize email functionality
 MAIL_PASSWORD=(optional) - Use if you want to utilize email functionality
 ADMIN_EMAIL=(optional)
@@ -69,7 +81,7 @@ SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 DATABASE_URL= (optional)
-ELASTICSEARCH_URL=
+ELASTICSEARCH_URL=http://localhost:9200
 
 ```
 <br>
