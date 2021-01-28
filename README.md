@@ -26,7 +26,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 ```sh
 ➜ git clone https://github.com/EricMontague/SponsorMatch.git
 ➜ cd Sponsormatch
-➜ touch .docker-env
+➜ touch .docker-env (add environment variables here)
 ➜ docker-compose up
 ```
 
@@ -34,8 +34,8 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 `.docker-env`
 
 ```sh
-FLASK_APP=
-FLASK_CONFIG=
+FLASK_APP=sponsormatch.py
+FLASK_CONFIG=docker
 MAIL_USERNAME=(optional) - Use if you want to utilize email functionality
 MAIL_PASSWORD=(optional) - Use if you want to utilize email functionality
 ADMIN_EMAIL=(optional)
@@ -43,13 +43,18 @@ SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 DATABASE_URL= postgresql://sponsormatch:password@database:5432/sponsormatch_db
-ELASTICSEARCH_URL=http://elasticsearch:9200 (Elasticsearch defaults to listening on port 9200, but adjust this to your needs)
+POSTGRES_USER=sponsormatch
+POSTGRES_PASSWORD=password
+POSTGRES_DB=sponsormatch_db
+ELASTICSEARCH_URL=http://elasticsearch:9200 
 
 ```
 <br>
 
 ### Running with the Werkzeug development server
-- Open a tab in your terminal and start up Elasticsearch before running any of the commands below
+- Open a tab in your terminal, navigate to the directory that contains Elasticsearch and run ```elasticsearch-7.6.0/bin/elasticsearch``` in order to start
+up Elasticsearch
+- Then, in a new tab, sequentially enter the commands below 
 
 ```sh
 ➜ git clone https://github.com/EricMontague/SponsorMatch.git
@@ -57,16 +62,18 @@ ELASTICSEARCH_URL=http://elasticsearch:9200 (Elasticsearch defaults to listening
 ➜ python3 -m venv venv
 ➜ source venv/bin/activate
 ➜ pip install --upgrade pip && pip install -r requirements.txt
-➜ touch .flask-env
+➜ touch .env (add environment variables here)
 ➜ flask setup-environment --fake-data (optional flag if you want to insert fake data into the database)
+➜ flask run
 ```
 
 
-`.flask-env`
+`.env`
 
 ```sh
-FLASK_APP=
-FLASK_CONFIG=
+FLASK_APP=sponsormatch.py
+FLASK_ENV=development
+FLASK_DEBUG=1
 MAIL_USERNAME=(optional) - Use if you want to utilize email functionality
 MAIL_PASSWORD=(optional) - Use if you want to utilize email functionality
 ADMIN_EMAIL=(optional)
@@ -74,7 +81,7 @@ SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 DATABASE_URL= (optional)
-ELASTICSEARCH_URL=
+ELASTICSEARCH_URL=http://elasticsearch:9200
 
 ```
 <br>
