@@ -10,7 +10,7 @@
 
 ![Image of Homepage](https://github.com/EricMontague/SponsorMatch/blob/master/app/static/images/SponsorMatch_Screenshot.png)
 
-
+<br>
 After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of the concepts from his book and build my own Flask application. While looking for ideas, I stumbled upon an old post on Quora where the founder of Eventbrite mentioned how it can be difficult for event organizers to find sponsors for their events. This inspired me to build, [SponsorMatch](https://sponsormatch.herokuapp.com/), a web application dedicated to solving this problem. 
 <br>
 <br>
