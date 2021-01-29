@@ -17,6 +17,11 @@ class ElasticsearchClient:
             self._client = Elasticsearch(hosts, transport_class, **kwargs)
         else:
             self._client = Elasticsearch(hosts, **kwargs)
+    
+    def create_index(self, index):
+        """Create a new index if it doesn't already exist."""
+        if not self._client.indices.exists(index):
+            self._client.indices.create(index)
 
     def query_index(self, index, query):
         """Query the given index and return the results of the search."""
