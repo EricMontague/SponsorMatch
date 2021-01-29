@@ -18,6 +18,7 @@ After reading Miguel Grinberg's Flask: Web Development, I wanted to build off of
 ## Development:
 - First you need to [register with Stripe](https://stripe.com/) and then [obtain your API keys](https://stripe.com/docs/keys) from your Stripe dashboard
 - Next you will need to [download Elasticsearch](https://www.elastic.co/downloads/elasticsearch) if you don't have it installed on your computer already. I built this application using version 7.6, but I believe that any subversion of version 7 should work
+- If you choose to run the application using Docker, it will be running on port 8000. If you run it with the werkzeug development server, it will be avaiable on port 5000
 <br>
 
 
