@@ -1,5 +1,4 @@
 #!/bin/sh
-source venv/bin/activate
 while true; do
     if [[ -z "${USE_FAKE_DATA}" ]]; then
         flask deploy
