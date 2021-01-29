@@ -16,7 +16,7 @@ services:
     image: "postgres:latest"
     ports:
       - "5432:5432"
-    env_file: .database-env
+    env_file: .docker-env
     volumes:
       - database-data:/var/lib/postgresql/data
     restart: always
