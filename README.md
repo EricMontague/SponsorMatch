@@ -89,7 +89,7 @@ ELASTICSEARCH_URL=http://localhost:9200
 
 ## Testing
 ```sh
-➜ flask run-tests
+➜ python run-tests.py
 ```
 <br>
 <br>
