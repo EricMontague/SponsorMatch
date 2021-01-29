@@ -42,7 +42,7 @@ from werkzeug.exceptions import (
     BadRequest,
     Forbidden,
 )
-from app.search import MatchQuery, BooleanQuery
+from app.search import MatchQuery, BooleanQuery, ElasticsearchClient
 
 
 app = create_app(
@@ -143,10 +143,12 @@ def deploy(fake_data):
     EventCategory.insert_event_categories()
     ImageType.insert_image_types()
 
+    es_client = ElasticsearchClient(app.config["ELASTICSEARCH_URL"])
+    es_client.create_index("events")
     # add fake data to the database if there isn't already fake data in the tables
     if fake_data:
         fake = FakeDataGenerator(48, 48)
-        fake.add_all()
+        fake.add_all()        
 
 
 if __name__ == "__main__":
