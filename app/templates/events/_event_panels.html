@@ -1,10 +1,10 @@
 <div id="eventPanels" class="row justify-content-center justify-content-xl-start">
 	<ul class="col-12 list-unstyled">
-		{% for main_imaage, event in events %}
+		{% for main_image, event in events %}
 		{% if main_image %}
 		{% set src=url_for('static', filename=main_image) %}
 		{% else %}
-		{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
+		{% set src=url_for('static', filename='images/default_event_image12.jpeg') %}
 		{% endif %}
 		<li id="{{ event.id }}" class="horizontal-card bg-white mb-4 p-3">
 			<a class="no-link-styling flex-column flex-md-row d-flex" href="{{ url_for('events.event', id=event.id) }}">
