@@ -86,6 +86,7 @@ def search_events_by_title():
         (event.main_image(), event)
         for event in pagination.items
     ]
+    
     return render_template(
         "main/search.html",
         events=events,
