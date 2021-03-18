@@ -79,7 +79,7 @@ def make_shell_context():
 
 
 @app.context_processor
-def uilitity_functions():
+def utility_functions():
     """Allow utility functions to be available
     for use throught templates.
     """
