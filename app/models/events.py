@@ -161,12 +161,13 @@ class Event(AbstractModel):
         """Return the filepath for the main event image."""
         for image in self.images:
             if image.image_type.name == "Main Event Image":
-                return "/".join(image.path.split("/")[-3:])
+                return "/".join(image.path.split("/")[-3:]).replace("static/", "")
+        return ""
 
     def misc_images(self):
         """Return the filepaths for other miscaelaneous images associated with this event."""
         images = [
-            "/".join(image.path.split("/")[-3:]) 
+            "/".join(image.path.split("/")[-3:]).replace("static/", "")
             for image in self.images if image.image_type.name == "Misc"
         ]
         return images
