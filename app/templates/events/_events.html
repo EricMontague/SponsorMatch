@@ -3,7 +3,7 @@
 	{% if main_image %}
 	{% set src=url_for('static', filename=main_image) %}
 	{% else %}
-	{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
+	{% set src=url_for('static', filename='images/default_event_image12.jpeg') %}
 	{% endif %}
 	<li id="eventListItem{{ event.id }}" class="event-card bg-white">
 		<a class="no-link-styling" href="{{ url_for('events.event', id=event.id) }}">

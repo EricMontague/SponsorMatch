@@ -17,7 +17,7 @@
 			{% if event_image %}
 			{% set src=url_for('static', filename=event_image) %}
 			{% else %}
-			{% set src=url_for('static', filename='images/default_event_images/default_event_image12.jpeg') %}
+			{% set src=url_for('static', filename='images/default_event_image12.jpeg') %}
 			{% endif %}
 			<li class="sponsorship horizontal-card flex-nowrap bg-white mb-3 py-3 px-4"
 				id="{{ sponsorship.package_id }}">
