@@ -6,6 +6,12 @@ convenient command line tools
 import os
 import click
 import sys
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
 from app import create_app
 from app.fake import FakeDataGenerator
 from app.models import (
@@ -36,7 +42,7 @@ from werkzeug.exceptions import (
     BadRequest,
     Forbidden,
 )
-from app.search import MatchQuery, BooleanQuery
+from app.search import MatchQuery, BooleanQuery, ElasticsearchClient
 
 
 app = create_app(
@@ -94,7 +100,7 @@ def utility_functions():
 @app.cli.command()
 @click.option(
     "--fake-data/--no-fake-data",
-    default=True,
+    default=False,
     help="Setup the developement environment.",
 )
 def setup_environment(fake_data):
@@ -137,10 +143,12 @@ def deploy(fake_data):
     EventCategory.insert_event_categories()
     ImageType.insert_image_types()
 
+    es_client = ElasticsearchClient(app.config["ELASTICSEARCH_URL"])
+    es_client.create_index("events")
     # add fake data to the database if there isn't already fake data in the tables
     if fake_data:
         fake = FakeDataGenerator(48, 48)
-        fake.add_all()
+        fake.add_all()        
 
 
 if __name__ == "__main__":
