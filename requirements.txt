@@ -5,7 +5,7 @@ attrs==19.3.0
 black==19.10b0
 blinker==1.4
 Bootstrap-Flask==1.5
-certifi==2019.11.28
+certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
 coverage==5.3
